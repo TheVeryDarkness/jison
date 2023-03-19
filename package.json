@@ -54,10 +54,11 @@
     "build999": "lerna run build",
     "build": "for d in packages/{common,lexer,parser}/; do (cd $d &&  tsc -b tsconfig.package.json); done",
     "clean": "rm -r packages/{common,lexer,parser}/lib/",
-    "js-calculator": "(cd packages/parser-generator/ && npm run js-calculator)",
-    "ts-calculator": "(cd packages/parser-generator/ && npm run ts-calculator)",
-    "test": "npm run js-calculator && npm run ts-calculator && (cd packages/lexer-generator/ && node tests/all-tests.js)",
-    "test:make": "(cd packages/parser-generator/examples/ && make clean && make ts-node-calculator-demo && make js-calculator-demo && make ts-calculator-demo)",
+    "js-calculator-demo": "(cd packages/parser-generator/ && npm run js-calculator-demo)",
+    "ts-calculator-demo": "(cd packages/parser-generator/ && npm run ts-calculator-demo)",
+    "ts-node-calculator-demo": "(cd packages/parser-generator/ && npm run ts-node-calculator-demo)",
+    "test": "npm run js-calculator-demo && npm run ts-calculator-demo && npm run ts-node-calculator-demo && (cd packages/lexer-generator/ && node tests/all-tests.js)",
+    "test:make": "(cd packages/parser-generator/examples/ && make clean && make js-calculator-demo && make ts-calculator-demo && make ts-node-calculator-demo)",
     "test-todo": "(cd packages/parser-generator/ && node tests/all-tests.js);"
   }
 }

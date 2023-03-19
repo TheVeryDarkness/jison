@@ -1,7 +1,6 @@
 clean:
 	rm js-calculator.js ts-calculator.js ts-calculator.ts
 
-
 # Javascript calculator
 js-calculator-demo: js-calculator.js
 	node js-calculator.cli.js calculator.input.txt

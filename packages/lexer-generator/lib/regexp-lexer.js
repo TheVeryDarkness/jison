@@ -219,7 +219,7 @@ function generateModuleBody (opt, templateParm) {
     }
 
     lexer.strs.performAction = String(opt.performAction);
-    lexer.strs.rules = "[" + opt.rules + "]";
+    lexer.strs.rules = "[" + opt.rules.join(",\n          ") + "\n        ]";
     lexer.strs.conditions = JSON.stringify(opt.conditions);
     return lexer;
 }

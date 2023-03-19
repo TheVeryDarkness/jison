@@ -54,17 +54,19 @@
   "scripts": {
     "build": "echo nothing to build in parser-generator",
     "prepublish": "npm run build",
-    "js-calculator": "npm run generate:js-calculator && npm run cli:js-calculator",
-    "generate:js-calculator": "(cd examples/ && ../lib/cli.js -n TsCalc -n TsCalc -o js-calculator.ts js-calculator.jison)",
+    "js-calculator-demo": "npm run generate:js-calculator && npm run cli:js-calculator",
+    "generate:js-calculator": "(cd examples/ && ../lib/cli.js -n JsCalc -o js-calculator.js js-calculator.jison)",
     "run:js-calculator": "(cd examples/ && node js-calculator.js calculator.input.txt)",
     "cli:js-calculator": "(cd examples/ && node js-calculator.cli.js calculator.input.txt)",
 
-    "ts-calculator": "npm run generate:ts-calculator && npm run compile:ts-calculator && npm run cli:ts-calculator && npm run ts-node:ts-calculator",
-    "generate:ts-calculator": "(cd examples/ && ../lib/cli.js -t typescript -n TsCalc -n TsCalc -o ts-calculator.ts ts-calculator.jison)",
+    "ts-calculator-demo": "npm run generate:ts-calculator && npm run compile:ts-calculator && npm run cli:ts-calculator",
+    "generate:ts-calculator": "(cd examples/ && ../lib/cli.js -t typescript -n TsCalc -o ts-calculator.ts ts-calculator.jison)",
     "compile:ts-calculator": "(cd examples/ && tsc ts-calculator.ts)",
     "run:ts-calculator": "(cd examples/ && node ts-calculator.js calculator.input.txt)",
     "cli:ts-calculator": "(cd examples/ && node ts-calculator.cli.js calculator.input.txt)",
-    "ts-node:ts-calculator": "(cd examples/ && ts-node ts-calculator.ts calculator.input.txt)",
+
+    "ts-node-calculator-demo": "npm run generate:ts-calculator && npm run ts-node:ts-calculator",
+    "ts-node:ts-calculator": "(cd examples/ && ts-node ts-calculator.cli.js calculator.input.txt)",
 
     "test": "node ./tests/all-tests"
   },

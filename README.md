@@ -57,6 +57,8 @@ e   : e '+' e               {$$ = $1+$3;}
     | '(' e ')'             {$$ = $2;}
     | NUMBER                {$$ = Number(yytext);} ;
 ```
+See [packages/parser-generator/examples/](packages/parser-generator/examples/) for examples and [scripts](packages/parser-generator/package.json) for invocation.
+
 
 ## Example compilation:
 Convert the .jison file to a TS file:

@@ -1294,7 +1294,7 @@ var parser = typal.beget();
 lrGeneratorMixin.createParser = function createParser () {
     var code = "const [exports, require] = arguments;\n"
         + this.generateModuleExpr(this.options || {});
-    const myExports = {}
+    const myExports = {};
     new Function(code)(myExports, require);
     const p = new myExports.Parser({}, null);
 
