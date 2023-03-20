@@ -88,6 +88,20 @@ const ParserAndLexer = require('./js-calculator');
 See [parser-generator docs](http://github.com/ericprud/ts-jison/tree/main/packages/parser-generator) for more details.
 
 
+Building from git
+-----------------
+
+``` sh
+git clone ...
+cd <cloned repo>
+npm ci
+for d in packages/{common,lexer,parser}/; do (cd $d && tsc -b tsconfig.package.json); done
+lerna bootstrap
+npm t
+```
+
+During development, you have to repeat the `lerna bootstrap` command to get to a steady state because bootstrap tests that the build worked and doesn't seem to reliably build in the order of package dependencies (PRs welcome!).
+
 How to contribute
 -----------------
 

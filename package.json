@@ -52,7 +52,7 @@
   },
   "scripts": {
     "build999": "lerna run build",
-    "build": "for d in packages/{common,lexer,parser}/; do (cd $d &&  tsc -b tsconfig.package.json); done",
+    "build": "(cd packages/common/ && tsc -b tsconfig.package.json) && (cd packages/lexer/ && tsc -b tsconfig.package.json) && (cd packages/parser/ && tsc -b tsconfig.package.json)",
     "clean": "rm -r packages/{common,lexer,parser}/lib/",
     "js-calculator-demo": "(cd packages/parser-generator/ && npm run js-calculator-demo)",
     "ts-calculator-demo": "(cd packages/parser-generator/ && npm run ts-calculator-demo)",

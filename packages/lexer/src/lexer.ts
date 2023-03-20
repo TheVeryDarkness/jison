@@ -47,7 +47,7 @@ export abstract class JisonLexer {
   ) { }
 
   public EOF: number = 1;
-  abstract options: any = {};
+  options: any = {};
 
   _input?: string;
   _more?: boolean;
