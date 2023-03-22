@@ -43,11 +43,16 @@
   },
   "devDependencies": {
     "@ts-jison/common": "file:packages/common",
+    "@ts-jison/ebnf-parser": "file:packages/lex-parser",
     "@ts-jison/lexer": "file:packages/lexer",
     "@ts-jison/lexer-generator": "file:packages/lexer-generator",
+    "@ts-jison/lex-parser": "file:packages/lex-parser",
     "@ts-jison/parser": "file:packages/parser",
     "@ts-jison/parser-generator": "file:packages/parser-generator",
+    "jest": "^29.5.0",
+    "jison": "git://github.com/zaach/jison.git#ef2647",
     "jison": "0.4.x",
+    "lerna": "^6.5.1",
     "test": "0.6.x"
   },
   "scripts": {

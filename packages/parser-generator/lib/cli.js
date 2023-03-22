@@ -175,7 +175,7 @@ cli.processGrammars = function processGrammars(file, lexFile, jsonMode) {
     "use strict";
     lexFile = lexFile || false;
     jsonMode = jsonMode || false;
-    var ebnfParser = require('ebnf-parser');
+    var ebnfParser = require('@ts-jison/ebnf-parser');
     var cjson = require('cjson');
     var grammar;
     try {
@@ -189,10 +189,10 @@ cli.processGrammars = function processGrammars(file, lexFile, jsonMode) {
     }
     try {
         if (lexFile) {
-            grammar.lex = require('lex-parser').parse(lexFile);
+            grammar.lex = require('@ts-jison/lex-parser').parse(lexFile);
         }
     } catch (e) {
-        throw new Error('Could not parse lex grammar');
+        throw new Error(`Could not parse lex grammar: ${e}`);
     }
     return grammar;
 };

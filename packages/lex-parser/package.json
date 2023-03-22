@@ -1,0 +1,25 @@
+{
+  "name": "@ts-jison/lex-parser",
+  "version": "0.3.0",
+  "description": "A parser for lexical grammars used by jison",
+  "main": "lex-parser.js",
+  "scripts": {
+    "build": "echo nothing to build in lexer-generator",
+    "prepublish": "npm run build",
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "repository": "https://github.com/zaach/lex-parser.git"
+  },
+  "keywords": [
+    "lexical",
+    "grammar",
+    "parser",
+    "jison"
+  ],
+  "author": "Zach Carter",
+  "license": "MIT",
+  "devDependencies": {
+  }
+}

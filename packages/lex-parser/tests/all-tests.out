@@ -1,0 +1,107 @@
+
+> @ts-jison/lexer-generator@0.3.0 test
+> node ./tests/all-tests
+
+{
+  testRegExpLexer: {
+    'test lex grammar with macros': [Function (anonymous)],
+    'test escaped chars': [Function (anonymous)],
+    'test advanced': [Function (anonymous)],
+    'test [^\\]]': [Function (anonymous)],
+    'test multiline action': [Function (anonymous)],
+    'test multiline action with single braces': [Function (anonymous)],
+    'test multiline action with brace in a multi-line-comment': [Function (anonymous)],
+    'test multiline action with brace in a single-line-comment': [Function (anonymous)],
+    'test multiline action with braces in strings': [Function (anonymous)],
+    'test multiline action with braces in regexp': [Function (anonymous)],
+    'test include': [Function (anonymous)],
+    'test bnf lex grammar': [Function (anonymous)],
+    'test lex grammar bootstrap': [Function (anonymous)],
+    'test ANSI C lexical grammar': [Function (anonymous)],
+    'test start conditions': [Function (anonymous)],
+    'test no brace action': [Function (anonymous)],
+    'test quote escape': [Function (anonymous)],
+    'test escape things': [Function (anonymous)],
+    'test unicode encoding': [Function (anonymous)],
+    'test unicode': [Function (anonymous)],
+    'test bugs': [Function (anonymous)],
+    'test special groupings': [Function (anonymous)],
+    'test trailing code include': [Function (anonymous)],
+    'test empty or regex': [Function (anonymous)],
+    'test options': [Function (anonymous)],
+    'test unquoted string rules': [Function (anonymous)],
+    'test [^\\\\]': [Function (anonymous)],
+    'test comments': [Function (anonymous)],
+    'test rules with trailing escapes': [Function (anonymous)],
+    'test no brace action with surplus whitespace between rules': [Function (anonymous)],
+    'test windows line endings': [Function (anonymous)],
+    'test braced action with surplus whitespace between rules': [Function (anonymous)]
+  }
+}
+Running all tests:
+  testRegExpLexer
+    test lex grammar with macros
+      [32m✓ passed[39m
+    test escaped chars
+      [32m✓ passed[39m
+    test advanced
+      [32m✓ passed[39m
+    test [^\]]
+      [32m✓ passed[39m
+    test multiline action
+      [32m✓ passed[39m
+    test multiline action with single braces
+      [32m✓ passed[39m
+    test multiline action with brace in a multi-line-comment
+      [32m✓ passed[39m
+    test multiline action with brace in a single-line-comment
+      [32m✓ passed[39m
+    test multiline action with braces in strings
+      [32m✓ passed[39m
+    test multiline action with braces in regexp
+      [32m✓ passed[39m
+    test include
+      [32m✓ passed[39m
+    test bnf lex grammar
+      [32m✓ passed[39m
+    test lex grammar bootstrap
+      [32m✓ passed[39m
+    test ANSI C lexical grammar
+      [32m✓ passed[39m
+    test start conditions
+      [32m✓ passed[39m
+    test no brace action
+      [32m✓ passed[39m
+    test quote escape
+      [32m✓ passed[39m
+    test escape things
+      [32m✓ passed[39m
+    test unicode encoding
+      [32m✓ passed[39m
+    test unicode
+      [32m✓ passed[39m
+    test bugs
+      [32m✓ passed[39m
+    test special groupings
+      [32m✓ passed[39m
+    test trailing code include
+      [32m✓ passed[39m
+    test empty or regex
+      [32m✓ passed[39m
+    test options
+      [32m✓ passed[39m
+    test unquoted string rules
+      [32m✓ passed[39m
+    test [^\\]
+      [32m✓ passed[39m
+    test comments
+      [32m✓ passed[39m
+    test rules with trailing escapes
+      [32m✓ passed[39m
+    test no brace action with surplus whitespace between rules
+      [32m✓ passed[39m
+    test windows line endings
+      [32m✓ passed[39m
+    test braced action with surplus whitespace between rules
+      [32m✓ passed[39m
+Passed:32 Failed:0 Errors:0

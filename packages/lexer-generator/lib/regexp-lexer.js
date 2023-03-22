@@ -5,7 +5,7 @@
 
 var Fs = require('fs');
 var Path = require('path');
-var lexParser = require('lex-parser');
+var lexParser = require('@ts-jison/lex-parser');
 var version = require('../package.json').version;
 
 // expand macros and convert matchers to RegExp's

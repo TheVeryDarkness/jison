@@ -1,0 +1,170 @@
+RE2 regular expression syntax reference
+-------------------------­-------­-----
+
+		Single characters:
+Any		.	any character, possibly including newline (s=true)
+Char
+CharClass	[xyz]	character class
+.negated	[^xyz]	negated character class
+PredefCharClass	\d	Perl character class
+.negated	\D	negated Perl character class
+PDC		[[:alpha:]]	ASCII character class
+.neg		[[:^alpha:]]	negated ASCII character class
+PDC		\pN	Unicode character class (one-letter name)
+PDC		\p{Greek}	Unicode character class
+.neg		\PN	negated Unicode character class (one-letter name)
+.neg		\P{Greek}	negated Unicode character class
+		
+		Composites:
+Seq		xy	«x» followed by «y»
+Choice		x|y	«x» or «y» (prefer «x»)
+		
+		Repetitions:
+Rept		x*	zero or more «x», prefer more
+Rept		x+	one or more «x», prefer more
+Rept		x?	zero or one «x», prefer one
+Rept		x{n,m}	«n» or «n»+1 or ... or «m» «x», prefer more
+Rept		x{n,}	«n» or more «x», prefer more
+Rept		x{n}	exactly «n» «x»
+!.greedy	x*?	zero or more «x», prefer fewer
+!.greedy	x+?	one or more «x», prefer fewer
+!.greedy	x??	zero or one «x», prefer zero
+!.greedy	x{n,m}?	«n» or «n»+1 or ... or «m» «x», prefer fewer
+!.greedy	x{n,}?	«n» or more «x», prefer fewer
+???		x{n}?	exactly «n» «x»
+		
+		Implementation restriction: The counting forms «x{n,m}», «x{n,}», and «x{n}»
+		reject forms that create a minimum or maximum repetition count above 1000.
+		Unlimited repetitions are not subject to this restriction.
+		
+		Possessive repetitions:
+		
+		Grouping:
+Capture		(re)	numbered capturing group (submatch)
+.id		(?P<name>re)	named & numbered capturing group (submatch)
+-		(?:re)	non-capturing group
+.flags		(?flags)	set flags within current group; non-capturing
+.flags		(?flags:re)	set flags during re; non-capturing
+		
+		Flags:
+		i	case-insensitive (default false)
+		m	multi-line mode: «^» and «$» match begin/end line in addition to begin/end text (default false)
+		s	let «.» match «\n» (default false)
+		U	ungreedy: swap meaning of «x*» and «x*?», «x+» and «x+?», etc (default false)
+		Flag syntax is «xyz» (set) or «-xyz» (clear) or «xy-z» (set «xy», clear «z»).
+		
+		Empty strings:
+		^	at beginning of text or line («m»=true)
+		$	at end of text (like «\z» not «\Z») or line («m»=true)
+		\A	at beginning of text
+		\b	at ASCII word boundary («\w» on one side and «\W», «\A», or «\z» on the other)
+		\B	not at ASCII word boundary
+		\z	at end of text
+		
+		Escape sequences:
+		\a	bell (== \007)
+		\f	form feed (== \014)
+		\t	horizontal tab (== \011)
+		\n	newline (== \012)
+		\r	carriage return (== \015)
+		\v	vertical tab character (== \013)
+		\*	literal «*», for any punctuation character «*»
+		\123	octal character code (up to three digits)
+		\x7F	hex character code (exactly two digits)
+		\x{10FFFF}	hex character code
+		\C	match a single byte even in UTF-8 mode
+		\Q...\E	literal text «...» even if «...» has punctuation
+		
+		
+		
+		Character class elements:
+Char		x	single character
+Range		A-Z	character range (inclusive)
+PDC		\d	Perl character class
+PDC		[:foo:]	ASCII character class «foo»
+PDC		\p{Foo}	Unicode character class «Foo»
+PDC		\pF	Unicode character class «F» (one-letter name)
+		
+		Named character classes as character class elements:
+		[\d]	digits (== \d)
+		[^\d]	not digits (== \D)
+		[\D]	not digits (== \D)
+		[^\D]	not not digits (== \d)
+		[[:name:]]	named ASCII class inside character class (== [:name:])
+		[^[:name:]]	named ASCII class inside negated character class (== [:^name:])
+		[\p{Name}]	named Unicode property inside character class (== \p{Name})
+		[^\p{Name}]	named Unicode property inside negated character class (== \P{Name})
+		
+		Perl character classes (all ASCII-only):
+		\d	digits (== [0-9])
+		\D	not digits (== [^0-9])
+		\s	whitespace (== [\t\n\f\r ])
+		\S	not whitespace (== [^\t\n\f\r ])
+		\w	word characters (== [0-9A-Za-z_])
+		\W	not word characters (== [^0-9A-Za-z_])
+		
+		
+		ASCII character classes:
+		[[:alnum:]]	alphanumeric (== [0-9A-Za-z])
+		[[:alpha:]]	alphabetic (== [A-Za-z])
+		[[:ascii:]]	ASCII (== [\x00-\x7F])
+		[[:blank:]]	blank (== [\t ])
+		[[:cntrl:]]	control (== [\x00-\x1F\x7F])
+		[[:digit:]]	digits (== [0-9])
+		[[:graph:]]	graphical (== [!-~] == [A-Za-z0-9!"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~])
+		[[:lower:]]	lower case (== [a-z])
+		[[:print:]]	printable (== [ -~] == [ [:graph:]])
+		[[:punct:]]	punctuation (== [!-/:-@[-`{-~])
+		[[:space:]]	whitespace (== [\t\n\v\f\r ])
+		[[:upper:]]	upper case (== [A-Z])
+		[[:word:]]	word characters (== [0-9A-Za-z_])
+		[[:xdigit:]]	hex digit (== [0-9A-Fa-f])
+		
+		Unicode character class names--general category:
+		C	other
+		Cc	control
+		Cf	format
+		Co	private use
+		Cs	surrogate
+		L	letter
+		Ll	lowercase letter
+		Lm	modifier letter
+		Lo	other letter
+		Lt	titlecase letter
+		Lu	uppercase letter
+		M	mark
+		Mc	spacing mark
+		Me	enclosing mark
+		Mn	non-spacing mark
+		N	number
+		Nd	decimal number
+		Nl	letter number
+		No	other number
+		P	punctuation
+		Pc	connector punctuation
+		Pd	dash punctuation
+		Pe	close punctuation
+		Pf	final punctuation
+		Pi	initial punctuation
+		Po	other punctuation
+		Ps	open punctuation
+		S	symbol
+		Sc	currency symbol
+		Sk	modifier symbol
+		Sm	math symbol
+		So	other symbol
+		Z	separator
+		Zl	line separator
+		Zp	paragraph separator
+		Zs	space separator
+		
+		Vim character classes:
+		\d	digits (== [0-9]) vim
+		\D	not «\d» vim
+		\w	word character vim
+		\W	not «\w» vim
+		
+		Vim flags:
+
+Magic:
+

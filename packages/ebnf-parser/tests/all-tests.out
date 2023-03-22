@@ -1,0 +1,47 @@
+
+> @ts-jison/lexer-generator@0.3.0 test
+> node ./tests/all-tests
+
+{
+  testRegExpLexer: {
+    'test idempotent transform': [Function: test idempotent transform],
+    'test repeat (*) on empty string': [Function (anonymous)],
+    'test repeat (*) on single word': [Function (anonymous)],
+    'test repeat (*) on multiple words': [Function (anonymous)],
+    'test repeat (+) on single word': [Function (anonymous)],
+    'test repeat (+) on multiple words': [Function (anonymous)],
+    'test option (?) on empty string': [Function (anonymous)],
+    'test option (?) on single word': [Function (anonymous)],
+    'test group () on simple phrase': [Function (anonymous)],
+    'test group () with multiple options on first option': [Function (anonymous)],
+    'test group () with multiple options on second option': [Function (anonymous)],
+    'test complex expression ( *, ?, () )': [Function (anonymous)]
+  }
+}
+Running all tests:
+  testRegExpLexer
+    test idempotent transform
+      [32m✓ passed[39m
+    test repeat (*) on empty string
+      [32m✓ passed[39m
+    test repeat (*) on single word
+      [32m✓ passed[39m
+    test repeat (*) on multiple words
+      [32m✓ passed[39m
+    test repeat (+) on single word
+      [32m✓ passed[39m
+    test repeat (+) on multiple words
+      [32m✓ passed[39m
+    test option (?) on empty string
+      [32m✓ passed[39m
+    test option (?) on single word
+      [32m✓ passed[39m
+    test group () on simple phrase
+      [32m✓ passed[39m
+    test group () with multiple options on first option
+      [32m✓ passed[39m
+    test group () with multiple options on second option
+      [32m✓ passed[39m
+    test complex expression ( *, ?, () )
+      [32m✓ passed[39m
+Passed:12 Failed:0 Errors:0
