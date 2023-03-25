@@ -1,5 +1,5 @@
-var Jison = require("../setup").Jison,
-    Lexer = require("../setup").Lexer,
+var Jison = require("../../parser-generator/tests/setup").Jison,
+    Lexer = require("../../parser-generator/tests/setup").Lexer,
     assert = require("assert");
 
 exports["test BNF parser"] = function () {

@@ -239,7 +239,7 @@ function generateModuleCore(lexer, opt, components) {
         { token: "STATE_ACTIONS", value: String(lexer.strs.performAction) },
     ];
 
-    const preSubstitution = components.map(k => lexer.template[k]).join('');
+    const preSubstitution = components.map(k => lexer.template[k] + '\n').join('');
     var moduleCode = templateParms.reduce(function (str, parm) {
         return repl(str, parm.token, parm.value);
     }, preSubstitution);
