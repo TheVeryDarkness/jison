@@ -1,5 +1,5 @@
 const assert = require("assert"),
-    lex    = require("../lex-parser"),
+    lex    = new (require("../lex-parser").lexParser),
     fs     = require('fs'),
     path   = require('path');
 

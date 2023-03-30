@@ -88,8 +88,18 @@ describe("bnf", () => {
     };
 
     var result = parser.parse('%start foo %left "+" "-" %right "*" "/" %nonassoc "=" STUFF %left UMINUS %% foo : bar baz blitz { stuff } %prec GEMINI | bar %prec UMINUS | ;\nbar: { things };\nbaz: | foo ;');
-    expect(result).toEqual(77);
+    expect(result).toEqual({
+      "bnf": {
+        "bar": [["", " things "]],
+        "baz": ["", "foo"],
+        "foo": [
+          ["bar baz blitz", " stuff ", {"prec": "GEMINI"}],
+          ["bar", {"prec": "UMINUS"}],
+          ""
+        ]
+      },
+      "operators": [["left", "+", "-"], ["right", "*", "/"], ["nonassoc", "=", "STUFF"], ["left", "UMINUS"]],
+      "start": "foo"
+    });
   });
-
-
 });

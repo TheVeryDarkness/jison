@@ -150,7 +150,7 @@ function RegExpLexer (dict, input, tokens, config = {}) {
     };
 
     const code = "const [JisonLexer] = arguments;\n\n"
-        + generateFromOpts(lexerText, Object.assign({bare: true}, opts)) + "return Lexer;\n";
+        + generateFromOpts(lexerText, Object.assign({bare: true}, opts)) + `return ${opts.moduleName || ""}Lexer;\n`;
     const { JisonLexer } = require('@ts-jison/lexer');
     const ctor = new Function(code)(JisonLexer);
     const lexer = new ctor();
