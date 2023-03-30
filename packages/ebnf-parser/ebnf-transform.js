@@ -1,5 +1,5 @@
 var EBNF = (function(){
-    var parser = require('./transform-parser.js');
+    var parser = require('./transform-parser.js').ebnfParser;
 
     var transformExpression = function(e, opts, emit) {
         var type = e[0], value = e[1], name = false;
@@ -105,7 +105,7 @@ var EBNF = (function(){
                 action = handle[1],
                 opts = handle[2],
                 handle = handle[0];
-            var expressions = parser.parse(handle);
+            var expressions = new parser().parse(handle);
 
             handle = transformExpressionList(expressions, transform_opts);
 

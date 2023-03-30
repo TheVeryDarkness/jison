@@ -185,7 +185,7 @@ cli.processGrammars = function processGrammars(file, lexFile, jsonMode) {
             grammar = ebnfParser.parse(file);
         }
     } catch (e) {
-        throw new Error('Could not parse jison grammar:' + e);
+        throw new Error('Could not parse jison grammar:' + (e.stack || e));
     }
     try {
         if (lexFile) {
