@@ -1,18 +1,13 @@
+JISON ?= ../parser-generator/lib/cli.js
 
-all: install build test
-
-install:
-	npm install
+all: build test
 
 build:
-	node ./node_modules/.bin/jison lex.y lex.l
+	node $(JISON) lex.y lex.l
 	mv lex.js lex-parser.js
 
 test:
 	node tests/all-tests.js
-
-
-
 
 clean:
 

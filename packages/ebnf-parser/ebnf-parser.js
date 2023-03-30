@@ -1,12 +1,12 @@
 var bnf = require("./parser").bnfParser,
     ebnf = require("./ebnf-transform"),
-    jisonlex = require("@ts-jison/lex-parser");
+    jisonlex = require("@ts-jison/lex-parser").lexParser;
 
 const yy = {
 
   // parse an embedded lex section
   parseLex: function (text) {
-    return jisonlex.parse(text.replace(/(?:^%lex)|(?:\/lex$)/g, ''));
+    return new jisonlex().parse(text.replace(/(?:^%lex)|(?:\/lex$)/g, ''));
   },
 
   // adds a declaration to the grammar

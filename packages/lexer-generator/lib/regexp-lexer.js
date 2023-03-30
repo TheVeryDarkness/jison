@@ -5,7 +5,7 @@
 
 const Fs = require('fs');
 const Path = require('path');
-const lexParser = require('@ts-jison/lex-parser');
+const lexParser = require('@ts-jison/lex-parser').lexParser;
 const {FileTemplate} = require('@ts-jison/common-generator');
 const version = require('../package.json').version;
 
@@ -173,7 +173,7 @@ function generate (dict, tokens) {
 function processGrammar(dict, tokens) {
     var opts = {};
     if (typeof dict === 'string') {
-        dict = lexParser.parse(dict);
+        dict = new lexParser().parse(dict);
     }
     dict = dict || {};
 
