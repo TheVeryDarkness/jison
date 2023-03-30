@@ -1,25 +1,18 @@
-var Jison = require("../tests/setup").Jison,
+const Jison = require("../tests/setup").Jison,
     Lexer = require("../tests/setup").Lexer;
+require("../tests/extend-expect");
 
-var lexData = {
+const lexData = {
     rules: [
        ["x", "return 'x';"],
        ["y", "return 'y';"]
     ]
 };
 
-expect.extend({
-  toParse(received, message) {
-    return received
-      ? { pass: true }
-      : { pass: false, message: () => message };
-  }
-});
-
 describe("api", () => {
   it("test tokens as a string",  () => {
 
-    var grammar = {
+    const grammar = {
       tokens: "x y",
       startSymbol: "A",
       bnf: {
@@ -29,14 +22,14 @@ describe("api", () => {
       }
     };
 
-    var parser = new Jison.Parser(grammar);
+    const parser = new Jison.Parser(grammar);
     parser.lexer = new Lexer(lexData);
     expect(parser.parse('xyx')).toParse("parse xyx");
   });
 
   it("test generator",  () => {
 
-    var grammar = {
+    const grammar = {
       bnf: {
         "A" :[ 'A x',
                'A y',
@@ -44,14 +37,14 @@ describe("api", () => {
       }
     };
 
-    var parser = new Jison.Parser(grammar);
+    const parser = new Jison.Parser(grammar);
     parser.lexer = new Lexer(lexData);
     expect(parser.parse('xyx')).toParse("parse xyx");
   });
 
   it("test extra spaces in productions",  () => {
 
-    var grammar = {
+    const grammar = {
       tokens: "x y",
       startSymbol: "A",
       bnf: {
@@ -61,14 +54,14 @@ describe("api", () => {
       }
     };
 
-    var parser = new Jison.Parser(grammar);
+    const parser = new Jison.Parser(grammar);
     parser.lexer = new Lexer(lexData);
     expect(parser.parse('xyx')).toParse("parse xyx");
   });
 
   it("test | seperated rules",  () => {
 
-    var grammar = {
+    const grammar = {
       tokens: "x y",
       startSymbol: "A",
       bnf: {
@@ -76,21 +69,21 @@ describe("api", () => {
       }
     };
 
-    var parser = new Jison.Parser(grammar);
+    const parser = new Jison.Parser(grammar);
     parser.lexer = new Lexer(lexData);
     expect(parser.parse('xyx')).toParse("parse xyx");
   });
 
   it("test start symbol optional",  () => {
 
-    var grammar = {
+    const grammar = {
       tokens: "x y",
       bnf: {
         "A" :"A x | A y | "
       }
     };
 
-    var parser = new Jison.Parser(grammar);
+    const parser = new Jison.Parser(grammar);
     parser.lexer = new Lexer(lexData);
     expect(() => {
       parser.parse('');
@@ -99,7 +92,7 @@ describe("api", () => {
 
   it("test start symbol should be nonterminal",  () => {
 
-    var grammar = {
+    const grammar = {
       tokens: "x y",
       startSymbol: "x",
       bnf: {
@@ -114,7 +107,7 @@ describe("api", () => {
 
   it("test token list as string",  () => {
 
-    var grammar = {
+    const grammar = {
       tokens: "x y",
       startSymbol: "A",
       bnf: {
@@ -122,13 +115,13 @@ describe("api", () => {
       }
     };
 
-    var gen = new Jison.Generator(grammar);
+    const gen = new Jison.Generator(grammar);
     expect(gen.terminals.indexOf('x') >= 0).toBe(true);
   });
 
   it("test grammar options",  () => {
 
-    var grammar = {
+    const grammar = {
       options: {type: "slr"},
       tokens: "x y",
       startSymbol: "A",
@@ -139,13 +132,13 @@ describe("api", () => {
       }
     };
 
-    var gen = new Jison.Generator(grammar);
+    const gen = new Jison.Generator(grammar);
     expect(gen.EOF).toBe("$end");
   });
 
   it("test overwrite grammar options",  () => {
 
-    var grammar = {
+    const grammar = {
       options: {type: "slr"},
       tokens: "x y",
       startSymbol: "A",
@@ -156,18 +149,18 @@ describe("api", () => {
       }
     };
 
-    var gen = new Jison.Generator(grammar, {type: "lr0"});
+    const gen = new Jison.Generator(grammar, {type: "lr0"});
     expect(gen.constructor).toEqual(Jison.LR0Generator);
   });
 
   it("test yy shared scope",  () => {
-    var lexData = {
+    const lexData = {
       rules: [
         ["x", "return 'x';"],
         ["y", "return yy.xed ? 'yfoo' : 'ybar';"]
       ]
     };
-    var grammar = {
+    const grammar = {
       tokens: "x yfoo ybar",
       startSymbol: "A",
       bnf: {
@@ -178,7 +171,7 @@ describe("api", () => {
       }
     };
 
-    var parser = new Jison.Parser(grammar, {type: "lr0"});
+    const parser = new Jison.Parser(grammar, {type: "lr0"});
     parser.lexer = new Lexer(lexData);
     expect(parser.parse('y')).toBe("bar");
     expect(parser.parse('xxy')).toBe("foo");
@@ -187,7 +180,7 @@ describe("api", () => {
 
   it("test optional token declaration",  () => {
 
-    var grammar = {
+    const grammar = {
       options: {type: "slr"},
       bnf: {
         "A" :[ 'A x',
@@ -196,13 +189,13 @@ describe("api", () => {
       }
     };
 
-    var gen = new Jison.Generator(grammar, {type: "lr0"});
+    const gen = new Jison.Generator(grammar, {type: "lr0"});
     expect(gen.constructor).toBe(Jison.LR0Generator);
   });
 
 
   it("test custom parse error method",  () => {
-    var lexData = {
+    const lexData = {
       rules: [
         ["a", "return 'a';"],
         ["b", "return 'b';"],
@@ -211,7 +204,7 @@ describe("api", () => {
         ["g", "return 'g';"]
       ]
     };
-    var grammar = {
+    const grammar = {
       "tokens": "a b c d g",
       "startSymbol": "S",
       "bnf": {
@@ -224,9 +217,9 @@ describe("api", () => {
       }
     };
 
-    var parser = new Jison.Parser(grammar, {type: "lalr"});
+    const parser = new Jison.Parser(grammar, {type: "lalr"});
     parser.lexer = new Lexer(lexData);
-    var result={};
+    let result = {};
     parser.yy.parseError = function (str, hash) {
       result = hash;
       throw str;
@@ -240,15 +233,15 @@ describe("api", () => {
 
   it("test jison grammar as string",  () => {
 
-    var grammar = "%% A : A x | A y | ;"
+    const grammar = "%% A : A x | A y | ;"
 
-    var parser = new Jison.Generator(grammar).createParser();
+    const parser = new Jison.Generator(grammar).createParser();
     parser.lexer = new Lexer(lexData);
     expect(parser.parse('xyx')).toParse("parse xyx");
   });
 
   it("test no default resolve",  () => {
-    var grammar = {
+    const grammar = {
       tokens: [ 'x' ],
       startSymbol: "A",
       bnf: {
@@ -257,8 +250,8 @@ describe("api", () => {
       }
     };
 
-    var gen = new Jison.Generator(grammar, {type: "lr0", noDefaultResolve: true});
-    var parser = gen.createParser();
+    const gen = new Jison.Generator(grammar, {type: "lr0", noDefaultResolve: true});
+    const parser = gen.createParser();
     parser.lexer = new Lexer(lexData);
 
     expect(gen.table.length == 4).toBe(true);
@@ -269,13 +262,13 @@ describe("api", () => {
 
   it("test EOF in 'Unexpected token' error message",  () => {
 
-    var grammar = {
+    const grammar = {
       bnf: {
         "A" :[ 'x x y' ]
       }
     };
 
-    var parser = new Jison.Parser(grammar);
+    const parser = new Jison.Parser(grammar);
     parser.lexer = new Lexer(lexData);
     parser.lexer.showPosition = null; // needed for "Unexpected" message
     parser.yy.parseError = function (str, hash) {
@@ -287,7 +280,7 @@ describe("api", () => {
   });
 
   it("test locations",  () => {
-    var grammar = {
+    const grammar = {
       tokens: [ 'x', 'y' ],
       startSymbol: "A",
       bnf: {
@@ -297,17 +290,17 @@ describe("api", () => {
       }
     };
 
-    var lexData = {
+    const lexData = {
       rules: [
         ["\\s", "/*ignore*/"],
         ["x", "return 'x';"],
         ["y", "return 'y';"]
       ]
     };
-    var gen = new Jison.Generator(grammar);
-    var parser = gen.createParser();
+    const gen = new Jison.Generator(grammar);
+    const parser = gen.createParser();
     parser.lexer = new Lexer(lexData);
-    var loc = parser.parse('xx\nxy');
+    const loc = parser.parse('xx\nxy');
 
     expect(loc.first_line).toBe(2);
     expect(loc.last_line).toBe(2);
@@ -316,7 +309,7 @@ describe("api", () => {
   });
 
   it("test default location action",  () => {
-    var grammar = {
+    const grammar = {
       tokens: [ 'x', 'y' ],
       startSymbol: "A",
       bnf: {
@@ -326,17 +319,17 @@ describe("api", () => {
       }
     };
 
-    var lexData = {
+    const lexData = {
       rules: [
         ["\\s", "/*ignore*/"],
         ["x", "return 'x';"],
         ["y", "return 'y';"]
       ]
     };
-    var gen = new Jison.Generator(grammar);
-    var parser = gen.createParser();
+    const gen = new Jison.Generator(grammar);
+    const parser = gen.createParser();
     parser.lexer = new Lexer(lexData);
-    var loc = parser.parse('xx\nxy');
+    const loc = parser.parse('xx\nxy');
 
     expect(loc.first_line).toBe(2);
     expect(loc.last_line).toBe(2);
@@ -345,7 +338,7 @@ describe("api", () => {
   });
 
   it("test locations by term name in action",  () => {
-    var grammar = {
+    const grammar = {
       tokens: [ 'x', 'y' ],
       startSymbol: "A",
       bnf: {
@@ -356,17 +349,17 @@ describe("api", () => {
       }
     };
 
-    var lexData = {
+    const lexData = {
       rules: [
         ["\\s", "/*ignore*/"],
         ["x", "return 'x';"],
         ["y", "return 'y';"]
       ]
     };
-    var gen = new Jison.Generator(grammar);
-    var parser = gen.createParser();
+    const gen = new Jison.Generator(grammar);
+    const parser = gen.createParser();
     parser.lexer = new Lexer(lexData);
-    var loc = parser.parse('xx\nxy');
+    const loc = parser.parse('xx\nxy');
 
     expect(loc.first_line).toBe(2);
     expect(loc.last_line).toBe(2);
@@ -375,7 +368,7 @@ describe("api", () => {
   });
 
   it("test lexer with no location support",  () => {
-    var grammar = {
+    const grammar = {
       tokens: [ 'x', 'y' ],
       startSymbol: "A",
       bnf: {
@@ -386,8 +379,8 @@ describe("api", () => {
       }
     };
 
-    var gen = new Jison.Generator(grammar);
-    var parser = gen.createParser();
+    const gen = new Jison.Generator(grammar);
+    const parser = gen.createParser();
     parser.lexer = {
       toks: ['x','x','x','y'],
       lex: function () {
@@ -395,7 +388,7 @@ describe("api", () => {
       },
       setInput: function (){}
     };
-    var loc = parser.parse('xx\nxy');
+    const loc = parser.parse('xx\nxy');
     expect(loc).toEqual({
       "first_column": undefined,
       "first_line": undefined,
@@ -405,7 +398,7 @@ describe("api", () => {
   });
 
   it("test intance creation",  () => {
-    var grammar = {
+    const grammar = {
       tokens: [ 'x', 'y' ],
       startSymbol: "A",
       bnf: {
@@ -416,8 +409,8 @@ describe("api", () => {
       }
     };
 
-    var gen = new Jison.Generator(grammar);
-    var parser = gen.createParser();
+    const gen = new Jison.Generator(grammar);
+    const parser = gen.createParser();
     parser.lexer = {
       toks: ['x','x','x','y'],
       lex: function () {
@@ -425,7 +418,7 @@ describe("api", () => {
       },
       setInput: function (){}
     };
-    var parser2 = gen.createParser();
+    const parser2 = gen.createParser();
     parser2.lexer = parser.lexer;
     parser2.parse('xx\nxy');
 
@@ -435,7 +428,7 @@ describe("api", () => {
   });
 
   it("test reentrant parsing",  () => {
-    var grammar = {
+    const grammar = {
       bnf: {
         "S" :['A EOF'],
         "A" :['x A',
@@ -447,7 +440,7 @@ describe("api", () => {
       }
     };
 
-    var lexData = {
+    const lexData = {
       rules: [
         ["\\s", "/*ignore*/"],
         ["w", "return 'w';"],
@@ -456,10 +449,10 @@ describe("api", () => {
         ["$", "return 'EOF';"]
       ]
     };
-    var gen = new Jison.Generator(grammar);
-    var parser = gen.createParser();
+    const gen = new Jison.Generator(grammar);
+    const parser = gen.createParser();
     parser.lexer = new Lexer(lexData);
-    var result = parser.parse('xxw');
+    const result = parser.parse('xxw');
     expect(result).toBe("foobar");
   });
 
