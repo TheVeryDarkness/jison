@@ -1,0 +1,24 @@
+{
+  "name": "@ts-jison/common-generator",
+  "version": "0.3.0",
+  "license": "MIT",
+  "main": "./lib/common-generator.js",
+  "types": "./src/common-generator.ts",
+  "files": [
+    "lib"
+  ],
+  "devDependencies": {
+    "@ts-jison/common": "^0.3.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc -b ./tsconfig.package.json",
+    "prepublish": "npm run build"
+  },
+  "gitHead": "f04f018b7655bccbf21e4fe9dab005b8ee179fab",
+  "dependencies": {
+    "@types/js-yaml": "^4.0.5"
+  }
+}

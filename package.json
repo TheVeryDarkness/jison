@@ -43,7 +43,8 @@
   },
   "devDependencies": {
     "@ts-jison/common": "file:packages/common",
-    "@ts-jison/ebnf-parser": "file:packages/lex-parser",
+    "@ts-jison/common-generator": "file:packages/common-generator",
+    "@ts-jison/ebnf-parser": "file:packages/ebnf-parser",
     "@ts-jison/lexer": "file:packages/lexer",
     "@ts-jison/lexer-generator": "file:packages/lexer-generator",
     "@ts-jison/lex-parser": "file:packages/lex-parser",

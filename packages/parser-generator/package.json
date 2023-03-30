@@ -37,6 +37,7 @@
     "node": ">=0.4"
   },
   "dependencies": {
+    "@ts-jison/common-generator": "^0.3.0",
     "@ts-jison/lexer-generator": "^0.3.0",
     "@ts-jison/parser": "^0.3.0",
     "JSONSelect": "^0.4.0",
