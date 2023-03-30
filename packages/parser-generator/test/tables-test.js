@@ -1,5 +1,4 @@
-const Jison = require("../tests/setup").Jison,
-    RegExpLexer = require("../tests/setup").RegExpLexer;
+const Jison = require("../tests/setup").Jison;
 require("../tests/extend-expect");
 
 describe("tables", () => {
