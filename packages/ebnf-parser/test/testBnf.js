@@ -5,7 +5,7 @@ const Jison = require("../../parser-generator/tests/setup").Jison,
 describe("bnf", () => {
 
   it("test BNF parser", () => {
-    var grammar = {
+    const grammar = {
       "lex": {
         "rules": [
           ["\\s+", "/* skip whitespace */"],
@@ -73,7 +73,7 @@ describe("bnf", () => {
 
     };
 
-    var parser = new Jison.Parser(grammar);
+    const parser = new Jison.Parser(grammar);
     parser.yy.addDeclaration = function (grammar, decl) {
       if (decl.start) {
         grammar.start = decl.start
@@ -87,7 +87,7 @@ describe("bnf", () => {
 
     };
 
-    var result = parser.parse('%start foo %left "+" "-" %right "*" "/" %nonassoc "=" STUFF %left UMINUS %% foo : bar baz blitz { stuff } %prec GEMINI | bar %prec UMINUS | ;\nbar: { things };\nbaz: | foo ;');
+    const result = parser.parse('%start foo %left "+" "-" %right "*" "/" %nonassoc "=" STUFF %left UMINUS %% foo : bar baz blitz { stuff } %prec GEMINI | bar %prec UMINUS | ;\nbar: { things };\nbaz: | foo ;');
     expect(result).toEqual({
       "bnf": {
         "bar": [["", " things "]],
