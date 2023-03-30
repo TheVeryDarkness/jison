@@ -10,7 +10,7 @@ const lexData = {
     ]
 };
 
-describe("api", () => {
+describe("lr0", () => {
   it("test left-recursive nullable grammar", () => {
 
     const grammar = {
