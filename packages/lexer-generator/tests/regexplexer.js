@@ -355,7 +355,7 @@ exports["test module generator from constructor"] = function() {
            ["y", "return 'Y';" ],
            ["$", "return 'EOF';" ]
        ],
-       options: { generate: true, template: "javascript" }
+       options: { makeGenerators: true, template: "javascript" }
     };
 
     var input = "xxyx";
@@ -384,7 +384,7 @@ exports["test module generator"] = function() {
 
     var input = "xxyx";
 
-    var lexer_ = new RegExpLexer(dict, undefined, undefined, { generate: true });
+    var lexer_ = new RegExpLexer(dict, undefined, undefined, { makeGenerators: true });
     var lexerSource = "const [JisonLexer] = arguments;\n\n"
         + lexer_.generateModule();
     const ctor = new Function(lexerSource)(JisonLexer);
@@ -416,7 +416,7 @@ exports["test generator with more complex lexer"] = function() {
 
     var input = 'x"fgjdrtj\\"sdfsdf"x';
 
-    var lexer_ = new RegExpLexer(dict, undefined, undefined, { generate: true });
+    var lexer_ = new RegExpLexer(dict, undefined, undefined, { makeGenerators: true });
     var lexerSource = "const [JisonLexer] = arguments;\n\n"
         + lexer_.generateModule();
     const ctor = new Function(lexerSource)(JisonLexer);
@@ -440,7 +440,7 @@ exports["test commonjs module generator"] = function() {
 
     var input = "xxyx";
 
-    var lexer_ = new RegExpLexer(dict, undefined, undefined, { generate: true });
+    var lexer_ = new RegExpLexer(dict, undefined, undefined, { makeGenerators: true });
     var lexerSource = "const [module, JisonLexer] = arguments;\n\n"
         + lexer_.generateCommonJSModule();
     var exports = {};
@@ -467,7 +467,7 @@ if (false) exports["test amd module generator"] = function() { // TODO
 
     var input = "xxyx";
 
-    var lexer_ = new RegExpLexer(dict, undefined, undefined, { generate: true });
+    var lexer_ = new RegExpLexer(dict, undefined, undefined, { makeGenerators: true });
     var lexerSource = lexer_.generateAMDModule();
 
     var lexer;

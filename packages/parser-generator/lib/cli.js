@@ -167,7 +167,7 @@ cli.generateParserString = function generateParserString(opts, grammar) {
         settings.template = opts.template;
     }
 
-    var generator = new jison.Generator(grammar, Object.assign({generate: true}, settings));
+    var generator = new jison.Generator(grammar, Object.assign({makeGenerators: true}, settings));
     return generator.generate(settings);
 };
 

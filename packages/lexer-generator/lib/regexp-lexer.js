@@ -141,7 +141,7 @@ function RegExpLexer (dict, input, tokens, config = {}) {
     var opts = processGrammar(dict, tokens);
     var lexerText = generateModuleBody(opts, config.template);
 
-    if (config.generate) return {
+    if (config.makeGenerators) return {
         generate: function () { return generateFromOpts(lexerText, opts); },
         generateModule: function () { return generateModule(lexerText, opts) + "return Lexer;\n"; },
         generateModuleCore: function () { return generateModuleCore(lexerText, opts, ['Import', 'Constructor', 'Export']); },

@@ -130,7 +130,7 @@ generator.constructor = function Jison_Generator (grammar, opt) {
             }
         }
         this.lexer = new Lexer(dict, null, this.terminals_, {
-            generate: !!opt.generate,
+            makeGenerators: !!opt.makeGenerators,
             template: opt.template,
             moduleName: opt.moduleName
         });
