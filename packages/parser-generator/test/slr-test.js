@@ -1,6 +1,5 @@
 const Jison = require("../tests/setup").Jison,
-    Lexer = require("../tests/setup").Lexer,
-    assert = require("assert");
+    Lexer = require("../tests/setup").Lexer;
 require("../tests/extend-expect");
 
 const lexData = {
@@ -10,7 +9,7 @@ const lexData = {
     ]
 };
 
-describe("lr0", () => {
+describe("slr", () => {
   it("test left-recursive nullable grammar", () => {
 
     var grammar = {
