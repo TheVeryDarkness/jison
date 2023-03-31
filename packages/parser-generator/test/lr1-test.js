@@ -1,6 +1,8 @@
 const Jison = require("../tests/setup").Jison,
     Lexer = require("../tests/setup").Lexer;
-require("../tests/extend-expect");
+Shared = require("../tests/extend-expect");
+Jison.print = Shared.print;
+afterEach(Shared.nothingPrinted);
 
 describe("lr1", () => {
   it("test xx nullable grammar", () => {
@@ -135,6 +137,34 @@ describe("lr1", () => {
     };
 
     var parser = new Jison.Parser(grammar, {type: "lr"});
+    expect().printed([
+  `Conflict in grammar: multiple actions possible when lookahead token is $end in state 0
+- reduce by rule: B -> 
+- reduce by rule: A -> `,
+  `Conflict in grammar: multiple actions possible when lookahead token is x in state 0
+- reduce by rule: B -> 
+- shift token (then go to state 4)`,
+  `Conflict in grammar: multiple actions possible when lookahead token is $end in state 3
+- reduce by rule: B -> 
+- reduce by rule: A -> `,
+  `Conflict in grammar: multiple actions possible when lookahead token is x in state 3
+- reduce by rule: B -> 
+- shift token (then go to state 4)`,
+  `
+States with conflicts:`,
+  `State 0`,
+  `  $accept -> .S $end #lookaheads= $end
+  S -> .A #lookaheads= $end
+  A -> .B A #lookaheads= $end
+  A -> . #lookaheads= $end
+  B -> . #lookaheads= $end x
+  B -> .x #lookaheads= $end x`,
+  `State 3`,
+  `  A -> B .A #lookaheads= $end
+  A -> .B A #lookaheads= $end
+  A -> . #lookaheads= $end
+  B -> . #lookaheads= $end x
+  B -> .x #lookaheads= $end x`]);
     parser.lexer = new Lexer(lexData);
 
     expect(parser.parse("xxx")).toParse("parse");
@@ -144,7 +174,20 @@ describe("lr1", () => {
     var grammar = "%% n : a b ; a : | a x ; b : | b x y ;";
 
     var parser = new Jison.Generator(grammar, {type: "lr"});
-
+    expect().printed([
+  `Conflict in grammar: multiple actions possible when lookahead token is x in state 2
+- reduce by rule: b -> 
+- shift token (then go to state 4)`,
+  `
+States with conflicts:`,
+  `State 2`,
+  `  n -> a .b #lookaheads= $end
+  a -> a .x #lookaheads= $end x
+  a -> a .x #lookaheads= x
+  b -> . #lookaheads= $end
+  b -> .b x y #lookaheads= $end
+  b -> . #lookaheads= x
+  b -> .b x y #lookaheads= x`]);
     expect(parser.conflicts).toBe(1);
   });
 

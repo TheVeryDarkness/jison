@@ -1,6 +1,8 @@
 const Jison = require("../tests/setup").Jison,
     RegExpLexer = require("../tests/setup").RegExpLexer;
-require("../tests/extend-expect");
+Shared = require("../tests/extend-expect");
+Jison.print = Shared.print;
+afterEach(Shared.nothingPrinted);
 
 describe("tables", () => {
   var lexData = {

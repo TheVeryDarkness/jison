@@ -1,5 +1,8 @@
 const RegExpLexer = require("../lib/regexp-lexer");
 const { JisonLexer } = require('@ts-jison/lexer');
+Shared = require("../../parser-generator/tests/extend-expect");
+JisonLexer.print = Shared.print;
+afterEach(Shared.nothingPrinted);
 
 describe("", () => {
   it("test basic matchers", () => {
@@ -844,11 +847,16 @@ describe("", () => {
     };
     const input = "xyx";
 
+    const logSpy = jest.spyOn(global.console, 'log').mockImplementation(() => { });
     const lexer = new RegExpLexer(dict);
     lexer.setInput(input);
 
     expect(lexer.lex()).toEqual("X");
+    expect(logSpy).toHaveBeenCalledTimes(0);
     expect(lexer.lex()).toEqual("X");
+    expect(logSpy.mock.calls).toContainEqual(['y']);
+
+    logSpy.mockRestore();
   });
 
   it("test pipe precedence", () => {

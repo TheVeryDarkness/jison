@@ -1,9 +1,11 @@
 const Jison = require("../../parser-generator/tests/setup").Jison,
     Lexer =   require("../../parser-generator/tests/setup").Lexer,
     assert = require("assert");
+Shared = require("../../parser-generator/tests/extend-expect");
+Jison.print = Shared.print;
+afterEach(Shared.nothingPrinted);
 
 describe("bnf", () => {
-
   it("test BNF parser", () => {
     const grammar = {
       "lex": {

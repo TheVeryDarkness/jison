@@ -1,6 +1,8 @@
 const Jison = require("../tests/setup").Jison,
     Lexer = require("../tests/setup").Lexer;
-require("../tests/extend-expect");
+Shared = require("../tests/extend-expect");
+Jison.print = Shared.print;
+afterEach(Shared.nothingPrinted);
 
 const lexData = {
     rules: [

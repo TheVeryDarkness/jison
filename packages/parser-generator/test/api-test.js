@@ -1,6 +1,11 @@
 const Jison = require("../tests/setup").Jison,
     Lexer = require("../tests/setup").Lexer;
-require("../tests/extend-expect");
+Shared = require("../tests/extend-expect");
+Jison.print = Shared.print;
+afterEach(Shared.nothingPrinted);
+
+// handy recipe for spewing conflicts to Jison.print
+// const junk = new Jison.Generator({tokens: [ 'x' ], startSymbol: "A", bnf: {"A" :[ 'x A', '']}}, {type: "lr0", noDefaultResolve: true});
 
 const lexData = {
     rules: [
@@ -177,7 +182,6 @@ describe("api", () => {
     expect(parser.parse('xxy')).toBe("foo");
   });
 
-
   it("test optional token declaration",  () => {
 
     const grammar = {
@@ -192,7 +196,6 @@ describe("api", () => {
     const gen = new Jison.Generator(grammar, {type: "lr0"});
     expect(gen.constructor).toBe(Jison.LR0Generator);
   });
-
 
   it("test custom parse error method",  () => {
     const lexData = {
@@ -251,6 +254,16 @@ describe("api", () => {
     };
 
     const gen = new Jison.Generator(grammar, {type: "lr0", noDefaultResolve: true});
+    expect().printed([
+      "Conflict in grammar: multiple actions possible when lookahead token is x in state 0\n- reduce by rule: A -> \n- shift token (then go to state 2)", // state 0
+      "Conflict in grammar: multiple actions possible when lookahead token is x in state 2\n- reduce by rule: A -> \n- shift token (then go to state 2)", // state 2
+      "\nStates with conflicts:",
+      "State 0",
+      "  $accept -> .A $end #lookaheads= $end\n  A -> .x A\n  A -> .",
+      "State 2",
+      "  A -> x .A\n  A -> .x A\n  A -> ."
+    ]);
+
     const parser = gen.createParser();
     parser.lexer = new Lexer(lexData);
 
@@ -258,7 +271,6 @@ describe("api", () => {
     expect(gen.conflicts == 2).toBe(true);
     expect(() => { parser.parse("xx"); }).toThrow(); // throws parse error for multiple actions
   });
-
 
   it("test EOF in 'Unexpected token' error message",  () => {
 

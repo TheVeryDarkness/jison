@@ -1,5 +1,7 @@
 const Jison = require("../tests/setup").Jison;
-require("../tests/extend-expect");
+Shared = require("../tests/extend-expect");
+Jison.print = Shared.print;
+afterEach(Shared.nothingPrinted);
 
 describe("tables", () => {
   it("test right-recursive nullable grammar", () => {
@@ -88,6 +90,23 @@ describe("tables", () => {
 
     var gen = new Jison.Generator(grammar, {type: "lr"});
     expect(gen.conflicts).toBe(2); // should have 2 conflict
+    expect().printed([
+  `Conflict in grammar: multiple actions possible when lookahead token is y in state 5
+- reduce by rule: A -> A B A
+- shift token (then go to state 4)`,
+  `Conflict in grammar: multiple actions possible when lookahead token is x in state 5
+- reduce by rule: B -> 
+- reduce by rule: A -> A B A`,
+  `
+States with conflicts:`,
+  `State 5`,
+  `  A -> A B A . #lookaheads= $end
+  A -> A B A . #lookaheads= x y
+  A -> A .B A #lookaheads= $end
+  A -> A .B A #lookaheads= x y
+  B -> . #lookaheads= x
+  B -> .y #lookaheads= x`,
+    ]);
   });
 
   // for Minimal LR testing. Not there yet.

@@ -1,6 +1,8 @@
 const Jison = require("../tests/setup").Jison,
     Lexer = require("../tests/setup").Lexer;
-require("../tests/extend-expect");
+Shared = require("../tests/extend-expect");
+Jison.print = Shared.print;
+afterEach(Shared.nothingPrinted);
 
 const lexData = {
     rules: [
@@ -41,6 +43,25 @@ describe("lr0", () => {
     };
 
     const gen = new Jison.Generator(grammar, {type: "lr0"});
+    expect().printed([
+  `Conflict in grammar: multiple actions possible when lookahead token is x in state 0
+- reduce by rule: A -> 
+- shift token (then go to state 2)`,
+  `Conflict in grammar: multiple actions possible when lookahead token is x in state 2
+- reduce by rule: A -> 
+- shift token (then go to state 2)`,
+  `
+States with conflicts:`,
+  `State 0`,
+  `  $accept -> .A $end #lookaheads= $end
+  A -> .x A
+  A -> .`,
+  `State 2`,
+  `  A -> x .A
+  A -> .x A
+  A -> .`,
+]
+    );
 
     expect(gen.table.length).toBe(4);
     expect(gen.conflicts).toBe(2);
