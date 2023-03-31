@@ -370,9 +370,9 @@ xdescribe("generator", () => {
     var parser = new Jison.Parser(grammar);
     var generated = parser.generate();
 
-    var tmpFile = path.resolve(__dirname, 'tmp-parser.js');
+    var tmpFile = path.resolve(__dirname, '../scratch/tmp-parser.js');
     fs.writeFileSync(tmpFile, generated);
-    var parser2 = require('./tmp-parser');
+    var parser2 = require('../scratch/tmp-parser');
 
     expect(parser.parse('happy happy joy joy joy')).toBe('happy happy joy joy joy'); // original parser works
     expect(parser2.parse('happy happy joy joy joy')).toBe('happy happy joy joy joy'); // generated parser works
