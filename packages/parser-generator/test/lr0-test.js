@@ -1,5 +1,6 @@
 const Jison = require("../tests/setup").Jison,
     Lexer = require("../tests/setup").Lexer;
+const { JisonParser } = require('@ts-jison/parser');
 Shared = require("../tests/extend-expect");
 Jison.print = Shared.print;
 afterEach(Shared.nothingPrinted);

@@ -276,16 +276,16 @@ export abstract class JisonParser {
       }
     }
   }
-}
 
-/* Function that extends an object with the given value for all given keys
- * e.g., o([1, 3, 4], [6, 7], { x: 1, y: 2 }) = { 1: [6, 7]; 3: [6, 7], 4: [6, 7], x: 1, y: 2 }
- * This is used to docompress parser tables at module load time.
- */
-export function o(k: number[], v: number[], o?: StateType) {
-  let l = k.length;
-  for (o = o || {}; l--; o[k[l]] = v)
-    ;
-  return o;
+  /* Function that extends an object with the given value for all given keys
+   * e.g., o([1, 3, 4], [6, 7], { x: 1, y: 2 }) = { 1: [6, 7]; 3: [6, 7], 4: [6, 7], x: 1, y: 2 }
+   * This is used to docompress parser tables at module load time.
+   */
+  static expandParseTable (k: number[], v: number[], o?: StateType) {
+    let l = k.length;
+    for (o = o || {}; l--; o[k[l]] = v)
+      ;
+    return o;
+  }
 }
 

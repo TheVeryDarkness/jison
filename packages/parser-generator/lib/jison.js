@@ -944,10 +944,16 @@ lrGeneratorMixin.generate = function parser_generate (opt) {
     opt = typal.mix.call({}, this.options, opt);
     var code = "";
 
-    // check for illegal identifier
-    if (!opt.moduleName || !opt.moduleName.match(/^[A-Za-z_$][A-Za-z0-9_$]*$/)) {
+    if (!opt.moduleName) {
         opt.moduleName = "parser";
     }
+
+    // check for illegal identifier
+    const valideModuleNameRegexp = /^[A-Za-z_$][A-Za-z0-9_$]*$/;
+    if (!opt.moduleName.match(valideModuleNameRegexp)) {
+      throw Error(`Illegal moduleName: ${opt.moduleName} must match ${valideModuleNameRegexp}`);
+    }
+
     switch (opt.moduleType) {
         case "js":
             code = this.generateModule(opt);
@@ -959,7 +965,9 @@ lrGeneratorMixin.generate = function parser_generate (opt) {
             code = this.generateCommonJSModule(opt);
             break;
         default:
-            code = this.generateModuleCore(opt);
+            code =
+                parser.template.Import + "\n"
+                + this.generateModuleCore(opt);
             break;
     }
 
@@ -971,12 +979,11 @@ lrGeneratorMixin.generateAMDModule = function generateAMDModule(opt){
     var moduleCode = this.generateModuleCode(opt);
     var out = '\n\ndefine(function(require){\n'
         + moduleCode
-        + '\nvar parser = '
         + "\n"+this.moduleInclude
         + ( this.lexer && this.lexer.generateModule
             ? '\n' + this.lexer.generateModule(opt)
             : '' )
-        + '\nreturn parser;'
+        + '\nreturn Parser;'
         + '\n});'
     return out;
 };
@@ -1005,7 +1012,7 @@ lrGeneratorMixin.generateModule = function generateModule (opt) {
         + "/**\n"
         + " * Returns a Parser implementing JisonParserApi and a Lexer implementing JisonLexerApi.\n"
         + " */\n";
-    out += (moduleName.match(/\./) ? moduleName : "export const "+moduleName) +
+    out += (moduleName.match(/\./) ? moduleName : "const "+moduleName) +
             " = " + this.generateModuleExpr(opt);
 
     return out;
@@ -1127,7 +1134,6 @@ lrGeneratorMixin.generateModuleCode = function generateModuleCode (opt) {
     ];
 
     const preSubstitution = ''
-          + parser.template.Import + "\n"
           + parser.template.Constructor
           + parser.template.Export;
     moduleCode = templateParms.reduce(function (str, parm) {

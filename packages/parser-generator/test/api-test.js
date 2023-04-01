@@ -409,7 +409,7 @@ describe("api", () => {
     });
   });
 
-  it("test intance creation",  () => {
+  it("test instance creation",  () => {
     const grammar = {
       tokens: [ 'x', 'y' ],
       startSymbol: "A",

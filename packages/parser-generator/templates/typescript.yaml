@@ -1,21 +1,23 @@
-Import: import { JisonParser, JisonParserApi, StateType, SymbolsType, TerminalsType, ProductionsType, o } from '@ts-jison/parser';
+Import: import { JisonParser, JisonParserApi, StateType, SymbolsType, TerminalsType, ProductionsType } from '@ts-jison/parser';
 
 Constructor: |
-  const {{STATE_TABLE_FACTORS}};
-
   export class {{NAME}}Parser extends JisonParser implements JisonParserApi {
       $?: any;
-  
-      constructor (yy = {}, lexer = new {{NAME}}Lexer(yy)) {
-        super(yy, lexer);
-      }
-  
       symbols_: SymbolsType = {{STATE_NAMES}};
       terminals_: TerminalsType = {{TERMINALS}};
       productions_: ProductionsType = {{PRODUCTIONS}};
-      table: Array<StateType> = {{STATE_TABLE}};
+      table: Array<StateType>;
       defaultActions: {[key:number]: any} = {{DEFAULT_ACTIONS}};
   
+      constructor (yy = {}, lexer = new {{NAME}}Lexer(yy)) {
+        super(yy, lexer);
+
+        // shorten static method to just `o` for terse STATE_TABLE
+        const {{STATE_TABLE_FACTORS}};
+        const o = JisonParser.expandParseTable;
+        this.table = {{STATE_TABLE}};
+      }
+
       performAction (yytext:string, yyleng:number, yylineno:number, yy:any, yystate:number /* action[1] */, $$:any /* vstack */, _$:any /* lstack */{{PARSE_PARAMS}}): any {
   /* this == yyval */
   {{ACTION_INCLUDE}}          var $0 = $$.length - 1;

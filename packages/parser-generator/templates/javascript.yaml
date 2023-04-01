@@ -1,14 +1,16 @@
 Import: const { JisonParser, o } = require('@ts-jison/parser');
 
 Constructor: |
-  const {{STATE_TABLE_FACTORS}};
-
   class {{NAME}}Parser extends JisonParser {
       constructor(yy = {}, lexer = new {{NAME}}Lexer(yy)) {
           super(yy, lexer);
           this.symbols_ = {{STATE_NAMES}};
           this.terminals_ = {{TERMINALS}};
           this.productions_ = {{PRODUCTIONS}};
+
+          // shorten static method to just `o` for terse STATE_TABLE
+          const {{STATE_TABLE_FACTORS}};
+          const o = JisonParser.expandParseTable;
           this.table = {{STATE_TABLE}};
           this.defaultActions = {{DEFAULT_ACTIONS}};
       }

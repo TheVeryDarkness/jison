@@ -1,5 +1,5 @@
 const Jison = require("../tests/setup").Jison,
-    Lexer = require("../tests/setup").Lexer;
+    buildLexer = require("../tests/setup").Lexer;
 Shared = require("../tests/extend-expect");
 Jison.print = Shared.print;
 afterEach(Shared.nothingPrinted);
@@ -23,7 +23,7 @@ describe("lalr", () => {
     };
 
     var parser = new Jison.Parser(grammar, {type: "lalr"});
-    parser.lexer = new Lexer(lexData2);
+    parser.lexer = buildLexer(lexData2);
 
     expect(parser.parse("0+0+0")).toParse("parse");
     expect(parser.parse("0")).toParse("parse single 0");
@@ -47,7 +47,7 @@ describe("lalr", () => {
     };
 
     var parser = new Jison.Parser(grammar, {type: "lalr"});
-    parser.lexer = new Lexer(lexData);
+    parser.lexer = buildLexer(lexData);
 
     expect(parser.parse("xxx")).toParse("parse");
     expect(parser.parse("x")).toParse("parse single x");
@@ -78,7 +78,7 @@ describe("lalr", () => {
     };
 
     var parser = new Jison.Parser(grammar, {type: "lalr"});
-    parser.lexer = new Lexer(lexData);
+    parser.lexer = buildLexer(lexData);
     expect(parser.parse("agd")).toParse("agd");
     expect(parser.parse("agc")).toParse("agc");
     expect(parser.parse("bgd")).toParse("bgd");
@@ -190,7 +190,7 @@ States with conflicts:`,
 
 
     var gen = new Jison.Generator(grammar, {type: "lalr"});
-    gen.lexer = new Lexer(lex);
+    gen.lexer = new buildLexer(lex);
 
     var parser = gen.createParser();
 
