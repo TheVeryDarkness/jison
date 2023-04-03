@@ -1,0 +1,52 @@
+Jison_Generator (grammar, opt) {
+    init: terms,operators,productions,conflicts,resolutions,
+    from grammar: parseParams, actionInclude, moduleInclude
+    parser.template = JsYaml.load(Fs.read((opt.template || 'javascript') + '.yaml', "utf8"));
+    this.processGrammar
+    this.lexer = new Lexer(dict, null, this.terminals_);
+
+processGrammar{,Def}
+    processOperators
+    buildProductions
+    augmentGrammar
+
+generate
+  switch moduleType
+        case "js": this.generateModule(opt);
+        case "amd": this.generateAMDModule(opt);
+        case "commonjs": this.generateCommonJSModule(opt);
+        default: parser.template.Import + this.generateModuleCore(opt);
+
+generateAMDModule
+    '\n\ndefine(function(require){\n'
+    this.generateModuleCode(opt);
+    '\nvar parser = '
+    this.moduleInclude
+    this.lexer.generateModule(opt)
+    '\nreturn parser;'
+    '\n});'
+
+generateCommonJSModule
+    this.generateModule(opt)
+    "\n\n\nif (typeof require !== 'undefined') ..."(moduleName, commonjsMain)
+
+generateModule (opt) {
+    (moduleName.match(/\./) ? "" : "export const ")+moduleName +
+    " = " + this.generateModuleExpr(opt);
+
+generateModuleCore (opt) {
+    this.moduleInclude + "\n";
+    this.generateModuleCode(opt) + "\n";
+    this.lexer.generateModuleCore();
+
+generateModuleExpr (opt) {
+    "(function(){\n";
+    this.generateModuleCode(opt);
+    "\n"+this.moduleInclude;
+    this.lexer.generateModule(opt);
+    "\n})();";
+
+generateModuleCode (opt) {
+    parser.template.Constructor
+    parser.template.Export;
+

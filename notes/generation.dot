@@ -1,0 +1,105 @@
+digraph G {
+  subgraph cluster_0 {
+#    style=filled;
+#    color=lightgrey;
+    node [style=filled];
+    generate [shape=Mdiamond];
+    generateModuleCode [shape=Mbox];
+
+    generate -> generateModule [label=<<font color="blue">js</font>>]
+    generate -> generateAMDModule [label=<<font color="blue">amd</font>>]
+    generate -> generateCommonJSModule [label=<<font color="blue">commonjs</font>>]
+    generate -> generateModuleCore [label=<<font color="blue">default</font>>]
+
+    generateAMDModule -> generateModuleCode    
+
+    generateCommonJSModule -> generateModule
+
+    generateModule -> generateModuleExpr
+
+    generateModuleCore -> generateModuleCode
+
+    generateModuleExpr -> generateModuleCode
+    Jison_Generator [label="Jison_Generator",shape=Mdiamond]
+    processGrammar [label="processGrammar{,Def}"]
+    Jison_Generator -> processGrammar
+
+    processGrammar -> processOperators
+    processGrammar -> buildProductions
+    processGrammar -> augmentGrammar
+
+    label = <<b>Parser</b>>;
+    fontsize = 20;
+  }
+  generateAMDModule -> LgenerateModule
+  generateModuleCore -> LgenerateModuleCore
+  generateModuleExpr -> LgenerateModule
+
+  subgraph cluster_1 {
+    style=filled;
+    color=lightgrey;
+    node [style=filled,color=pink];
+
+    Lgenerate [label="generate",shape=Mdiamond]
+    LRegExpLexer [label="RegExpLexer",shape=Mdiamond]
+    LgenerateAMDModule [label="generateAMDModule"]
+    LgenerateCommonJSModule [label="generateCommonJSModule"]
+    LgenerateFromOpts [label="generateFromOpts"]
+    LgenerateModule [label="generateModule",style=filled,color=pink]
+    LgenerateModuleBody [label="generateModuleBody"]
+    LgenerateModuleCore [label="generateModuleCore",style=filled,color=pink]
+    LgenerateModuleFunction [label="generateModuleFunction"]
+#    LprocessGrammar [shape=record,label="{*processGrammar*|moduleType\l|moduleName\l|conditions\l|conditions\l|actionInclude\l|performAction\l|conditionStack\l|moduleInclude\l}"]
+LprocessGrammar [shape=record,label=<
+<table bgcolor="#eeeeee">
+  <tr><td align="left" colspan="2"><b>processGrammar</b></td></tr>
+  <tr><td align="left">moduleType</td></tr>
+  <tr><td align="left">moduleName</td></tr>
+  <tr><td align="left">conditions</td></tr>
+  <tr><td align="left">conditions</td></tr>
+  <tr><td align="left">actionInclude</td></tr>
+  <tr><td align="left">performAction</td></tr>
+  <tr><td align="left">conditionStack</td></tr>
+  <tr><td align="left">moduleInclude</td></tr>
+</table>
+>]
+
+    Jison_Generator -> LRegExpLexer
+
+    LRegExpLexer -> LprocessGrammar
+    LRegExpLexer -> LgenerateModuleBody
+    LRegExpLexer -> LgenerateFromOpts
+
+    Lgenerate -> LprocessGrammar
+    Lgenerate -> LgenerateModuleBody
+    Lgenerate -> LgenerateFromOpts
+
+    LgenerateFromOpts -> LgenerateCommonJSModule [label=<<font color="blue">commonjs</font>>]
+    LgenerateFromOpts -> LgenerateAMDModule [label=<<font color="blue">amd</font>>]
+    LgenerateFromOpts -> LgenerateModule [label=<<font color="blue">default</font>>]
+
+    LgenerateModule -> LgenerateModuleFunction
+
+    LgenerateAMDModule -> LgenerateModuleFunction
+
+    LgenerateCommonJSModule -> LgenerateModule
+
+    LgenerateModuleFunction -> LgenerateModuleCore
+
+    LgenerateModuleCore [shape=Mbox];
+#    LgenerateModuleBody [shape=record,label="{ *generateModuleBody* | {strs:| {performActions\l|rules\l|conditions\l}}| templates \l| options\l }"];
+    LgenerateModuleBody [shape=record,label=<
+<table bgcolor="#eeeeee">
+  <tr><td align="left" colspan="2"><b>generateModuleBody</b></td></tr>
+  <tr><td align="left" valign="top" rowspan="3">strs:</td><td align="left">performActions</td></tr>
+  <tr><td align="left">rules</td></tr>
+  <tr><td align="left" colspan="2">conditions</td></tr>
+  <tr><td align="left" colspan="2">templates</td></tr>
+  <tr><td align="left" colspan="2">options</td></tr>
+</table>
+>];
+
+    label = <<b>Lexer</b>>;
+    fontsize = 20;
+  }
+}

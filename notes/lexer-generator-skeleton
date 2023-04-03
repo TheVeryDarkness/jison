@@ -1,0 +1,51 @@
+RegExpLexer
+    processGrammar
+    lexerText = generateModuleBody
+    "const [JisonLexer] = arguments;\n\n"
+        + generateFromOpts(lexerText)
+        + `return ${opts.moduleName || ""}Lexer;\n`;
+    eval(code)
+
+generate
+    processGrammar
+    lexerText = generateModuleBody
+    generateFromOpts(lexerText)
+    + "return Lexer;\n";
+
+generateFromOpts
+  switch moduleType
+    case 'commonjs': generateCommonJSModule(lexer, opt)
+    case 'amd': generateAMDModule(lexer, opt)
+    default: generateModule(lexer, opt)
+
+generateModule
+    generateModuleFunction(lexer, opt);
+
+generateAMDModule
+    "HEADER" + "define([], "
+    generateModuleFunction(lexer, Object.assign({bare: true}, opt))
+    ");"
+
+generateCommonJSModule
+    generateModule(lexer, opt);
+    "\nmodule.exports = " + moduleName + ";\n";
+
+generateModuleFunction
+    generateModuleCore(lexer, opt, ['Constructor']);
+
+generateModuleCore(lexer, opt, components)
+    "HEADER" += components + ";\n" + opt.moduleInclude;
+
+generateModuleBody
+    return {
+      strs: {
+        EOF,
+        options,
+        performAction,
+        rules,
+        conditions
+      },
+      template,
+      options
+    }
+
