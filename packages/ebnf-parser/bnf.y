@@ -3,8 +3,10 @@
 /* grammar for parsing jison grammar files */
 
 %{
+// import {transform} from './ebnf-parser';
 var transform = require('./ebnf-parser').transform;
-var ebnf = false;
+import {Bnf, Grammar, BnfWithGrammar} from './bnf-types';
+let ebnf = false;
 %}
 
 %%
@@ -209,8 +211,8 @@ action_comments_body
 %%
 
 // transform ebnf to bnf if necessary
-function extend (json: any, grammar: any): any {
-    json.bnf = ebnf ? transform(grammar) : grammar;
-    return json;
+function extend (json: Bnf, grammar: Grammar): BnfWithGrammar {
+    (json as BnfWithGrammar).bnf = ebnf ? transform(grammar) : grammar;
+    return json as BnfWithGrammar;
 }
 
