@@ -210,11 +210,11 @@ string
 
 %%
 
-function encodeRE (s) {
+function encodeRE (s: string) {
     return s.replace(/([.*+?^${}()|[\]\/\\])/g, '\\$1').replace(/\\\\u([a-fA-F0-9]{4})/g,'\\u$1');
 }
 
-function prepareString (s) {
+function prepareString (s: string) {
     // unescape slashes
     s = s.replace(/\\\\/g, "\\");
     s = encodeRE(s);

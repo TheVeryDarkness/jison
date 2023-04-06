@@ -2,16 +2,13 @@ JISON ?= ../parser-generator/lib/cli.js
 
 all: build test
 
-build:
-	node $(JISON) lex.y lex.l
-	mv lex.js lex-parser.js
+build: lib/lex-parser.js
 
 test:
 	node tests/all-tests.js
 
-clean:
+src/lex-parser.ts: lex.y lex.l ../lexer-generator/templates/typescript.yaml
+	node $(JISON) -t typescript -n Lex -o $@ lex.y lex.l
 
-superclean: clean
-	-find . -type d -name 'node_modules' -exec rm -rf "{}" \;
-
-
+lib/lex-parser.js: src/lex-parser.ts
+	npx tsc -p tsconfig.package.json
