@@ -1,6 +1,6 @@
-var bnf = require("./parser").bnfParser,
-    ebnf = require("./ebnf-transform"),
-    jisonlex = require("@ts-jison/lex-parser").lexParser;
+var bnf = require("./lib/bnf-parser").BnfParser,
+    ebnf = require("./lib/ebnf-parser"),
+    jisonlex = require("@ts-jison/lex-parser").LexParser;
 
 const yy = {
 
