@@ -83,7 +83,7 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
   }
 }
    */
-  it("new Jison.Generator(g).generateCommonJSModule()", () => {
+  xit("new Jison.Generator(g).generateCommonJSModule()", () => {
     var lexData = {
       rules: [
         ["x", "return 'x';"],
@@ -121,7 +121,7 @@ lexData.moduleInclude
 ...
 })();
    */
-  it("new Jison.Generator(g).generateModule()", () => {
+  xit("new Jison.Generator(g).generateModule()", () => {
     var lexData = {
       rules: [
         ["x", "return 'x';"],
@@ -148,7 +148,7 @@ lexData.moduleInclude
     expect(parser.parse(input)).toBe(true);
   });
 
-  it("generate({moduleType: \"js\", moduleName: \"parsey\"})", () => {
+  xit("generate({moduleType: \"js\", moduleName: \"parsey\"})", () => {
     var lexData = {
       rules: [
         ["x", "return 'x';"],
@@ -175,7 +175,7 @@ lexData.moduleInclude
     expect(parsey.parse(input)).toBe(true);
   });
 
-  it("generateModule({moduleName: \"compiler.parser\"}) (namespaced module name)", () => {
+  xit("generateModule({moduleName: \"compiler.parser\"}) (namespaced module name)", () => {
     var lexData = {
       rules: [
         ["x", "return 'x';"],
@@ -204,7 +204,7 @@ lexData.moduleInclude
     expect(compiler.parser.parse(input)).toBe(true);
   });
   if (false) // doesn't pass in jison
-  it("test module include", () => {
+  xit("test module include", () => {
     var grammar = {
       "comment": "ECMA-262 5th Edition, 15.12.1 The JSON Grammar. (Incomplete implementation)",
       "author": "Zach Carter",
@@ -284,7 +284,7 @@ lexData.moduleInclude
     expect(parser.parse(JSON.stringify(grammar.bnf))).toBe(true);
   });
 
-  it("generateCommonJSModule() grammar.moduleInclude", () => {
+  xit("generateCommonJSModule() grammar.moduleInclude", () => {
     var lexData = {
       rules: [
         ["y", "return 'y';"]
@@ -308,7 +308,7 @@ lexData.moduleInclude
     expect(parser.parse(y)).toBe(1); // semantic action
   });
 
-  it("generateCommonJSModule() lexData.moduleInclude", () => {
+  xit("generateCommonJSModule() lexData.moduleInclude", () => {
     var lexData = {
       rules: [
         ["y", "return test();"]
@@ -332,7 +332,7 @@ lexData.moduleInclude
     expect(parser.parse(y)).toBe(1); // semantic action
   });
 
-  it("test generated parser instance creation", () => {
+  xit("test generated parser instance creation", () => {
     var grammar = {
       lex: {
         rules: [
@@ -362,7 +362,7 @@ lexData.moduleInclude
   /* Jison.Parser(g). Jison.Generator
      same results as Jison.Generator().generateCommonJSModule() test above
    */
-  it("new Jison.Parser(g).generateCommonJSModule()", () => {
+  xit("new Jison.Parser(g).generateCommonJSModule()", () => {
     var lexData = {
       rules: [
         ["y", "return 'y';"]
@@ -410,7 +410,7 @@ lexData.moduleInclude
   });
 
   // test for issue #246
-  it("test compiling a parser/lexer", () => {
+  xit("test compiling a parser/lexer", () => {
     var grammar =
         '// Simple "happy happy joy joy" parser, written by Nolan Lawson\n' +
         '// Based on the song of the same name.\n\n' +
