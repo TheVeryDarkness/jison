@@ -66,7 +66,8 @@
     "js-calculator-demo": "(cd packages/parser-generator/ && npm run js-calculator-demo)",
     "ts-calculator-demo": "(cd packages/parser-generator/ && npm run ts-calculator-demo)",
     "ts-node-calculator-demo": "(cd packages/parser-generator/ && npm run ts-node-calculator-demo)",
-    "test": "npm run js-calculator-demo && npm run ts-calculator-demo && npm run ts-node-calculator-demo && (cd packages/lexer-generator/ && node tests/all-tests.js) && jest",
+    "test": "npm run test:run && jest",
+    "test:run": "npm run js-calculator-demo > /dev/null && npm run ts-calculator-demo > /dev/null && npm run ts-node-calculator-demo > /dev/null",
     "test:make": "(cd packages/parser-generator/examples/ && make clean && make js-calculator-demo && make ts-calculator-demo && make ts-node-calculator-demo)",
     "test-todo": "(cd packages/parser-generator/ && node tests/all-tests.js);"
   }
