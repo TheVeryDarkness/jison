@@ -59,7 +59,9 @@
   },
   "scripts": {
     "build999": "lerna run build",
-    "build": "(cd packages/common/ && tsc -b tsconfig.package.json) && (cd packages/lexer/ && tsc -b tsconfig.package.json) && (cd packages/parser/ && tsc -b tsconfig.package.json)",
+    "build": "npm run build:ts && npm run build:parsers",
+    "build:ts": "(cd packages/common/ && tsc -b tsconfig.package.json) && (cd packages/lexer/ && tsc -b tsconfig.package.json) && (cd packages/parser/ && tsc -b tsconfig.package.json)",
+    "build:parsers": "(cd packages/lex-parser && make) && (cd packages/ebnf-parser && make)",
     "clean": "rm -r packages/{common,lexer,parser}/lib/",
     "js-calculator-demo": "(cd packages/parser-generator/ && npm run js-calculator-demo)",
     "ts-calculator-demo": "(cd packages/parser-generator/ && npm run ts-calculator-demo)",
