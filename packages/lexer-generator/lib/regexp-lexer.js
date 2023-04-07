@@ -5,7 +5,7 @@
 
 const Fs = require('fs');
 const Path = require('path');
-const lexParser = require('@ts-jison/lex-parser').lexParser;
+const lexParser = require('@ts-jison/lex-parser').LexParser;
 const {FileTemplate} = require('@ts-jison/common-generator');
 const version = require('../package.json').version;
 

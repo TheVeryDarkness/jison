@@ -1,5 +1,5 @@
 var bnf = require("./lib/bnf-parser").BnfParser,
-    ebnf = require("./lib/ebnf-parser"),
+    ebnf = require("./ebnf-transform"),
     jisonlex = require("@ts-jison/lex-parser").LexParser;
 
 const yy = {

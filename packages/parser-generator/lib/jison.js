@@ -86,7 +86,6 @@ var Production = typal.construct({
 
 var generator = typal.beget();
 
-var Template = 'typescript';
 generator.constructor = function Jison_Generator (grammar, opt) {
     if (typeof grammar === 'string') {
         grammar = ebnfParser.parse(grammar);

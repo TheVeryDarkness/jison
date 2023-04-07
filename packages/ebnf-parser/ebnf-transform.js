@@ -1,5 +1,5 @@
 var EBNF = (function(){
-    var parser = require('./transform-parser.js').ebnfParser;
+    var parser = require('./lib/ebnf-parser.js').EbnfParser;
 
     var transformExpression = function(e, opts, emit) {
         var type = e[0], value = e[1], name = false;
@@ -132,4 +132,3 @@ var EBNF = (function(){
 })();
 
 exports.transform = EBNF.transform;
-

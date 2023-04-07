@@ -5,7 +5,7 @@ import { JisonParser, JisonParserApi, StateType, SymbolsType, TerminalsType, Pro
  */
 
 // import {transform} from './ebnf-parser';
-var transform = require('./ebnf-parser').transform;
+const transform = require('../ebnf-transform').transform;
 import {Bnf, Grammar, BnfWithGrammar} from './bnf-types';
 let ebnf = false;
 

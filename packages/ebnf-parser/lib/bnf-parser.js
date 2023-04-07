@@ -7,7 +7,7 @@ const parser_1 = require("@ts-jison/parser");
  * @returns Parser implementing JisonParserApi and a Lexer implementing JisonLexerApi.
  */
 // import {transform} from './ebnf-parser';
-var transform = require('./ebnf-parser').transform;
+const transform = require('../ebnf-transform').transform;
 let ebnf = false;
 // transform ebnf to bnf if necessary
 function extend(json, grammar) {
