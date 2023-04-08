@@ -7,16 +7,14 @@ build: lib/bnf-parser.js lib/ebnf-parser.js
 test:
 	node tests/all-tests.js
 
-src/bnf-parser.ts: bnf.y bnf.l
-	node $(JISON) -t typescript -n Bnf -o $@ bnf.y bnf.l
-#	mv bnf.js parser.js
+src/bnf-parser.ts: src/bnf.jison
+	node $(JISON) -t typescript -n Bnf -o $@ src/bnf.jison
 
 lib/bnf-parser.js: src/bnf-parser.ts
 	npx tsc -p tsconfig.package.json
 
-src/ebnf-parser.ts: ebnf.y
-	node $(JISON) -t typescript -n Ebnf -o $@ ebnf.y
-#	mv ebnf.js transform-parser.js
+src/ebnf-parser.ts: src/ebnf.jison
+	node $(JISON) -t typescript -n Ebnf -o $@ src/ebnf.jison
 
 lib/ebnf-parser.js: src/ebnf-parser.ts
 	npx tsc -p tsconfig.package.json

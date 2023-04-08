@@ -5,7 +5,7 @@ import { JisonParser, JisonParserApi, StateType, SymbolsType, TerminalsType, Pro
  */
 
 // import {transform} from './ebnf-parser';
-const transform = require('../ebnf-transform').transform;
+const transform = require('./ebnf-parser').transform;
 import {Bnf, Grammar, BnfWithGrammar} from './bnf-types';
 let ebnf = false;
 
@@ -221,7 +221,7 @@ export class BnfLexer extends JisonLexer implements JisonLexerApi {
           /^(?:%nonassoc\b)/,
           /^(?:%parse-param\b)/,
           /^(?:%options\b)/,
-          /^(?:%lex[\w\W]*?\/lex\b)/,
+          /^(?:[%]lex[\w\W]*?[/]lex\b)/,
           /^(?:%[a-zA-Z]+[^\r\n]*)/,
           /^(?:<[a-zA-Z]*>)/,
           /^(?:\{\{[\w\W]*?\}\})/,

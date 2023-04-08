@@ -219,7 +219,7 @@ class BnfLexer extends lexer_1.JisonLexer {
             /^(?:%nonassoc\b)/,
             /^(?:%parse-param\b)/,
             /^(?:%options\b)/,
-            /^(?:%lex[\w\W]*?\/lex\b)/,
+            /^(?:[%]lex[\w\W]*?[/]lex\b)/,
             /^(?:%[a-zA-Z]+[^\r\n]*)/,
             /^(?:<[a-zA-Z]*>)/,
             /^(?:\{\{[\w\W]*?\}\})/,
