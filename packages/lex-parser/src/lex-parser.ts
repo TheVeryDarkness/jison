@@ -4,6 +4,10 @@ import { JisonParser, JisonParserApi, StateType, SymbolsType, TerminalsType, Pro
  * @returns Parser implementing JisonParserApi and a Lexer implementing JisonLexerApi.
  */
 
+// import {transform} from './ebnf-parser';
+    import {Choice, Concat, Empty, CaptureGroup, SpecialGroup, Cardinality, LookAhead, LookBehind, Wildcard, Begin, End, String, Reference, CharacterClass} from './lex-types';
+let ebnf = false;
+
 
 function encodeRE (s: string) {
     return s.replace(/([.*+?^${}()|[\]\/\\])/g, '\\$1').replace(/\\\\u([a-fA-F0-9]{4})/g,'\\u$1');
@@ -119,7 +123,7 @@ break;
 case 23:
 this.$ = $$[$0-3] + $$[$0-2] + $$[$0-1] + $$[$0];
 break;
-case 24: case 54: case 55: case 56:
+case 24:
  this.$ = yytext; 
 break;
 case 25:
@@ -133,56 +137,82 @@ case 30:
 break;
 case 31:
 
-          this.$ = $$[$0];
-          if (!(yy.options && yy.options.flex) && this.$.match(/[\w\d]$/) && !this.$.match(/\\(r|f|n|t|v|s|b|c[A-Z]|x[0-9A-F]{2}|u[a-fA-F0-9]{4}|[0-7]{1,3})$/)) {
+          const compiled = $$[$0];
+          const asStr = compiled.toString({debug: true, captureGroups: false}, 0);
+          const asStr1 = compiled.toString({debug: true, captureGroups: false}, 0);
+          this.$ = asStr;
+          const endsWithIdChar = (this.$.match(/[\w\d]$/) || [])[0];
+          const endsWithEscapedChar = (this.$.match(/\\(r|f|n|t|v|s|b|c[A-Z]|x[0-9A-F]{2}|u[a-fA-F0-9]{4}|[0-7]{1,3})$/) || [])[0];
+          if (!(yy.options && yy.options.flex) && endsWithIdChar && !endsWithEscapedChar) {
               this.$ += "\\b";
+              // console.log('if', this.$, endsWithIdChar, endsWithEscapedChar);
+          } else {
+              // console.log('else', this.$, endsWithIdChar, endsWithEscapedChar);
           }
         
 break;
 case 32:
- this.$ = $$[$0-2] + '|' + $$[$0]; 
+ this.$ = new Choice($$[$0-2], $$[$0]); 
 break;
 case 33:
- this.$ = $$[$0-1] + '|'; 
+ this.$ = new Choice($$[$0-1], new Empty()); 
 break;
 case 35:
- this.$ = '' 
+ this.$ = ''; throw Error("regex_list: empty"); 
 break;
-case 36: case 46:
- this.$ = $$[$0-1] + $$[$0]; 
+case 36:
+ this.$ = new Concat($$[$0-1], $$[$0]); 
 break;
 case 38:
- this.$ = '(' + $$[$0-1] + ')'; 
+ this.$ = new CaptureGroup($$[$0-1]); 
 break;
 case 39:
- this.$ = $$[$0-2] + $$[$0-1] + ')'; 
+ this.$ = new SpecialGroup($$[$0-2], $$[$0-1]); 
 break;
 case 40:
- this.$ = $$[$0-1] + '+'; 
+ this.$ = new Cardinality($$[$0-1], '+'); 
 break;
 case 41:
- this.$ = $$[$0-1] + '*'; 
+ this.$ = new Cardinality($$[$0-1], '*'); 
 break;
 case 42:
- this.$ = $$[$0-1] + '?'; 
+ this.$ = new Cardinality($$[$0-1], '?'); 
 break;
 case 43:
- this.$ = '(?=' + $$[$0] + ')'; 
+ this.$ = new LookAhead($$[$0]); 
 break;
 case 44:
- this.$ = '(?!' + $$[$0] + ')'; 
+ this.$ = new LookBehind($$[$0]); 
+break;
+case 46:
+ this.$ = new Cardinality($$[$0-1], $$[$0]); 
 break;
 case 48:
- this.$ = '.'; 
+ this.$ = new Wildcard(); 
 break;
 case 49:
- this.$ = '^'; 
+ this.$ = new Begin(); 
 break;
 case 50:
- this.$ = '$'; 
+ this.$ = new End(); 
+break;
+case 53:
+ this.$ = new Reference(yytext.substring(1, yytext.length - 1)); 
+break;
+case 54:
+ this.$ = new CharacterClass(yytext.substring(1, yytext.length - 1)); 
+break;
+case 55:
+ this.$ = yytext; console.log('ESCAPE_CHAR', this.$); 
+break;
+case 56:
+ this.$ = yytext; console.log('RANGE_REGEX', this.$); 
 break;
 case 57:
- this.$ = prepareString(yytext.substr(1, yytext.length - 2)); 
+ this.$ = new String(prepareString(yytext.substr(1, yytext.length - 2))); 
+break;
+case 58:
+ this.$ = $$[$0]; console.log('CHARACTER_LIT', this.$); 
 break;
         }
     }

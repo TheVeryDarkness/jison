@@ -10,5 +10,5 @@ test:
 src/lex-parser.ts: src/lex.jison
 	node $(JISON) -t typescript -n Lex -o $@ src/lex.jison
 
-lib/lex-parser.js: src/lex-parser.ts
+lib/lex-parser.js: src/lex-parser.ts src/lex-types.ts
 	npx tsc -p tsconfig.package.json
