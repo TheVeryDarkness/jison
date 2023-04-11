@@ -131,6 +131,7 @@ class LexParser extends parser_1.JisonParser {
                 this.$ = $$[$0 - 3] + $$[$0 - 2] + $$[$0 - 1] + $$[$0];
                 break;
             case 24:
+            case 56:
                 this.$ = yytext;
                 break;
             case 25:
@@ -145,9 +146,10 @@ class LexParser extends parser_1.JisonParser {
                 break;
             case 31:
                 const compiled = $$[$0];
-                const asStr = compiled.toString({ debug: true, captureGroups: false }, 0);
-                const asStr1 = compiled.toString({ debug: true, captureGroups: false }, 0);
-                this.$ = asStr;
+                console.log(JSON.stringify(compiled));
+                const asStr0 = compiled.toString999({ debug: true, captureGroups: true }, 0);
+                const asStr1 = compiled.toString999({ debug: true, captureGroups: true }, 0);
+                this.$ = asStr0;
                 const endsWithIdChar = (this.$.match(/[\w\d]$/) || [])[0];
                 const endsWithEscapedChar = (this.$.match(/\\(r|f|n|t|v|s|b|c[A-Z]|x[0-9A-F]{2}|u[a-fA-F0-9]{4}|[0-7]{1,3})$/) || [])[0];
                 if (!(yy.options && yy.options.flex) && endsWithIdChar && !endsWithEscapedChar) {
@@ -175,7 +177,7 @@ class LexParser extends parser_1.JisonParser {
                 this.$ = new lex_types_1.CaptureGroup($$[$0 - 1]);
                 break;
             case 39:
-                this.$ = new lex_types_1.SpecialGroup($$[$0 - 2], $$[$0 - 1]);
+                this.$ = new lex_types_1.SpecialGroup($$[$0 - 2].substring(1), $$[$0 - 1]);
                 break;
             case 40:
                 this.$ = new lex_types_1.Cardinality($$[$0 - 1], '+');
@@ -211,19 +213,13 @@ class LexParser extends parser_1.JisonParser {
                 this.$ = new lex_types_1.CharacterClass(yytext.substring(1, yytext.length - 1));
                 break;
             case 55:
-                this.$ = yytext;
-                console.log('ESCAPE_CHAR', this.$);
-                break;
-            case 56:
-                this.$ = yytext;
-                console.log('RANGE_REGEX', this.$);
+                this.$ = new lex_types_1.EscapedCharacter(yytext.substring(1));
                 break;
             case 57:
                 this.$ = new lex_types_1.String(prepareString(yytext.substr(1, yytext.length - 2)));
                 break;
             case 58:
-                this.$ = $$[$0];
-                console.log('CHARACTER_LIT', this.$);
+                this.$ = new lex_types_1.SimpleCharacter(prepareString(yytext));
                 break;
         }
     }
@@ -480,8 +476,7 @@ class LexLexer extends lexer_1.JisonLexer {
             case 54:
                 return 53;
                 break;
-            case 55:
-                yy_.yytext = yy_.yytext.replace(/^\\/g, '');
+            case 55: /* yy_.yytext = yy_.yytext.replace(/^\\/g,''); */
                 return 53;
                 break;
             case 56:
