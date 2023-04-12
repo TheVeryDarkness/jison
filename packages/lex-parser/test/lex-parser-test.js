@@ -8,7 +8,8 @@ function read (p, file) {
 }
 
 describe("lex-parser", () => {
-if (false) {
+
+if (true) {
   it("test lex grammar with macros", () => {
     const lexgrammar = 'D [0-9]\nID [a-zA-Z][a-zA-Z0-9]+\n%%\n\n{D}"ohhai" {print(9);}\n"{" return \'{\';';
     const expected = {
@@ -140,14 +141,14 @@ if (false) {
 
     expect(lex.parse(lexgrammar)).toEqual(expected);
   });
-
+}
   it("test bnf lex grammar", () => {
     const lexgrammar = lex.parse(read('lex', 'bnf.jisonlex'));
     const expected = JSON.parse(read('lex', 'bnf.lex.json'));
 
     expect(lexgrammar).toEqual(expected);
   });
-
+if (true) {
   it("test lex grammar bootstrap", () => {
     const lexgrammar = lex.parse(read('lex', 'lex_grammar.jisonlex'));
     const expected = JSON.parse(read('lex', 'lex_grammar.lex.json'));
@@ -217,18 +218,7 @@ if (false) {
 
     expect(lex.parse(lexgrammar)).toEqual(expected);
   });
-}
-  it("abc", () => {
-    const lexgrammar = '%%\n\\"\\\'"x" return 1;';
-    const expected = {
-      rules: [
-        ["\"'x\\b", "return 1;"]
-      ]
-    };
 
-    expect(lex.parse(lexgrammar)).toEqual(expected);
-  });
-if (false) {
   it("test escape things", () => {
     const lexgrammar = '%%\n\\"\\\'\\\\\\*\\i return 1;\n"a"\\b return 2;\n\\cA {}\n\\012 {}\n\\xFF {}';
     const expected = {

@@ -14,11 +14,16 @@ function encodeRE(s) {
 }
 function prepareString(s) {
     // unescape slashes
-    s = s.replace(/\\\\/g, "\\");
-    s = encodeRE(s);
+    /* s = s.replace(/\\(.)/g, "$1"); */
+    /* s = encodeRE(s); */
     return s;
 }
 ;
+function prepareCharacterClass(s) {
+    s = s.replace(/\\n/g, "\n");
+    s = s.replace(/\\(.)/g, "$1");
+    return s;
+}
 class LexParser extends parser_1.JisonParser {
     constructor(yy = {}, lexer = new LexLexer(yy)) {
         super(yy, lexer);
@@ -147,8 +152,8 @@ class LexParser extends parser_1.JisonParser {
             case 31:
                 const compiled = $$[$0];
                 console.log(JSON.stringify(compiled));
-                const asStr0 = compiled.toString999({ debug: true, captureGroups: true }, 0);
-                const asStr1 = compiled.toString999({ debug: true, captureGroups: true }, 0);
+                const asStr0 = compiled.toString999(new lex_types_1.RegexpAtomToJs({ debug: true, groups: 'preserve' }), 0);
+                const asStr1 = compiled.toString999(new lex_types_1.RegexpAtomToJs({ debug: true, groups: 'preserve' }), 0);
                 this.$ = asStr0;
                 const endsWithIdChar = (this.$.match(/[\w\d]$/) || [])[0];
                 const endsWithEscapedChar = (this.$.match(/\\(r|f|n|t|v|s|b|c[A-Z]|x[0-9A-F]{2}|u[a-fA-F0-9]{4}|[0-7]{1,3})$/) || [])[0];
@@ -210,16 +215,16 @@ class LexParser extends parser_1.JisonParser {
                 this.$ = new lex_types_1.Reference(yytext.substring(1, yytext.length - 1));
                 break;
             case 54:
-                this.$ = new lex_types_1.CharacterClass(yytext.substring(1, yytext.length - 1));
+                this.$ = new lex_types_1.CharacterClass(prepareCharacterClass(yytext.substring(1, yytext.length - 1)));
                 break;
             case 55:
                 this.$ = new lex_types_1.EscapedCharacter(yytext.substring(1));
                 break;
             case 57:
-                this.$ = new lex_types_1.String(prepareString(yytext.substr(1, yytext.length - 2)));
+                this.$ = new lex_types_1.Literal(prepareString(yytext.substr(1, yytext.length - 2)));
                 break;
             case 58:
-                this.$ = new lex_types_1.SimpleCharacter(prepareString(yytext));
+                this.$ = new lex_types_1.Literal(prepareString(yytext));
                 break;
         }
     }

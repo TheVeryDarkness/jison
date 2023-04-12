@@ -1,6 +1,23 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SimpleCharacter = exports.EscapedCharacter = exports.CharacterClass = exports.String = exports.Reference = exports.End = exports.Begin = exports.Anchor = exports.Wildcard = exports.LookBehind = exports.LookAhead = exports.LookOut = exports.Cardinality = exports.Empty = exports.SpecialGroup = exports.CaptureGroup = exports.Concat = exports.Choice = exports.RegexpList = exports.RegexpAtom = void 0;
+exports.SimpleCharacter = exports.EscapedCharacter = exports.CharacterClass = exports.Literal = exports.Reference = exports.End = exports.Begin = exports.Anchor = exports.Wildcard = exports.LookBehind = exports.LookAhead = exports.LookOut = exports.Cardinality = exports.Empty = exports.SpecialGroup = exports.CaptureGroup = exports.Concat = exports.Choice = exports.RegexpList = exports.RegexpAtom = exports.RegexpAtomToJs = exports.RegexpAtom_toString_Opts = void 0;
+class RegexpAtom_toString_Opts {
+    constructor({ groups, debug, }) {
+        this.groups = groups;
+        this.debug = debug;
+    }
+}
+exports.RegexpAtom_toString_Opts = RegexpAtom_toString_Opts;
+class RegexpAtomToJs extends RegexpAtom_toString_Opts {
+    escapeLiteral(literal) {
+        return literal.replace(/([.*+?^${}()|[\]\/\\])/g, '\\$1').replace(/\\\\u([a-fA-F0-9]{4})/g, '\\u$1');
+        // return literal.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    }
+    escapeCharacterClass(literal) {
+        return literal.replace(/\n/g, "\\n").replace(/([[\]])/g, '\\$1'); // .replace(/\\\\u([a-fA-F0-9]{4})/g,'\\u$1')
+    }
+}
+exports.RegexpAtomToJs = RegexpAtomToJs;
 class RegexpAtom {
     getNewPrec(parentPrecedence) {
         const myPrecedence = this.getPrecedence();
@@ -50,9 +67,6 @@ class CaptureGroup extends RegexpAtom {
             case "capture":
             default: return '(' + this.list.toString999(opts, 1) + ')';
         }
-        // return opts.captureGroups
-        //   ? '(' + this.list.toString999(opts, 1) + ')'
-        //   : '(?:' + this.list.toString999(opts, 1) + ')'
     }
 }
 exports.CaptureGroup = CaptureGroup;
@@ -76,15 +90,15 @@ class Empty extends RegexpAtom {
 }
 exports.Empty = Empty;
 class Cardinality extends RegexpAtom {
-    constructor(inner, card) {
+    constructor(repeated, card) {
         super();
-        this.inner = inner;
+        this.repeated = repeated;
         this.card = card;
     }
     getPrecedence() { return 4; }
     toString999(opts, parentPrecedence) {
         const { needParen, myPrecedence } = this.getNewPrec(parentPrecedence);
-        const innerStr = this.inner.toString999(opts, myPrecedence) + this.card;
+        const innerStr = this.repeated.toString999(opts, myPrecedence) + this.card;
         return needParen
             ? '(' + innerStr + ')'
             : innerStr;
@@ -92,14 +106,14 @@ class Cardinality extends RegexpAtom {
 }
 exports.Cardinality = Cardinality;
 class LookOut extends RegexpAtom {
-    constructor(inner) {
+    constructor(lookFor) {
         super();
-        this.inner = inner;
+        this.lookFor = lookFor;
     }
     getPrecedence() { return 7; }
     toString999(opts, parentPrecedence) {
         const { needParen, myPrecedence } = this.getNewPrec(parentPrecedence);
-        const innerStr = this.inner.toString999(opts, parentPrecedence);
+        const innerStr = this.lookFor.toString999(opts, parentPrecedence);
         return '(' + this.getOperator() + innerStr + ')';
     }
 }
@@ -138,57 +152,57 @@ class End extends Anchor {
 exports.End = End;
 // this isn't really a RegexpAtom, but will be replaced before serailization.
 class Reference extends RegexpAtom {
-    constructor(target) {
+    constructor(ref) {
         super();
-        this.target = target;
+        this.ref = ref;
     }
     getPrecedence() { throw Error('Reference.getPrecedence() should never be called'); }
     toString999(opts, _parentPrecedence) {
         if (opts.debug)
-            return `{${this.target}}`;
+            return `{${this.ref}}`;
         throw Error('Reference.toString999() should never be called (unless you\'re debugging)');
     }
 }
 exports.Reference = Reference;
-class String extends RegexpAtom {
-    constructor(text) {
+class Literal extends RegexpAtom {
+    constructor(literal) {
         super();
-        this.text = text;
+        this.literal = literal;
     }
     getPrecedence() { return 7; }
-    toString999(opts, _parentPrecedence) { return this.text; }
+    toString999(opts, _parentPrecedence) { return opts.escapeLiteral(this.literal); }
 }
-exports.String = String;
+exports.Literal = Literal;
 class CharacterClass extends RegexpAtom {
-    constructor(range) {
+    constructor(charClass) {
         super();
-        this.range = range;
+        this.charClass = charClass;
     }
     getPrecedence() { return 7; }
     toString999(opts, _parentPrecedence) {
-        return '[' + this.range + ']';
+        return '[' + opts.escapeCharacterClass(this.charClass) + ']';
     }
 }
 exports.CharacterClass = CharacterClass;
 class EscapedCharacter extends RegexpAtom {
-    constructor(char) {
+    constructor(escapedChar) {
         super();
-        this.char = char;
+        this.escapedChar = escapedChar;
     }
     getPrecedence() { return 7; }
     toString999(opts, _parentPrecedence) {
-        return '\\' + this.char;
+        return '\\' + opts.escapeLiteral(this.escapedChar);
     }
 }
 exports.EscapedCharacter = EscapedCharacter;
 class SimpleCharacter extends RegexpAtom {
-    constructor(char) {
+    constructor(simpleChar) {
         super();
-        this.char = char;
+        this.simpleChar = simpleChar;
     }
     getPrecedence() { return 7; }
     toString999(opts, _parentPrecedence) {
-        return this.char;
+        return opts.escapeLiteral(this.simpleChar);
     }
 }
 exports.SimpleCharacter = SimpleCharacter;

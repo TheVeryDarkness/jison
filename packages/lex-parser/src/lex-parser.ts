@@ -5,7 +5,7 @@ import { JisonParser, JisonParserApi, StateType, SymbolsType, TerminalsType, Pro
  */
 
 // import {transform} from './ebnf-parser';
-    import {Choice, Concat, Empty, CaptureGroup, SpecialGroup, Cardinality, LookAhead, LookBehind, Wildcard, Begin, End, String, Reference, CharacterClass, SimpleCharacter, EscapedCharacter} from './lex-types';
+    import {Choice, Concat, Empty, CaptureGroup, SpecialGroup, Cardinality, LookAhead, LookBehind, Wildcard, Begin, End, Literal, EscapedCharacter, Reference, CharacterClass, RegexpAtomToJs} from './lex-types';
 let ebnf = false;
 
 
@@ -15,11 +15,16 @@ function encodeRE (s: string) {
 
 function prepareString (s: string) {
     // unescape slashes
-    s = s.replace(/\\\\/g, "\\");
-    s = encodeRE(s);
+    /* s = s.replace(/\\(.)/g, "$1"); */
+    /* s = encodeRE(s); */
     return s;
 };
 
+function prepareCharacterClass (s: string) {
+    s = s.replace(/\\n/g, "\n");
+    s = s.replace(/\\(.)/g, "$1");
+    return s;
+}
 
 export class LexParser extends JisonParser implements JisonParserApi {
     $?: any;
@@ -138,8 +143,8 @@ break;
 case 31:
 
           const compiled = $$[$0];console.log(JSON.stringify(compiled));
-          const asStr0 = compiled.toString999({debug: true, captureGroups: true}, 0);
-          const asStr1 = compiled.toString999({debug: true, captureGroups: true}, 0);
+          const asStr0 = compiled.toString999(new RegexpAtomToJs({debug: true, groups: 'preserve'}), 0);
+          const asStr1 = compiled.toString999(new RegexpAtomToJs({debug: true, groups: 'preserve'}), 0);
           this.$ = asStr0;
           const endsWithIdChar = (this.$.match(/[\w\d]$/) || [])[0];
           const endsWithEscapedChar = (this.$.match(/\\(r|f|n|t|v|s|b|c[A-Z]|x[0-9A-F]{2}|u[a-fA-F0-9]{4}|[0-7]{1,3})$/) || [])[0];
@@ -200,16 +205,16 @@ case 53:
  this.$ = new Reference(yytext.substring(1, yytext.length - 1)); 
 break;
 case 54:
- this.$ = new CharacterClass(yytext.substring(1, yytext.length - 1)); 
+ this.$ = new CharacterClass(prepareCharacterClass(yytext.substring(1, yytext.length - 1))); 
 break;
 case 55:
  this.$ = new EscapedCharacter(yytext.substring(1)); 
 break;
 case 57:
- this.$ = new String(prepareString(yytext.substr(1, yytext.length - 2))); 
+ this.$ = new Literal(prepareString(yytext.substr(1, yytext.length - 2))); 
 break;
 case 58:
- this.$ = new SimpleCharacter(prepareString(yytext)); 
+ this.$ = new Literal(prepareString(yytext)); 
 break;
         }
     }
