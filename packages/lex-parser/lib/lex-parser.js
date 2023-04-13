@@ -534,7 +534,7 @@ class LexLexer extends lexer_1.JisonLexer {
                 break;
             case 61:
                 yy_.yytext = yy_.yytext.replace(/^\\/g, '');
-                return 57; // throw Error(`unknown escape ${yy_.yytext}`)
+                return 57; // escaped special chars like '"'s
                 break;
             case 62:
                 return 48;

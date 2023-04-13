@@ -455,7 +455,7 @@ export class LexLexer extends JisonLexer implements JisonLexerApi {
       break;
     case 60:return 54;
       break;
-    case 61:yy_.yytext = yy_.yytext.replace(/^\\/g,''); return 57; // throw Error(`unknown escape ${yy_.yytext}`)
+    case 61:yy_.yytext = yy_.yytext.replace(/^\\/g,''); return 57; // escaped special chars like '"'s
       break;
     case 62:return 48;
       break;
