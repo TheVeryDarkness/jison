@@ -22,7 +22,7 @@ if (true) {
 
     expect(lex.parse(lexgrammar)).toEqual(expected);
   });
-
+}
   it("test escaped chars", () => {
     const lexgrammar = '%%\n"\\n"+ {return \'NL\';}\n\\n+ {return \'NL2\';}\n\\s+ {/* skip */}';
     const expected = {
@@ -35,7 +35,7 @@ if (true) {
 
     expect(lex.parse(lexgrammar)).toEqual(expected);
   });
-
+if (true) {
   it("test advanced", () => {
     const lexgrammar = '%%\n$ {return \'EOF\';}\n. {/* skip */}\n"stuff"*/("{"|";") {/* ok */}\n(.+)[a-z]{1,2}"hi"*? {/* skip */}\n';
     const expected = {
@@ -141,14 +141,14 @@ if (true) {
 
     expect(lex.parse(lexgrammar)).toEqual(expected);
   });
-}
+
   it("test bnf lex grammar", () => {
     const lexgrammar = lex.parse(read('lex', 'bnf.jisonlex'));
     const expected = JSON.parse(read('lex', 'bnf.lex.json'));
 
     expect(lexgrammar).toEqual(expected);
   });
-if (true) {
+
   it("test lex grammar bootstrap", () => {
     const lexgrammar = lex.parse(read('lex', 'lex_grammar.jisonlex'));
     const expected = JSON.parse(read('lex', 'lex_grammar.lex.json'));

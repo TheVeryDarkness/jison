@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SimpleCharacter = exports.EscapedCharacter = exports.CharacterClass = exports.Literal = exports.Reference = exports.End = exports.Begin = exports.Anchor = exports.Wildcard = exports.LookBehind = exports.LookAhead = exports.LookOut = exports.Cardinality = exports.Empty = exports.SpecialGroup = exports.CaptureGroup = exports.Concat = exports.Choice = exports.RegexpList = exports.RegexpAtom = exports.RegexpAtomToJs = exports.RegexpAtom_toString_Opts = void 0;
+exports.SimpleCharacter = exports.Operator = exports.Assertion = exports.EscapedCharacter = exports.CharacterClass = exports.Literal = exports.Reference = exports.End = exports.Begin = exports.Anchor = exports.Wildcard = exports.LookBehind = exports.LookAhead = exports.LookOut = exports.Cardinality = exports.Empty = exports.SpecialGroup = exports.CaptureGroup = exports.Concat = exports.Choice = exports.RegexpList = exports.RegexpAtom = exports.RegexpAtomToJs = exports.RegexpAtom_toString_Opts = void 0;
 class RegexpAtom_toString_Opts {
     constructor({ groups, debug, }) {
         this.groups = groups;
@@ -10,7 +10,10 @@ class RegexpAtom_toString_Opts {
 exports.RegexpAtom_toString_Opts = RegexpAtom_toString_Opts;
 class RegexpAtomToJs extends RegexpAtom_toString_Opts {
     escapeLiteral(literal) {
-        return literal.replace(/([.*+?^${}()|[\]\/\\])/g, '\\$1').replace(/\\\\u([a-fA-F0-9]{4})/g, '\\u$1');
+        return literal
+            .replace(/([.*+?^${}()|[\]\/\\])/g, '\\$1')
+            .replace(/\\\\u([a-fA-F0-9]{4})/g, '\\u$1')
+            .replace(/\n/g, "\\n");
         // return literal.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     }
     escapeCharacterClass(literal) {
@@ -191,10 +194,18 @@ class EscapedCharacter extends RegexpAtom {
     }
     getPrecedence() { return 7; }
     toString999(opts, _parentPrecedence) {
-        return '\\' + opts.escapeLiteral(this.escapedChar);
+        return /*opts.escapeLiteral(*/ '\\' + this.escapedChar;
     }
 }
 exports.EscapedCharacter = EscapedCharacter;
+class Assertion extends EscapedCharacter {
+    constructor(char) { super(char); }
+}
+exports.Assertion = Assertion;
+class Operator extends EscapedCharacter {
+    constructor(char) { super(char); }
+}
+exports.Operator = Operator;
 class SimpleCharacter extends RegexpAtom {
     constructor(simpleChar) {
         super();

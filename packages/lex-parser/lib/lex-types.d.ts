@@ -115,6 +115,12 @@ export declare class EscapedCharacter extends RegexpAtom {
     getPrecedence(): number;
     toString999(opts: RegexpAtom_toString_Opts, _parentPrecedence: number): string;
 }
+export declare class Assertion extends EscapedCharacter {
+    constructor(char: string);
+}
+export declare class Operator extends EscapedCharacter {
+    constructor(char: string);
+}
 export declare class SimpleCharacter extends RegexpAtom {
     simpleChar: string;
     constructor(simpleChar: string);

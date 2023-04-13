@@ -27,7 +27,10 @@ export abstract class RegexpAtom_toString_Opts {
 
 export class RegexpAtomToJs extends RegexpAtom_toString_Opts {
   escapeLiteral (literal: string): string {
-    return literal.replace(/([.*+?^${}()|[\]\/\\])/g, '\\$1').replace(/\\\\u([a-fA-F0-9]{4})/g,'\\u$1');
+    return literal
+      .replace(/([.*+?^${}()|[\]\/\\])/g, '\\$1')
+      .replace(/\\\\u([a-fA-F0-9]{4})/g,'\\u$1')
+      .replace(/\n/g, "\\n");
     // return literal.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   }
   escapeCharacterClass (literal: string): string {
@@ -203,9 +206,18 @@ export class EscapedCharacter extends RegexpAtom {
   ) { super(); }
   getPrecedence (): number { return 7; }
   toString999 (opts: RegexpAtom_toString_Opts, _parentPrecedence: number) {
-    return '\\' + opts.escapeLiteral(this.escapedChar);
+    return /*opts.escapeLiteral(*/ '\\' + this.escapedChar;
   }
 }
+
+export class Assertion extends EscapedCharacter {
+  constructor (char: string) { super(char); }
+}
+
+export class Operator extends EscapedCharacter {
+  constructor (char: string) { super(char); }
+}
+
 
 export class SimpleCharacter extends RegexpAtom {
   constructor (
