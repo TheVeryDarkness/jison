@@ -10,7 +10,14 @@ function read (p, file) {
 describe("lex-parser", () => {
 
   it("test lex grammar with macros", () => {
-    const lexgrammar = 'D [0-9]\nID [a-zA-Z][a-zA-Z0-9]+\n%%\n\n{D}"ohhai" {print(9);}\n"{" return \'{\';';
+    const lexgrammar = `
+D [0-9]
+ID [a-zA-Z][a-zA-Z0-9]+
+%%
+
+{D}"ohhai" {print(9);}
+"{" return '{';
+`;
     const expected = {
       macros: {"D": "[0-9]", "ID": "[a-zA-Z][a-zA-Z0-9]+"},
       rules: [
@@ -23,7 +30,11 @@ describe("lex-parser", () => {
   });
 
   it("test escaped chars", () => {
-    const lexgrammar = '%%\n"\\n"+ {return \'NL\';}\n\\n+ {return \'NL2\';}\n\\s+ {/* skip */}';
+    const lexgrammar = `
+%%
+"\\n"+ {return 'NL';}
+\\n+ {return 'NL2';}
+\\s+ {/* skip */}`;
     const expected = {
       rules: [
         ["\\\\n+", "return 'NL';"],
@@ -36,7 +47,14 @@ describe("lex-parser", () => {
   });
 
   it("test advanced", () => {
-    const lexgrammar = '%%\n$ {return \'EOF\';}\n. {/* skip */}\n"stuff"*/("{"|";") {/* ok */}\n(.+)[a-z]{1,2}"hi"*? {/* skip */}\n';
+    const lexgrammar = `
+%%
+$ {return 'EOF';}
+. {/* skip */}
+"stuff"*/("{"|";") {/* ok */}
+(.+)[a-z]{1,2}"hi"*? {/* skip */}
+
+`;
     const expected = {
       rules: [
         ["$", "return 'EOF';"],
@@ -50,7 +68,12 @@ describe("lex-parser", () => {
   });
 
   it("test [^\\]]", () => {
-    const lexgrammar = '%%\n"["[^\\]]"]" {return true;}\n\'f"oo\\\'bar\'  {return \'baz2\';}\n"fo\\"obar"  {return \'baz\';}\n';
+    const lexgrammar = `
+%%
+"["[^\\]]"]" {return true;}
+'f"oo\\'bar'  {return 'baz2';}
+"fo\\"obar"  {return 'baz';}
+`;
     const expected = {
       rules: [
         ["\\[[^\\]]\\]", "return true;"],
@@ -63,7 +86,12 @@ describe("lex-parser", () => {
   });
 
   it("test multiline action", () => {
-    const lexgrammar = '%%\n"["[^\\]]"]" %{\nreturn true;\n%}\n';
+    const lexgrammar = `
+%%
+"["[^\\]]"]" %{
+return true;
+%}
+`;
     const expected = {
       rules: [
         ["\\[[^\\]]\\]", "\nreturn true;\n"]
@@ -74,7 +102,12 @@ describe("lex-parser", () => {
   });
 
   it("test multiline action with single braces", () => {
-    const lexgrammar = '%%\n"["[^\\]]"]" {\nconst b={};return true;\n}\n';
+    const lexgrammar = `
+%%
+"["[^\\]]"]" {
+const b={};return true;
+}
+`;
     const expected = {
       rules: [
         ["\\[[^\\]]\\]", "\nconst b={};return true;\n"]
@@ -85,7 +118,12 @@ describe("lex-parser", () => {
   });
 
   it("test multiline action with brace in a multi-line-comment", () => {
-    const lexgrammar = '%%\n"["[^\\]]"]" {\nconst b={}; /* { */ return true;\n}\n';
+    const lexgrammar = `
+%%
+"["[^\\]]"]" {
+const b={}; /* { */ return true;
+}
+`;
     const expected = {
       rules: [
         ["\\[[^\\]]\\]", "\nconst b={}; /* { */ return true;\n"]
@@ -96,7 +134,13 @@ describe("lex-parser", () => {
   });
 
   it("test multiline action with brace in a single-line-comment", () => {
-    const lexgrammar = '%%\n"["[^\\]]"]" {\nconst b={}; // { \nreturn 2 / 3;\n}\n';
+    const lexgrammar = `
+%%
+"["[^\\]]"]" {
+const b={}; // { 
+return 2 / 3;
+}
+`;
     const expected = {
       rules: [
         ["\\[[^\\]]\\]", "\nconst b={}; // { \nreturn 2 / 3;\n"]
@@ -107,7 +151,13 @@ describe("lex-parser", () => {
   });
 
   it("test multiline action with braces in strings", () => {
-    const lexgrammar = '%%\n"["[^\\]]"]" {\nconst b=\'{\' + "{"; // { \nreturn 2 / 3;\n}\n';
+    const lexgrammar = `
+%%
+"["[^\\]]"]" {
+const b='{' + "{"; // { 
+return 2 / 3;
+}
+`;
     const expected = {
       rules: [
         ["\\[[^\\]]\\]", "\nconst b='{' + \"{\"; // { \nreturn 2 / 3;\n"]
@@ -118,7 +168,13 @@ describe("lex-parser", () => {
   });
 
   it("test multiline action with braces in regexp", () => {
-    const lexgrammar = '%%\n"["[^\\]]"]" {\nconst b=/{/; // { \nreturn 2 / 3;\n}\n';
+    const lexgrammar = `
+%%
+"["[^\\]]"]" {
+const b=/{/; // { 
+return 2 / 3;
+}
+`;
     const expected = {
       rules: [
         ["\\[[^\\]]\\]", "\nconst b=/{/; // { \nreturn 2 / 3;\n"]
@@ -129,7 +185,17 @@ describe("lex-parser", () => {
   });
 
   it("test include", () => {
-    const lexgrammar = '\nRULE [0-9]\n\n%{\n hi <stuff> \n%}\n%%\n"["[^\\]]"]" %{\nreturn true;\n%}\n';
+    const lexgrammar = `
+RULE [0-9]
+
+%{
+ hi <stuff> 
+%}
+%%
+"["[^\\]]"]" %{
+return true;
+%}
+`;
     const expected = {
       macros: {"RULE": "[0-9]"},
       actionInclude: "\n hi <stuff> \n",
@@ -162,7 +228,10 @@ describe("lex-parser", () => {
   });
 
   it("test advanced", () => {
-    const lexgrammar = '%%\n"stuff"*/!("{"|";") {/* ok */}\n';
+    const lexgrammar = `
+%%
+"stuff"*/!("{"|";") {/* ok */}
+`;
     const expected = {
       rules: [
         ["stuff*(?!(\\{|;))", "/* ok */"],
@@ -173,11 +242,15 @@ describe("lex-parser", () => {
   });
 
   it("test start conditions", () => {
-    const lexgrammar = '%s TEST TEST2\n%x EAT\n%%\n'+
-        '"enter-test" {this.begin(\'TEST\');}\n'+
-        '<TEST,EAT>"x" {return \'T\';}\n'+
-        '<*>"z" {return \'Z\';}\n'+
-        '<TEST>"y" {this.begin(\'INITIAL\'); return \'TY\';}';
+    const lexgrammar = `
+%s TEST TEST2
+%x EAT
+%%
+"enter-test" {this.begin('TEST');}
+<TEST,EAT>"x" {return 'T';}
+<*>"z" {return 'Z';}
+<TEST>"y" {this.begin('INITIAL'); return 'TY';}
+`;
     const expected = {
       startConditions: {
         "TEST": 0,
@@ -196,7 +269,11 @@ describe("lex-parser", () => {
   });
 
   it("test no brace action", () => {
-    const lexgrammar = '%%\n"["[^\\]]"]" return true;\n"x" return 1;';
+    const lexgrammar = `
+%%
+"["[^\\]]"]" return true;
+"x" return 1;
+`;
     const expected = {
       rules: [
         ["\\[[^\\]]\\]", "return true;"],
@@ -208,7 +285,10 @@ describe("lex-parser", () => {
   });
 
   it("test quote escape", () => {
-    const lexgrammar = '%%\n\\"\\\'"x" return 1;';
+    const lexgrammar = `
+%%
+\\"\\'"x" return 1;
+`;
     const expected = {
       rules: [
         ["\"'x\\b", "return 1;"]
@@ -218,18 +298,15 @@ describe("lex-parser", () => {
     expect(lex.parse(lexgrammar)).toEqual(expected);
   });
 
-  /*
-%%
-\"\'\\\*\i return 1;
-"a"\b return 2;
-\cA {}
-\012 {}
-\xFF {}
-
-{"l":{"l":{"l":{"l":{"literal":"\""},"r":{"literal":"'"}},"r":{"escapedChar":"\\"}},"r":{"escapedChar":"*"}},"r":{"literal":"i"}}
-   */
   it("test escape things", () => {
-    const lexgrammar = '%%\n\\"\\\'\\\\\\*\\i return 1;\n"a"\\b return 2;\n\\cA {}\n\\012 {}\n\\xFF {}';
+    const lexgrammar = `
+%%
+\\"\\'\\\\\\*\\i return 1;
+"a"\\b return 2;
+\\cA {}
+\\012 {}
+\\xFF {}
+`;
     const expected = {
       rules: [
         ["\"'\\\\\\*i\\b", "return 1;"], // "'\\\*i\b
@@ -244,7 +321,9 @@ describe("lex-parser", () => {
   });
 
   xit("test unicode encoding", () => { // need a start state for inside ""s
-    const lexgrammar = '%%\n"\\u03c0" return 1;';
+    const lexgrammar = `
+%%
+"\\u03c0" return 1;`;
     const expected = {
       rules: [
         ["\\u03c0", "return 1;"]
@@ -255,7 +334,9 @@ describe("lex-parser", () => {
   });
 
   it("test unicode", () => {
-    const lexgrammar = '%%\n"π" return 1;'; // GREEK SMALL LETTER PI
+    const lexgrammar = `
+%%
+"π" return 1;`; // GREEK SMALL LETTER PI
     const expected = {
       rules: [
         ["\\u03c0", "return 1;"] // \uxxxx representation of pi
@@ -265,15 +346,12 @@ describe("lex-parser", () => {
     expect(lex.parse(lexgrammar)).toEqual(expected);
   });
 
-  /*
-%%
-\'([^\\']+|\\(\n|.))*?\' return 1;
-   */
   it("test bugs", () => {
-    const lexgrammar = '%%\n\\\'([^\\\\\']+|\\\\(\\n|.))*?\\\' return 1;';
+    const lexgrammar = `
+%%
+\\\'([^\\\\\']+|\\\\(\\n|.))*?\\\' return 1;`;
     const expected = {
       rules: [
-        // '([^\\']+|\\(\n|.))*?'
         ["'([^\\\\']+|\\\\(\\n|.))*?'", "return 1;"]
       ]
     };
@@ -282,7 +360,9 @@ describe("lex-parser", () => {
   });
 
   it("test special groupings", () => {
-    const lexgrammar = '%%\n(?:"foo"|"bar")\\(\\) return 1;';
+    const lexgrammar = `
+%%
+(?:"foo"|"bar")\\(\\) return 1;`;
     const expected = {
       rules: [
         ["(?:foo|bar)\\(\\)", "return 1;"]
@@ -293,7 +373,9 @@ describe("lex-parser", () => {
   });
 
   it("test trailing code include", () => {
-    const lexgrammar = '%%"foo"  {return bar;}\n%% const bar = 1;';
+    const lexgrammar = `
+%%"foo"  {return bar;}
+%% const bar = 1;`;
     const expected = {
       rules: [
         ['foo\\b', "return bar;"]
@@ -305,7 +387,9 @@ describe("lex-parser", () => {
   });
 
   it("test empty or regex", () => {
-    const lexgrammar = '%%\n(|"bar")("foo"|)(|) return 1;';
+    const lexgrammar = `
+%%
+(|"bar")("foo"|)(|) return 1;`;
     const expected = {
       rules: [
         ["(|bar)(foo|)(|)", "return 1;"]
@@ -316,7 +400,10 @@ describe("lex-parser", () => {
   });
 
   it("test options", () => {
-    const lexgrammar = '%options flex\n%%\n"foo" return 1;';
+    const lexgrammar = `
+%options flex
+%%
+"foo" return 1;`;
     const expected = {
       rules: [
         ["foo", "return 1;"]
@@ -328,7 +415,9 @@ describe("lex-parser", () => {
   });
 
   it("test unquoted string rules", () => {
-    const lexgrammar = "%%\nfoo* return 1";
+    const lexgrammar = `
+%%
+foo* return 1`;
     const expected = {
       rules: [
         ["foo*", "return 1"]
@@ -339,7 +428,12 @@ describe("lex-parser", () => {
   });
 
   it("test [^\\\\]", () => {
-    const lexgrammar = '%%\n"["[^\\\\]"]" {return true;}\n\'f"oo\\\'bar\'  {return \'baz2\';}\n"fo\\"obar"  {return \'baz\';}\n';
+    const lexgrammar = `
+%%
+"["[^\\\\]"]" {return true;}
+\'f"oo\\\'bar\'  {return \'baz2\';}
+"fo\\"obar"  {return \'baz\';}
+`;
     const expected = {
       rules: [
         ["\\[[^\\\\]\\]", "return true;"],
@@ -352,7 +446,10 @@ describe("lex-parser", () => {
   });
 
   it("test comments", () => {
-    const lexgrammar = "/* */ // foo\n%%\nfoo* return 1";
+    const lexgrammar = `
+/* */ // foo
+%%
+foo* return 1`;
     const expected = {
       rules: [
         ["foo*", "return 1"]
@@ -363,7 +460,10 @@ describe("lex-parser", () => {
   });
 
   it("test rules with trailing escapes", () => {
-    const lexgrammar = '%%\n\\#[^\\n]*\\n {/* ok */}\n';
+    const lexgrammar = `
+%%
+\\#[^\\n]*\\n {/* ok */}
+`;
     const expected = {
       rules: [
         ["#[^\\n]*\\n", "/* ok */"],
@@ -374,7 +474,13 @@ describe("lex-parser", () => {
   });
 
   it("test no brace action with surplus whitespace between rules", () => {
-    const lexgrammar = '%%\n"a" return true;\n  \n"b" return 1;\n   \n';
+    const lexgrammar = `
+%%
+"a" return true;
+  
+"b" return 1;
+   
+`;
     const expected = {
       rules: [
         ["a\\b", "return true;"],
@@ -397,7 +503,16 @@ describe("lex-parser", () => {
   });
 
   it("test braced action with surplus whitespace between rules", () => {
-    const lexgrammar = '%%\n"a" %{  \nreturn true;\n%}  \n  \n"b" %{    return 1;\n%}  \n   \n';
+    const lexgrammar = `
+%%
+"a" %{  
+return true;
+%}  
+  
+"b" %{    return 1;
+%}  
+   
+`;
     const expected = {
       rules: [
         ["a\\b", "  \nreturn true;\n"],
