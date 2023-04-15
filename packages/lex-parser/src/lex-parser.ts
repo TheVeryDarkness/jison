@@ -33,13 +33,6 @@ function decodeEscaped999 (c: string): string { return c;
   }
 }
 
-function prepareString (s: string) {
-    // unescape slashes
-    /* s = s.replace(/\\(.)/g, "$1"); */
-    /* s = encodeRE(s); */
-    return s;
-};
-
 function prepareCharacterClass (s: string) {
     s = s.replace(/\\n/g, "\n");
     s = s.replace(/\\(.)/g, "$1");
@@ -162,12 +155,12 @@ case 30:
 break;
 case 31:
 
-          const compiled = $$[$0];//console.log(JSON.stringify(compiled));
+          const compiled = $$[$0];
           const asStr0 = compiled.toString999(new RegexpAtomToJs({debug: true, groups: 'preserve'}), 0);
           const asStr1 = compiled.toString999(new RegexpAtomToJs({debug: true, groups: 'preserve'}), 0);
           this.$ = asStr0;
           const endsWithIdChar = (this.$.match(/[\w\d]$/) || [])[0];
-          const endsWithEscapedChar = (this.$.match(/\\(r|f|n|t|v|s|b|c[A-Z]|x[0-9A-F]{2}|u[a-fA-F0-9]{4}|[0-7]{1,3})$/) || [])[0];
+          const endsWithEscapedChar = (this.$.match(/\\(r|f|n|t|v|s|b|c[A-Z]|x[0-9a-fA-F]{2}|u[a-fA-F0-9]{4}|[0-7]{1,3})$/) || [])[0];
           if (!(yy.options && yy.options.flex) && endsWithIdChar && !endsWithEscapedChar) {
               this.$ += "\\b";
               // console.log('if', this.$, endsWithIdChar, endsWithEscapedChar);
@@ -183,7 +176,7 @@ case 33:
  this.$ = new Choice($$[$0-1], new Empty()); 
 break;
 case 35:
- this.$ = ''; throw Error("regex_list: empty"); 
+ this.$ = new Empty(); 
 break;
 case 36:
  this.$ = new Concat($$[$0-1], $$[$0]); 
@@ -234,10 +227,10 @@ case 56:
  this.$ = new Operator(yytext.substring(1)); 
 break;
 case 58:
- this.$ = new Literal(prepareString(yytext.substr(1, yytext.length - 2))); 
+ this.$ = new Literal(yytext.substr(1, yytext.length - 2)); 
 break;
 case 59:
- this.$ = new Literal(prepareString(yytext)); 
+ this.$ = new Literal(yytext); 
 break;
         }
     }
@@ -307,11 +300,11 @@ export class LexLexer extends JisonLexer implements JisonLexerApi {
           /^(?:<)/,
           /^(?:\/!)/,
           /^(?:\/)/,
-          /^(?:\\([0-7]{1,3}))/,
-          /^(?:\\(x[0-9A-F]{2}))/,
-          /^(?:\\(u[a-fA-F0-9]{4}))/,
-          /^(?:\\(c[A-Z]))/,
+          /^(?:\\x([0-9A-F]{2}))/,
+          /^(?:\\u([0-9a-fA-F]{4}))/,
+          /^(?:\\c([A-Z]))/,
           /^(?:\\([rfntv]))/,
+          /^(?:\\([0-7]{1,3}))/,
           /^(?:\\([sSbBwWdD]))/,
           /^(?:\\([\\*+()${}|[\]\/.^?]))/,
           /^(?:\\.)/,
@@ -441,15 +434,15 @@ export class LexLexer extends JisonLexer implements JisonLexerApi {
       break;
     case 53:return 41;
       break;
-    case 54:yy_.yytext = parseInt(yy_.yytext.substring(1), 8); return 57;
+    case 54:yy_.yytext = String.fromCharCode(parseInt(yy_.yytext.substring(2), 16)); return 57;
       break;
-    case 55:yy_.yytext = parseInt(yy_.yytext.substring(1), 16); return 57;
+    case 55:yy_.yytext = String.fromCharCode(parseInt(yy_.yytext.substring(2), 16)); return 57;
       break;
-    case 56:yy_.yytext = parseInt(yy_.yytext.substring(1), 16); return 57;
+    case 56:yy_.yytext = String.fromCodePoint(yy_.yytext.charCodeAt(2) - 64);        return 57;
       break;
-    case 57:yy_.yytext = String.fromCodePoint(yy_.yytext.charCodeAt(2) - 64); return 57;
+    case 57:yy_.yytext = decodeStringEscape(yy_.yytext.substring(1));                return 57;
       break;
-    case 58:yy_.yytext = decodeStringEscape(yy_.yytext.substring(1)); return 57;
+    case 58:yy_.yytext = String.fromCharCode(parseInt(yy_.yytext.substring(1),  8)); return 57;
       break;
     case 59:return 53;
       break;

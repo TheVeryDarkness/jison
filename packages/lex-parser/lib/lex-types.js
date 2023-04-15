@@ -8,16 +8,30 @@ class RegexpAtom_toString_Opts {
     }
 }
 exports.RegexpAtom_toString_Opts = RegexpAtom_toString_Opts;
+const ToStrEscape = {
+    '\r': "\\r",
+    '\f': "\\f",
+    '\n': "\\n",
+    '\t': "\\t",
+    '\v': "\\v",
+};
 class RegexpAtomToJs extends RegexpAtom_toString_Opts {
     escapeLiteral(literal) {
-        return literal
-            .replace(/([.*+?^${}()|[\]\/\\])/g, '\\$1')
-            .replace(/\\\\u([a-fA-F0-9]{4})/g, '\\u$1')
-            .replace(/\n/g, "\\n");
-        // return literal.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        return literal.replace(/([\r\f\n\t\v])|([\x00-\x1f\x7f-\xff])|([\u0100-\ufffd])|([.*+?^${}()|[\]\/\\])/g, RegexpAtomToJs.escapeGroupMatch);
     }
     escapeCharacterClass(literal) {
-        return literal.replace(/\n/g, "\\n").replace(/([[\]])/g, '\\$1'); // .replace(/\\\\u([a-fA-F0-9]{4})/g,'\\u$1')
+        return literal.replace(/([\r\f\n\t\v])|([\x00-\x1f\x7f-\xff])|([\u0100-\ufffd])|([[\]\\])/g, RegexpAtomToJs.escapeGroupMatch);
+    }
+    static escapeGroupMatch(text, str, crl, uni, operator) {
+        if (str)
+            return ToStrEscape[str];
+        if (crl)
+            return '\\x' + crl.charCodeAt(0).toString(16).padStart(2, '0');
+        if (uni)
+            return '\\u' + uni.charCodeAt(0).toString(16).padStart(4, '0');
+        if (operator)
+            return '\\' + operator;
+        throw Error(`none of str, crl, uni set in ${arguments}`);
     }
 }
 exports.RegexpAtomToJs = RegexpAtomToJs;
@@ -81,8 +95,7 @@ class SpecialGroup extends RegexpAtom {
     }
     getPrecedence() { return 7; }
     toString999(opts, parentPrecedence) {
-        const ret = '(' + this.specialty + this.list.toString999(opts, parentPrecedence) + ')';
-        console.log(ret);
+        const ret = '(' + this.specialty + this.list.toString999(opts, 0) + ')';
         return ret;
     }
 }

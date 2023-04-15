@@ -32,13 +32,6 @@ function decodeEscaped999(c) {
         default: throw Error(`decodeEscaped(${c})`);
     }
 }
-function prepareString(s) {
-    // unescape slashes
-    /* s = s.replace(/\\(.)/g, "$1"); */
-    /* s = encodeRE(s); */
-    return s;
-}
-;
 function prepareCharacterClass(s) {
     s = s.replace(/\\n/g, "\n");
     s = s.replace(/\\(.)/g, "$1");
@@ -170,12 +163,12 @@ class LexParser extends parser_1.JisonParser {
                 this.$.push($$[$0]);
                 break;
             case 31:
-                const compiled = $$[$0]; //console.log(JSON.stringify(compiled));
+                const compiled = $$[$0];
                 const asStr0 = compiled.toString999(new lex_types_1.RegexpAtomToJs({ debug: true, groups: 'preserve' }), 0);
                 const asStr1 = compiled.toString999(new lex_types_1.RegexpAtomToJs({ debug: true, groups: 'preserve' }), 0);
                 this.$ = asStr0;
                 const endsWithIdChar = (this.$.match(/[\w\d]$/) || [])[0];
-                const endsWithEscapedChar = (this.$.match(/\\(r|f|n|t|v|s|b|c[A-Z]|x[0-9A-F]{2}|u[a-fA-F0-9]{4}|[0-7]{1,3})$/) || [])[0];
+                const endsWithEscapedChar = (this.$.match(/\\(r|f|n|t|v|s|b|c[A-Z]|x[0-9a-fA-F]{2}|u[a-fA-F0-9]{4}|[0-7]{1,3})$/) || [])[0];
                 if (!(yy.options && yy.options.flex) && endsWithIdChar && !endsWithEscapedChar) {
                     this.$ += "\\b";
                     // console.log('if', this.$, endsWithIdChar, endsWithEscapedChar);
@@ -191,8 +184,7 @@ class LexParser extends parser_1.JisonParser {
                 this.$ = new lex_types_1.Choice($$[$0 - 1], new lex_types_1.Empty());
                 break;
             case 35:
-                this.$ = '';
-                throw Error("regex_list: empty");
+                this.$ = new lex_types_1.Empty();
                 break;
             case 36:
                 this.$ = new lex_types_1.Concat($$[$0 - 1], $$[$0]);
@@ -243,10 +235,10 @@ class LexParser extends parser_1.JisonParser {
                 this.$ = new lex_types_1.Operator(yytext.substring(1));
                 break;
             case 58:
-                this.$ = new lex_types_1.Literal(prepareString(yytext.substr(1, yytext.length - 2)));
+                this.$ = new lex_types_1.Literal(yytext.substr(1, yytext.length - 2));
                 break;
             case 59:
-                this.$ = new lex_types_1.Literal(prepareString(yytext));
+                this.$ = new lex_types_1.Literal(yytext);
                 break;
         }
     }
@@ -312,11 +304,11 @@ class LexLexer extends lexer_1.JisonLexer {
             /^(?:<)/,
             /^(?:\/!)/,
             /^(?:\/)/,
-            /^(?:\\([0-7]{1,3}))/,
-            /^(?:\\(x[0-9A-F]{2}))/,
-            /^(?:\\(u[a-fA-F0-9]{4}))/,
-            /^(?:\\(c[A-Z]))/,
+            /^(?:\\x([0-9A-F]{2}))/,
+            /^(?:\\u([0-9a-fA-F]{4}))/,
+            /^(?:\\c([A-Z]))/,
             /^(?:\\([rfntv]))/,
+            /^(?:\\([0-7]{1,3}))/,
             /^(?:\\([sSbBwWdD]))/,
             /^(?:\\([\\*+()${}|[\]\/.^?]))/,
             /^(?:\\.)/,
@@ -507,23 +499,23 @@ class LexLexer extends lexer_1.JisonLexer {
                 return 41;
                 break;
             case 54:
-                yy_.yytext = parseInt(yy_.yytext.substring(1), 8);
+                yy_.yytext = String.fromCharCode(parseInt(yy_.yytext.substring(2), 16));
                 return 57;
                 break;
             case 55:
-                yy_.yytext = parseInt(yy_.yytext.substring(1), 16);
+                yy_.yytext = String.fromCharCode(parseInt(yy_.yytext.substring(2), 16));
                 return 57;
                 break;
             case 56:
-                yy_.yytext = parseInt(yy_.yytext.substring(1), 16);
-                return 57;
-                break;
-            case 57:
                 yy_.yytext = String.fromCodePoint(yy_.yytext.charCodeAt(2) - 64);
                 return 57;
                 break;
-            case 58:
+            case 57:
                 yy_.yytext = decodeStringEscape(yy_.yytext.substring(1));
+                return 57;
+                break;
+            case 58:
+                yy_.yytext = String.fromCharCode(parseInt(yy_.yytext.substring(1), 8));
                 return 57;
                 break;
             case 59:

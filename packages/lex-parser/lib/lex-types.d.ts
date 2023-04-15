@@ -10,9 +10,11 @@ export declare abstract class RegexpAtom_toString_Opts {
     abstract escapeLiteral(literal: string): string;
     abstract escapeCharacterClass(literal: string): string;
 }
+type StrEscapes = '\r' | '\f' | '\n' | '\t' | '\v';
 export declare class RegexpAtomToJs extends RegexpAtom_toString_Opts {
     escapeLiteral(literal: string): string;
     escapeCharacterClass(literal: string): string;
+    protected static escapeGroupMatch(text: string, str: StrEscapes | undefined, crl: string | undefined, uni: string | undefined, operator: string | undefined): string;
 }
 export declare abstract class RegexpAtom {
     abstract toString999(opts: RegexpAtom_toString_Opts, parentPrecedence: number): string;

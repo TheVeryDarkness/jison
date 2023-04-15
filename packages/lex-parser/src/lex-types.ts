@@ -25,16 +25,28 @@ export abstract class RegexpAtom_toString_Opts {
   abstract escapeCharacterClass (literal: string): string;
 }
 
+type StrEscapes = '\r' | '\f' | '\n' | '\t' | '\v';
+type StrsEscaped = '\\r' | '\\f' | '\\n' | '\\t' | '\\v';
+const ToStrEscape: Record<StrEscapes, StrsEscaped>  = {
+  '\r': "\\r",
+  '\f': "\\f",
+  '\n': "\\n",
+  '\t': "\\t",
+  '\v': "\\v",
+};
 export class RegexpAtomToJs extends RegexpAtom_toString_Opts {
   escapeLiteral (literal: string): string {
-    return literal
-      .replace(/([.*+?^${}()|[\]\/\\])/g, '\\$1')
-      .replace(/\\\\u([a-fA-F0-9]{4})/g,'\\u$1')
-      .replace(/\n/g, "\\n");
-    // return literal.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    return literal.replace(/([\r\f\n\t\v])|([\x00-\x1f\x7f-\xff])|([\u0100-\ufffd])|([.*+?^${}()|[\]\/\\])/g, RegexpAtomToJs.escapeGroupMatch);
   }
   escapeCharacterClass (literal: string): string {
-    return literal.replace(/\n/g, "\\n").replace(/([[\]])/g, '\\$1'); // .replace(/\\\\u([a-fA-F0-9]{4})/g,'\\u$1')
+    return literal.replace(/([\r\f\n\t\v])|([\x00-\x1f\x7f-\xff])|([\u0100-\ufffd])|([[\]\\])/g, RegexpAtomToJs.escapeGroupMatch);
+  }
+  protected static escapeGroupMatch (text: string, str: StrEscapes|undefined, crl: string|undefined, uni: string|undefined, operator: string|undefined) {
+    if (str) return ToStrEscape[str];
+    if (crl) return '\\x' + crl.charCodeAt(0).toString(16).padStart(2, '0');
+    if (uni) return '\\u' + uni.charCodeAt(0).toString(16).padStart(4, '0');
+    if (operator) return '\\' + operator;
+    throw Error(`none of str, crl, uni set in ${arguments}`);
   }
 }
 
@@ -98,8 +110,7 @@ export class SpecialGroup extends RegexpAtom {
   ) { super(); }
   getPrecedence (): number { return 7; }
   toString999 (opts: RegexpAtom_toString_Opts, parentPrecedence: number) {
-    const ret = '(' + this.specialty + this.list.toString999(opts, parentPrecedence) + ')';
-    console.log(ret);
+    const ret = '(' + this.specialty + this.list.toString999(opts, 0) + ')';
     return ret;
   }
 }

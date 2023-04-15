@@ -7,9 +7,9 @@ OCTAL             [0-7]{1,3}
 STR_ESCAPE        [rfntv]
 REGEXP_ASSERTIONS [sSbBwWdD]
 OPERATORS         [\\*+()${}|[\]\/.^?]
-CONTROL_CHARS     "c"[A-Z]
-HEX               "x"[0-9A-F]{2}
-UNICODE           "u"[a-fA-F0-9]{4}
+HEX               [0-9A-F]{2}
+UNICODE           [0-9a-fA-F]{4}
+CONTROL_CHARS     [A-Z]
 
 %s indented trail rules
 %x code start_condition options conditions action
@@ -78,11 +78,11 @@ UNICODE           "u"[a-fA-F0-9]{4}
 "<"                             this.begin('conditions'); return '<';
 "/!"                            return '/!';
 "/"                             return '/';
-"\\"{OCTAL}                     yytext = parseInt(yytext.substring(1), 8); return 'CHARACTER_LIT';
-"\\"{HEX}                       yytext = parseInt(yytext.substring(1), 16); return 'CHARACTER_LIT';
-"\\"{UNICODE}                   yytext = parseInt(yytext.substring(1), 16); return 'CHARACTER_LIT';
-"\\"{CONTROL_CHARS}             yytext = String.fromCodePoint(yytext.charCodeAt(2) - 64); return 'CHARACTER_LIT';
-"\\"{STR_ESCAPE}                yytext = decodeStringEscape(yytext.substring(1)); return 'CHARACTER_LIT';
+"\\x"{HEX}                      yytext = String.fromCharCode(parseInt(yytext.substring(2), 16)); return 'CHARACTER_LIT';
+"\\u"{UNICODE}                  yytext = String.fromCharCode(parseInt(yytext.substring(2), 16)); return 'CHARACTER_LIT';
+"\\c"{CONTROL_CHARS}            yytext = String.fromCodePoint(yytext.charCodeAt(2) - 64);        return 'CHARACTER_LIT';
+"\\"{STR_ESCAPE}                yytext = decodeStringEscape(yytext.substring(1));                return 'CHARACTER_LIT';
+"\\"{OCTAL}                     yytext = String.fromCharCode(parseInt(yytext.substring(1),  8)); return 'CHARACTER_LIT';
 "\\"{REGEXP_ASSERTIONS}         return 'ASSERTION';
 "\\"{OPERATORS}                 return 'OPERATOR';
 "\\".                           yytext = yytext.replace(/^\\/g,''); return 'CHARACTER_LIT'; // escaped special chars like '"'s
@@ -256,12 +256,12 @@ name_list
 regex
     : regex_list
         {
-          const compiled = $1;//console.log(JSON.stringify(compiled));
+          const compiled = $1;
           const asStr0 = compiled.toString999(new RegexpAtomToJs({debug: true, groups: 'preserve'}), 0);
           const asStr1 = compiled.toString999(new RegexpAtomToJs({debug: true, groups: 'preserve'}), 0);
           $$ = asStr0;
           const endsWithIdChar = ($$.match(/[\w\d]$/) || [])[0];
-          const endsWithEscapedChar = ($$.match(/\\(r|f|n|t|v|s|b|c[A-Z]|x[0-9A-F]{2}|u[a-fA-F0-9]{4}|[0-7]{1,3})$/) || [])[0];
+          const endsWithEscapedChar = ($$.match(/\\(r|f|n|t|v|s|b|c[A-Z]|x[0-9a-fA-F]{2}|u[a-fA-F0-9]{4}|[0-7]{1,3})$/) || [])[0];
           if (!(yy.options && yy.options.flex) && endsWithIdChar && !endsWithEscapedChar) {
               $$ += "\\b";
               // console.log('if', $$, endsWithIdChar, endsWithEscapedChar);
@@ -278,7 +278,7 @@ regex_list
         { $$ = new Choice($1, new Empty()); }
     | regex_concat
     |
-        { $$ = ''; throw Error("regex_list: empty"); }
+        { $$ = new Empty(); }
     ;
 
 regex_concat
@@ -340,8 +340,8 @@ range_regex
 
 string
     : STRING_LIT
-        { $$ = new Literal(prepareString(yytext.substr(1, yytext.length - 2))); }
-    | CHARACTER_LIT { $$ = new Literal(prepareString(yytext)); }
+        { $$ = new Literal(yytext.substr(1, yytext.length - 2)); }
+    | CHARACTER_LIT { $$ = new Literal(yytext); }
     ;
 
 %%
@@ -369,13 +369,6 @@ function decodeEscaped999 (c: string): string { return c;
   default: throw Error(`decodeEscaped(${c})`);
   }
 }
-
-function prepareString (s: string) {
-    // unescape slashes
-    /* s = s.replace(/\\(.)/g, "$1"); */
-    /* s = encodeRE(s); */
-    return s;
-};
 
 function prepareCharacterClass (s: string) {
     s = s.replace(/\\n/g, "\n");
