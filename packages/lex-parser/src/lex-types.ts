@@ -11,30 +11,121 @@ interface RegexpAtom_toString_Arg {
   debug: boolean,
 }
 
-export abstract class RegexpAtom_toString_Opts {
+export abstract class RegexpAtomVisitor {
+  abstract visit_RegexpList (visitee: RegexpList, ...args: any[]): any;
+  abstract visit_CaptureGroup (visitee: CaptureGroup, ...args: any[]): any;
+  abstract visit_SpecialGroup (visitee: SpecialGroup, ...args: any[]): any;
+  abstract visit_Empty (visitee: Empty, ...args: any[]): any;
+  abstract visit_Cardinality (visitee: Cardinality, ...args: any[]): any;
+  abstract visit_LookOut (visitee: LookOut, ...args: any[]): any;
+  abstract visit_Wildcard (visitee: Wildcard, ...args: any[]): any;
+  abstract visit_Anchor (visitee: Anchor, ...args: any[]): any;
+  abstract visit_Reference (visitee: Reference, ...args: any[]): any;
+  abstract visit_Literal (visitee: Literal, ...args: any[]): any;
+  abstract visit_CharacterClass (visitee: CharacterClass, ...args: any[]): any;
+  abstract visit_EscapedCharacter (visitee: EscapedCharacter, ...args: any[]): any;
+  abstract visit_SimpleCharacter (visitee: SimpleCharacter, ...args: any[]): any;
+}
+
+export abstract class RegexpAtom_toString_Visitor extends RegexpAtomVisitor {
   public groups: GroupControl
   public debug: boolean
   constructor ({
     groups,
     debug,
   }: RegexpAtom_toString_Arg) {
+    super();
     this.groups = groups;
     this.debug = debug;
   }
+
+  visit_RegexpList (visitee: RegexpList, parentPrecedence: number, ...args: any[]): any {
+    const {needParen, myPrecedence} = this.getNewPrec(visitee, parentPrecedence);
+    const innerStr = visitee.l.visit999(this, myPrecedence)
+      + visitee.getDelim()
+      + visitee.r.visit999(this, myPrecedence);
+    return needParen
+      ? '(' + innerStr + ')'
+      : innerStr;
+  }
+  visit_CaptureGroup (visitee: CaptureGroup, parentPrecedence: number, ...args: any[]): any {
+    switch (this.groups) {
+      case "simplify": return visitee.list.visit999(this, parentPrecedence)
+      case "preserve": return '(' + visitee.list.visit999(this, 1) + ')';
+      case "capture":
+      default: return '(' + visitee.list.visit999(this, 1) + ')';
+    }
+  }
+  visit_SpecialGroup (visitee: SpecialGroup, parentPrecedence: number, ...args: any[]): any {
+    const ret = '(' + visitee.specialty + visitee.list.visit999(this, 0) + ')';
+    return ret;
+  }
+  visit_Empty (visitee: Empty, parentPrecedence: number, ...args: any[]): any {
+    return "";
+  }
+  visit_Cardinality (visitee: Cardinality, parentPrecedence: number, ...args: any[]): any {
+    const {needParen, myPrecedence} = this.getNewPrec(visitee, parentPrecedence);
+    const innerStr = visitee.repeated.visit999(this, myPrecedence) + visitee.card;
+    return needParen
+      ? '(' + innerStr + ')'
+      : innerStr;
+  }
+  visit_LookOut (visitee: LookOut, parentPrecedence: number, ...args: any[]): any {
+    const {needParen, myPrecedence} = this.getNewPrec(visitee, parentPrecedence);
+    const innerStr = visitee.lookFor.visit999(this, parentPrecedence);
+    return '(' + visitee.getOperator() + innerStr + ')';
+  }
+  visit_Wildcard (visitee: Wildcard, parentPrecedence: number, ...args: any[]): any {
+    return '.';
+  }
+  visit_Anchor (visitee: Anchor, parentPrecedence: number, ...args: any[]): any {
+    return visitee.getOperator();
+  }
+  visit_Reference (visitee: Reference, parentPrecedence: number, ...args: any[]): any {
+    if (this.debug) return `{${visitee.ref}}`
+    throw Error('Reference.visit999() should never be called (unless you\'re debugging)');
+  }
+  visit_Literal (visitee: Literal, parentPrecedence: number, ...args: any[]): any {
+    return this.escapeLiteral(visitee.literal);
+  }
+  visit_CharacterClass (visitee: CharacterClass, parentPrecedence: number, ...args: any[]): any {
+    return '[' + this.escapeCharacterClass(visitee.charClass) + ']';
+  }
+  visit_EscapedCharacter (visitee: EscapedCharacter, parentPrecedence: number, ...args: any[]): any {
+    return '\\' + visitee.escapedChar;
+  }
+  visit_SimpleCharacter (visitee: SimpleCharacter, parentPrecedence: number, ...args: any[]): any {
+    return this.escapeLiteral(visitee.simpleChar);
+  }
+
+  getNewPrec (visitee: RegexpAtom, parentPrecedence: number) {
+    const myPrecedence = visitee.getPrecedence();
+    return parentPrecedence > myPrecedence
+      ? { needParen: true, myPrecedence }
+      : { needParen: false, myPrecedence };
+  }
+
   abstract escapeLiteral (literal: string): string;
   abstract escapeCharacterClass (literal: string): string;
 }
 
-type StrEscapes = '\r' | '\f' | '\n' | '\t' | '\v';
-type StrsEscaped = '\\r' | '\\f' | '\\n' | '\\t' | '\\v';
-const ToStrEscape: Record<StrEscapes, StrsEscaped>  = {
+export type StrEscapes = '\r' | '\f' | '\n' | '\t' | '\v';
+export type StrsEscaped = '\\r' | '\\f' | '\\n' | '\\t' | '\\v';
+export const ToStrEscape: Record<StrEscapes, StrsEscaped>  = {
   '\r': "\\r",
   '\f': "\\f",
   '\n': "\\n",
   '\t': "\\t",
   '\v': "\\v",
 };
-export class RegexpAtomToJs extends RegexpAtom_toString_Opts {
+export const fromStrEscape: Record<StrsEscaped, StrEscapes>  = {
+  "\\r": '\r',
+  "\\f": '\f',
+  "\\n": '\n',
+  "\\t": '\t',
+  "\\v": '\v',
+};
+export class RegexpAtomToJs extends RegexpAtom_toString_Visitor {
   escapeLiteral (literal: string): string {
     return literal.replace(/([\r\f\n\t\v])|([\x00-\x1f\x7f-\xff])|([\u0100-\ufffd])|([.*+?^${}()|[\]\/\\])/g, RegexpAtomToJs.escapeGroupMatch);
   }
@@ -51,14 +142,8 @@ export class RegexpAtomToJs extends RegexpAtom_toString_Opts {
 }
 
 export abstract class RegexpAtom {
-  abstract toString999 (opts: RegexpAtom_toString_Opts, parentPrecedence: number): string;
+  abstract visit999 (visitor: RegexpAtomVisitor, ...args: any[]): string;
   abstract getPrecedence (): number;
-  getNewPrec (parentPrecedence: number) {
-    const myPrecedence = this.getPrecedence();
-    return parentPrecedence > myPrecedence
-      ? { needParen: true, myPrecedence }
-      : { needParen: false, myPrecedence };
-  }
 }
 
 export abstract class RegexpList extends RegexpAtom {
@@ -66,14 +151,8 @@ export abstract class RegexpList extends RegexpAtom {
     public l: RegexpAtom,
     public r: RegexpAtom,
   ) { super(); }
-  toString999 (opts: RegexpAtom_toString_Opts, parentPrecedence: number): string {
-    const {needParen, myPrecedence} = this.getNewPrec(parentPrecedence);
-    const innerStr = this.l.toString999(opts, myPrecedence)
-      + this.getDelim()
-      + this.r.toString999(opts, myPrecedence);
-    return needParen
-      ? '(' + innerStr + ')'
-      : innerStr;
+  visit999 (visitor: RegexpAtomVisitor, ...args: any[]): any {
+    return visitor.visit_RegexpList(this, args);
   }
   abstract getDelim (): string;
 }
@@ -93,13 +172,8 @@ export class CaptureGroup extends RegexpAtom {
     public list: RegexpList,
   ) { super(); }
   getPrecedence (): number { return 7; }
-  toString999 (opts: RegexpAtom_toString_Opts, parentPrecedence: number) {
-    switch (opts.groups) {
-      case "simplify": return this.list.toString999(opts, parentPrecedence)
-      case "preserve": return '(' + this.list.toString999(opts, 1) + ')';
-      case "capture":
-      default: return '(' + this.list.toString999(opts, 1) + ')';
-    }
+  visit999 (visitor: RegexpAtomVisitor, ...args: any[]): any {
+    return visitor.visit_CaptureGroup(this, args);
   }
 }
 
@@ -109,15 +183,16 @@ export class SpecialGroup extends RegexpAtom {
     public list: RegexpList,
   ) { super(); }
   getPrecedence (): number { return 7; }
-  toString999 (opts: RegexpAtom_toString_Opts, parentPrecedence: number) {
-    const ret = '(' + this.specialty + this.list.toString999(opts, 0) + ')';
-    return ret;
+  visit999 (visitor: RegexpAtomVisitor, ...args: any[]): any {
+    return visitor.visit_SpecialGroup(this, args);
   }
 }
 
 export class Empty extends RegexpAtom {
   getPrecedence (): number { return 6; }
-  toString999 (opts: RegexpAtom_toString_Opts, parentPrecedence: number) { return ""; }
+  visit999 (visitor: RegexpAtomVisitor, ...args: any[]): any {
+    return visitor.visit_Empty(this, args);
+  }
 }
 
 export class Cardinality extends RegexpAtom {
@@ -126,12 +201,8 @@ export class Cardinality extends RegexpAtom {
     public card: string,
   ) { super(); }
   getPrecedence (): number { return 4; }
-  toString999 (opts: RegexpAtom_toString_Opts, parentPrecedence: number) {
-    const {needParen, myPrecedence} = this.getNewPrec(parentPrecedence);
-    const innerStr = this.repeated.toString999(opts, myPrecedence) + this.card;
-    return needParen
-      ? '(' + innerStr + ')'
-      : innerStr;
+  visit999 (visitor: RegexpAtomVisitor, ...args: any[]): any {
+    return visitor.visit_Cardinality(this, args);
   }
 }
 
@@ -140,10 +211,8 @@ export abstract class LookOut extends RegexpAtom {
     public lookFor: RegexpAtom,
   ) { super(); }
   getPrecedence (): number { return 7; }
-  toString999 (opts: RegexpAtom_toString_Opts, parentPrecedence: number) {
-    const {needParen, myPrecedence} = this.getNewPrec(parentPrecedence);
-    const innerStr = this.lookFor.toString999(opts, parentPrecedence);
-    return '(' + this.getOperator() + innerStr + ')';
+  visit999 (visitor: RegexpAtomVisitor, ...args: any[]): any {
+    return visitor.visit_LookOut(this, args);
   }
   abstract getOperator (): string;
 }
@@ -160,16 +229,16 @@ export class LookBehind extends LookOut {
 
 export class Wildcard extends RegexpAtom {
   getPrecedence (): number { return 7; }
-  toString999 (opts: RegexpAtom_toString_Opts, parentPrecedence: number) {
-    return '.';
+  visit999 (visitor: RegexpAtomVisitor, ...args: any[]): any {
+    return visitor.visit_Wildcard(this, args);
   }
 }
 
 export abstract class Anchor extends RegexpAtom {
   getPrecedence (): number { return 7; }
   abstract getOperator (): string;
-  toString999 (_opts: RegexpAtom_toString_Opts, _parentPrecedence: number) {
-    return this.getOperator();
+  visit999 (visitor: RegexpAtomVisitor, ...args: any[]): any {
+    return visitor.visit_Anchor(this, args);
   }
 }
 
@@ -187,9 +256,8 @@ export class Reference extends RegexpAtom {
     public ref: string,
   ) { super(); }
   getPrecedence (): never { throw Error('Reference.getPrecedence() should never be called'); }
-  toString999 (opts: RegexpAtom_toString_Opts, _parentPrecedence: number) {
-    if (opts.debug) return `{${this.ref}}`
-    throw Error('Reference.toString999() should never be called (unless you\'re debugging)');
+  visit999 (visitor: RegexpAtomVisitor, ...args: any[]): any {
+    return visitor.visit_Reference(this, args);
   }
 }
 
@@ -198,7 +266,9 @@ export class Literal extends RegexpAtom {
     public literal: string,
   ) { super(); }
   getPrecedence (): number { return 7; }
-  toString999 (opts: RegexpAtom_toString_Opts, _parentPrecedence: number) { return opts.escapeLiteral(this.literal); }
+  visit999 (visitor: RegexpAtomVisitor, ...args: any[]): any {
+    return visitor.visit_Literal(this, args);
+  }
 }
 
 export class CharacterClass extends RegexpAtom {
@@ -206,8 +276,8 @@ export class CharacterClass extends RegexpAtom {
     public charClass: string,
   ) { super(); }
   getPrecedence (): number { return 7; }
-  toString999 (opts: RegexpAtom_toString_Opts, _parentPrecedence: number) {
-    return '[' + opts.escapeCharacterClass(this.charClass) + ']';
+  visit999 (visitor: RegexpAtomVisitor, ...args: any[]): any {
+    return visitor.visit_CharacterClass(this, args);
   }
 }
 
@@ -216,8 +286,8 @@ export class EscapedCharacter extends RegexpAtom {
     public escapedChar: string,
   ) { super(); }
   getPrecedence (): number { return 7; }
-  toString999 (opts: RegexpAtom_toString_Opts, _parentPrecedence: number) {
-    return /*opts.escapeLiteral(*/ '\\' + this.escapedChar;
+  visit999 (visitor: RegexpAtomVisitor, ...args: any[]): any {
+    return visitor.visit_EscapedCharacter(this, args);
   }
 }
 
@@ -235,7 +305,7 @@ export class SimpleCharacter extends RegexpAtom {
     public simpleChar: string,
   ) { super(); }
   getPrecedence (): number { return 7; }
-  toString999 (opts: RegexpAtom_toString_Opts, _parentPrecedence: number) {
-    return opts.escapeLiteral(this.simpleChar);
+  visit999 (visitor: RegexpAtomVisitor, ...args: any[]): any {
+    return visitor.visit_SimpleCharacter(this, args);
   }
 }

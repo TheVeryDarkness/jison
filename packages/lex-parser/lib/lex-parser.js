@@ -12,26 +12,13 @@ let ebnf = false;
 function encodeRE(s) {
     return s.replace(/([.*+?^${}()|[\]\/\\])/g, '\\$1').replace(/\\\\u([a-fA-F0-9]{4})/g, '\\u$1');
 }
-function decodeEscaped999(c) {
-    return c;
-    switch (c) {
-        case "\\": return "\\\\";
-        case "n": return "\\n";
-        case "b": return "\\b";
-        case "s": return "\\s";
-        case "c": return "\\c";
-        case "d": return "\\d";
-        case "i": return "\\i";
-        case "'": return "\\'";
-        case "(": return "\\(";
-        case ")": return "\\)"; //
-        case "#": return "#"; //
-        case "*": return "\\*"; //
-        case "\"": return "\\\"";
-        case "cA": return "\\cA";
-        default: throw Error(`decodeEscaped(${c})`);
-    }
+function prepareString(s) {
+    // unescape slashes
+    /* s = s.replace(/\\(.)/g, "$1"); */
+    /* s = encodeRE(s); */
+    return s;
 }
+;
 function prepareCharacterClass(s) {
     s = s.replace(/\\n/g, "\n");
     s = s.replace(/\\(.)/g, "$1");
@@ -164,9 +151,7 @@ class LexParser extends parser_1.JisonParser {
                 break;
             case 31:
                 const compiled = $$[$0];
-                const asStr0 = compiled.toString999(new lex_types_1.RegexpAtomToJs({ debug: true, groups: 'preserve' }), 0);
-                const asStr1 = compiled.toString999(new lex_types_1.RegexpAtomToJs({ debug: true, groups: 'preserve' }), 0);
-                this.$ = asStr0;
+                this.$ = compiled.visit999(new lex_types_1.RegexpAtomToJs({ debug: true, groups: 'preserve' }), 0);
                 const endsWithIdChar = (this.$.match(/[\w\d]$/) || [])[0];
                 const endsWithEscapedChar = (this.$.match(/\\(r|f|n|t|v|s|b|c[A-Z]|x[0-9a-fA-F]{2}|u[a-fA-F0-9]{4}|[0-7]{1,3})$/) || [])[0];
                 if (!(yy.options && yy.options.flex) && endsWithIdChar && !endsWithEscapedChar) {
@@ -235,10 +220,10 @@ class LexParser extends parser_1.JisonParser {
                 this.$ = new lex_types_1.Operator(yytext.substring(1));
                 break;
             case 58:
-                this.$ = new lex_types_1.Literal(yytext.substr(1, yytext.length - 2));
+                this.$ = new lex_types_1.Literal(prepareString(yytext.substr(1, yytext.length - 2)));
                 break;
             case 59:
-                this.$ = new lex_types_1.Literal(yytext);
+                this.$ = new lex_types_1.Literal(prepareString(yytext));
                 break;
         }
     }

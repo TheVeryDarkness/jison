@@ -127,7 +127,7 @@ function decodeStringEscape (c: string): string {
 
 %{
 // import {transform} from './ebnf-parser';
-    import {Choice, Concat, Empty, CaptureGroup, SpecialGroup, Cardinality, LookAhead, LookBehind, Wildcard, Begin, End, Literal, Assertion, Operator, Reference, CharacterClass, RegexpAtomToJs} from './lex-types';
+    import {Choice, Concat, Empty, CaptureGroup, SpecialGroup, Cardinality, LookAhead, LookBehind, Wildcard, Begin, End, Literal, Assertion, Operator, Reference, CharacterClass, RegexpAtomToJs, StrEscapes, StrsEscaped, fromStrEscape} from './lex-types';
 let ebnf = false;
 %}
 
@@ -257,9 +257,7 @@ regex
     : regex_list
         {
           const compiled = $1;
-          const asStr0 = compiled.toString999(new RegexpAtomToJs({debug: true, groups: 'preserve'}), 0);
-          const asStr1 = compiled.toString999(new RegexpAtomToJs({debug: true, groups: 'preserve'}), 0);
-          $$ = asStr0;
+          $$ = compiled.visit999(new RegexpAtomToJs({debug: true, groups: 'preserve'}), 0);
           const endsWithIdChar = ($$.match(/[\w\d]$/) || [])[0];
           const endsWithEscapedChar = ($$.match(/\\(r|f|n|t|v|s|b|c[A-Z]|x[0-9a-fA-F]{2}|u[a-fA-F0-9]{4}|[0-7]{1,3})$/) || [])[0];
           if (!(yy.options && yy.options.flex) && endsWithIdChar && !endsWithEscapedChar) {
@@ -340,8 +338,8 @@ range_regex
 
 string
     : STRING_LIT
-        { $$ = new Literal(yytext.substr(1, yytext.length - 2)); }
-    | CHARACTER_LIT { $$ = new Literal(yytext); }
+        { $$ = new Literal(prepareString(yytext.substr(1, yytext.length - 2))); }
+    | CHARACTER_LIT { $$ = new Literal(prepareString(yytext)); }
     ;
 
 %%
@@ -350,25 +348,12 @@ function encodeRE (s: string) {
     return s.replace(/([.*+?^${}()|[\]\/\\])/g, '\\$1').replace(/\\\\u([a-fA-F0-9]{4})/g,'\\u$1');
 }
 
-function decodeEscaped999 (c: string): string { return c;
-  switch (c) {
-  case "\\": return "\\\\";
-  case "n": return "\\n";
-  case "b": return "\\b";
-  case "s": return "\\s";
-  case "c": return "\\c";
-  case "d": return "\\d";
-  case "i": return "\\i";
-  case "'": return "\\'";
-  case "(": return "\\(";
-  case ")": return "\\)"; //
-  case "#": return "#"; //
-  case "*": return "\\*"; //
-  case "\"": return "\\\"";
-  case "cA": return "\\cA";
-  default: throw Error(`decodeEscaped(${c})`);
-  }
-}
+function prepareString (s: string) {
+    // unescape slashes
+    /* s = s.replace(/\\(.)/g, "$1"); */
+    /* s = encodeRE(s); */
+    return s;
+};
 
 function prepareCharacterClass (s: string) {
     s = s.replace(/\\n/g, "\n");
