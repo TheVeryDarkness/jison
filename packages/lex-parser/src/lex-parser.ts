@@ -142,16 +142,7 @@ case 30:
 break;
 case 31:
 
-          const compiled = $$[$0];
-          this.$ = compiled.visit999(new RegexpAtomToJs({debug: true, groups: 'preserve'}), 0);
-          const endsWithIdChar = (this.$.match(/[\w\d]$/) || [])[0];
-          const endsWithEscapedChar = (this.$.match(/\\(r|f|n|t|v|s|b|c[A-Z]|x[0-9a-fA-F]{2}|u[a-fA-F0-9]{4}|[0-7]{1,3})$/) || [])[0];
-          if (!(yy.options && yy.options.flex) && endsWithIdChar && !endsWithEscapedChar) {
-              this.$ += "\\b";
-              // console.log('if', this.$, endsWithIdChar, endsWithEscapedChar);
-          } else {
-              // console.log('else', this.$, endsWithIdChar, endsWithEscapedChar);
-          }
+          this.$ = RegexpAtomToJs.serialize($$[$0], !(yy.options && yy.options.flex), 'preserve', true);
         
 break;
 case 32:

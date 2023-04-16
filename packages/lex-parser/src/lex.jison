@@ -256,16 +256,7 @@ name_list
 regex
     : regex_list
         {
-          const compiled = $1;
-          $$ = compiled.visit999(new RegexpAtomToJs({debug: true, groups: 'preserve'}), 0);
-          const endsWithIdChar = ($$.match(/[\w\d]$/) || [])[0];
-          const endsWithEscapedChar = ($$.match(/\\(r|f|n|t|v|s|b|c[A-Z]|x[0-9a-fA-F]{2}|u[a-fA-F0-9]{4}|[0-7]{1,3})$/) || [])[0];
-          if (!(yy.options && yy.options.flex) && endsWithIdChar && !endsWithEscapedChar) {
-              $$ += "\\b";
-              // console.log('if', $$, endsWithIdChar, endsWithEscapedChar);
-          } else {
-              // console.log('else', $$, endsWithIdChar, endsWithEscapedChar);
-          }
+          $$ = RegexpAtomToJs.serialize($1, !(yy.options && yy.options.flex), 'preserve', true);
         }
     ;
 

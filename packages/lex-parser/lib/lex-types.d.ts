@@ -3,37 +3,48 @@ interface RegexpAtom_toString_Arg {
     groups: GroupControl;
     debug: boolean;
 }
-export declare abstract class RegexpAtomVisitor {
-    abstract visit_RegexpList(visitee: RegexpList, ...args: any[]): any;
-    abstract visit_CaptureGroup(visitee: CaptureGroup, ...args: any[]): any;
-    abstract visit_SpecialGroup(visitee: SpecialGroup, ...args: any[]): any;
-    abstract visit_Empty(visitee: Empty, ...args: any[]): any;
-    abstract visit_Cardinality(visitee: Cardinality, ...args: any[]): any;
-    abstract visit_LookOut(visitee: LookOut, ...args: any[]): any;
-    abstract visit_Wildcard(visitee: Wildcard, ...args: any[]): any;
-    abstract visit_Anchor(visitee: Anchor, ...args: any[]): any;
-    abstract visit_Reference(visitee: Reference, ...args: any[]): any;
-    abstract visit_Literal(visitee: Literal, ...args: any[]): any;
-    abstract visit_CharacterClass(visitee: CharacterClass, ...args: any[]): any;
-    abstract visit_EscapedCharacter(visitee: EscapedCharacter, ...args: any[]): any;
-    abstract visit_SimpleCharacter(visitee: SimpleCharacter, ...args: any[]): any;
+export interface RegexpAtomVisitor {
+    visit_Choice(visitee: Choice, ...args: any[]): any;
+    visit_Concat(visitee: Concat, ...args: any[]): any;
+    visit_CaptureGroup(visitee: CaptureGroup, ...args: any[]): any;
+    visit_SpecialGroup(visitee: SpecialGroup, ...args: any[]): any;
+    visit_Empty(visitee: Empty, ...args: any[]): any;
+    visit_Cardinality(visitee: Cardinality, ...args: any[]): any;
+    visit_LookAhead(visitee: LookAhead, ...args: any[]): any;
+    visit_LookBehind(visitee: LookBehind, ...args: any[]): any;
+    visit_Wildcard(visitee: Wildcard, ...args: any[]): any;
+    visit_Begin(visitee: Begin, ...args: any[]): any;
+    visit_End(visitee: End, ...args: any[]): any;
+    visit_Reference(visitee: Reference, ...args: any[]): any;
+    visit_Literal(visitee: Literal, ...args: any[]): any;
+    visit_CharacterClass(visitee: CharacterClass, ...args: any[]): any;
+    visit_Assertion(visitee: EscapedCharacter, ...args: any[]): any;
+    visit_Operator(visitee: EscapedCharacter, ...args: any[]): any;
+    visit_SimpleCharacter(visitee: SimpleCharacter, ...args: any[]): any;
 }
-export declare abstract class RegexpAtom_toString_Visitor extends RegexpAtomVisitor {
+export declare abstract class RegexpAtom_toString_Visitor implements RegexpAtomVisitor {
     groups: GroupControl;
     debug: boolean;
     constructor({ groups, debug, }: RegexpAtom_toString_Arg);
-    visit_RegexpList(visitee: RegexpList, parentPrecedence: number, ...args: any[]): any;
+    static serialize(atom: RegexpAtom, trailingAnchor: boolean, groups: GroupControl, debug: boolean): string;
+    protected visit_RegexpList(visitee: RegexpList, delim: string, parentPrecedence: number, ...args: any[]): any;
+    visit_Choice(visitee: Choice, parentPrecedence: number, ...args: any[]): any;
+    visit_Concat(visitee: Concat, parentPrecedence: number, ...args: any[]): any;
     visit_CaptureGroup(visitee: CaptureGroup, parentPrecedence: number, ...args: any[]): any;
     visit_SpecialGroup(visitee: SpecialGroup, parentPrecedence: number, ...args: any[]): any;
     visit_Empty(visitee: Empty, parentPrecedence: number, ...args: any[]): any;
     visit_Cardinality(visitee: Cardinality, parentPrecedence: number, ...args: any[]): any;
-    visit_LookOut(visitee: LookOut, parentPrecedence: number, ...args: any[]): any;
+    protected visit_LookOut(visitee: LookOut, operator: string, parentPrecedence: number, ...args: any[]): any;
+    visit_LookAhead(visitee: LookAhead, parentPrecedence: number, ...args: any[]): any;
+    visit_LookBehind(visitee: LookBehind, parentPrecedence: number, ...args: any[]): any;
     visit_Wildcard(visitee: Wildcard, parentPrecedence: number, ...args: any[]): any;
-    visit_Anchor(visitee: Anchor, parentPrecedence: number, ...args: any[]): any;
+    visit_Begin(visitee: Begin, parentPrecedence: number, ...args: any[]): any;
+    visit_End(visitee: End, parentPrecedence: number, ...args: any[]): any;
     visit_Reference(visitee: Reference, parentPrecedence: number, ...args: any[]): any;
     visit_Literal(visitee: Literal, parentPrecedence: number, ...args: any[]): any;
     visit_CharacterClass(visitee: CharacterClass, parentPrecedence: number, ...args: any[]): any;
-    visit_EscapedCharacter(visitee: EscapedCharacter, parentPrecedence: number, ...args: any[]): any;
+    visit_Assertion(visitee: Assertion, parentPrecedence: number, ...args: any[]): any;
+    visit_Operator(visitee: Operator, parentPrecedence: number, ...args: any[]): any;
     visit_SimpleCharacter(visitee: SimpleCharacter, parentPrecedence: number, ...args: any[]): any;
     getNewPrec(visitee: RegexpAtom, parentPrecedence: number): {
         needParen: boolean;
@@ -51,114 +62,134 @@ export declare class RegexpAtomToJs extends RegexpAtom_toString_Visitor {
     escapeCharacterClass(literal: string): string;
     protected static escapeGroupMatch(text: string, str: StrEscapes | undefined, crl: string | undefined, uni: string | undefined, operator: string | undefined): string;
 }
+/**
+@startuml
+abstract class RegexpList extends RegexpAtom
+  class Choice extends RegexpList
+  class Concat extends RegexpList
+class CaptureGroup extends RegexpAtom
+class SpecialGroup extends RegexpAtom
+class Empty extends RegexpAtom
+class Cardinality extends RegexpAtom
+abstract class LookOut extends RegexpAtom
+  class LookAhead extends LookOut
+  class LookBehind extends LookOut
+class Wildcard extends RegexpAtom
+abstract class Anchor extends RegexpAtom
+  class Begin extends Anchor
+  class End extends Anchor
+class Reference extends RegexpAtom
+class Literal extends RegexpAtom
+class CharacterClass extends RegexpAtom
+class EscapedCharacter extends RegexpAtom
+  class Assertion extends EscapedCharacter
+  class Operator extends EscapedCharacter
+class SimpleCharacter extends RegexpAtom
+@enduml
+ */
 export declare abstract class RegexpAtom {
-    abstract visit999(visitor: RegexpAtomVisitor, ...args: any[]): string;
+    abstract visit(visitor: RegexpAtomVisitor, ...args: any[]): string;
     abstract getPrecedence(): number;
 }
 export declare abstract class RegexpList extends RegexpAtom {
     l: RegexpAtom;
     r: RegexpAtom;
     constructor(l: RegexpAtom, r: RegexpAtom);
-    visit999(visitor: RegexpAtomVisitor, ...args: any[]): any;
-    abstract getDelim(): string;
 }
 export declare class Choice extends RegexpList {
-    getDelim(): string;
+    visit(visitor: RegexpAtomVisitor, ...args: any[]): any;
     getPrecedence(): number;
 }
 export declare class Concat extends RegexpList {
-    getDelim(): string;
+    visit(visitor: RegexpAtomVisitor, ...args: any[]): any;
     getPrecedence(): number;
 }
 export declare class CaptureGroup extends RegexpAtom {
     list: RegexpList;
     constructor(list: RegexpList);
     getPrecedence(): number;
-    visit999(visitor: RegexpAtomVisitor, ...args: any[]): any;
+    visit(visitor: RegexpAtomVisitor, ...args: any[]): any;
 }
 export declare class SpecialGroup extends RegexpAtom {
     specialty: string;
     list: RegexpList;
     constructor(specialty: string, list: RegexpList);
     getPrecedence(): number;
-    visit999(visitor: RegexpAtomVisitor, ...args: any[]): any;
+    visit(visitor: RegexpAtomVisitor, ...args: any[]): any;
 }
 export declare class Empty extends RegexpAtom {
     getPrecedence(): number;
-    visit999(visitor: RegexpAtomVisitor, ...args: any[]): any;
+    visit(visitor: RegexpAtomVisitor, ...args: any[]): any;
 }
 export declare class Cardinality extends RegexpAtom {
     repeated: RegexpAtom;
     card: string;
     constructor(repeated: RegexpAtom, card: string);
     getPrecedence(): number;
-    visit999(visitor: RegexpAtomVisitor, ...args: any[]): any;
+    visit(visitor: RegexpAtomVisitor, ...args: any[]): any;
 }
 export declare abstract class LookOut extends RegexpAtom {
     lookFor: RegexpAtom;
     constructor(lookFor: RegexpAtom);
     getPrecedence(): number;
-    visit999(visitor: RegexpAtomVisitor, ...args: any[]): any;
-    abstract getOperator(): string;
 }
 export declare class LookAhead extends LookOut {
     constructor(inner: RegexpAtom);
-    getOperator(): string;
+    visit(visitor: RegexpAtomVisitor, ...args: any[]): any;
 }
 export declare class LookBehind extends LookOut {
     constructor(inner: RegexpAtom);
-    getOperator(): string;
+    visit(visitor: RegexpAtomVisitor, ...args: any[]): any;
 }
 export declare class Wildcard extends RegexpAtom {
     getPrecedence(): number;
-    visit999(visitor: RegexpAtomVisitor, ...args: any[]): any;
+    visit(visitor: RegexpAtomVisitor, ...args: any[]): any;
 }
 export declare abstract class Anchor extends RegexpAtom {
     getPrecedence(): number;
-    abstract getOperator(): string;
-    visit999(visitor: RegexpAtomVisitor, ...args: any[]): any;
 }
 export declare class Begin extends Anchor {
-    getOperator(): string;
+    visit(visitor: RegexpAtomVisitor, ...args: any[]): any;
 }
 export declare class End extends Anchor {
-    getOperator(): string;
+    visit(visitor: RegexpAtomVisitor, ...args: any[]): any;
 }
 export declare class Reference extends RegexpAtom {
     ref: string;
     constructor(ref: string);
     getPrecedence(): never;
-    visit999(visitor: RegexpAtomVisitor, ...args: any[]): any;
+    visit(visitor: RegexpAtomVisitor, ...args: any[]): any;
 }
 export declare class Literal extends RegexpAtom {
     literal: string;
     constructor(literal: string);
     getPrecedence(): number;
-    visit999(visitor: RegexpAtomVisitor, ...args: any[]): any;
+    visit(visitor: RegexpAtomVisitor, ...args: any[]): any;
 }
 export declare class CharacterClass extends RegexpAtom {
     charClass: string;
     constructor(charClass: string);
     getPrecedence(): number;
-    visit999(visitor: RegexpAtomVisitor, ...args: any[]): any;
+    visit(visitor: RegexpAtomVisitor, ...args: any[]): any;
 }
-export declare class EscapedCharacter extends RegexpAtom {
+export declare abstract class EscapedCharacter extends RegexpAtom {
     escapedChar: string;
     constructor(escapedChar: string);
     getPrecedence(): number;
-    visit999(visitor: RegexpAtomVisitor, ...args: any[]): any;
 }
 export declare class Assertion extends EscapedCharacter {
     constructor(char: string);
+    visit(visitor: RegexpAtomVisitor, ...args: any[]): any;
 }
 export declare class Operator extends EscapedCharacter {
     constructor(char: string);
+    visit(visitor: RegexpAtomVisitor, ...args: any[]): any;
 }
 export declare class SimpleCharacter extends RegexpAtom {
     simpleChar: string;
     constructor(simpleChar: string);
     getPrecedence(): number;
-    visit999(visitor: RegexpAtomVisitor, ...args: any[]): any;
+    visit(visitor: RegexpAtomVisitor, ...args: any[]): any;
 }
 export {};
 //# sourceMappingURL=lex-types.d.ts.map
