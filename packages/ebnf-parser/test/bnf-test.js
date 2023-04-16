@@ -1,6 +1,4 @@
-const Jison = require("../../parser-generator/tests/setup").Jison,
-    Lexer =   require("../../parser-generator/tests/setup").Lexer,
-    assert = require("assert");
+const {Jison, Lexer} = require("../../parser-generator/tests/setup");
 Shared = require("../../parser-generator/tests/extend-expect");
 Jison.print = Shared.print;
 afterEach(Shared.nothingPrinted);
