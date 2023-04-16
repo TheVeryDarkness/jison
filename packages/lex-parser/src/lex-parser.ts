@@ -4,9 +4,8 @@ import { JisonParser, JisonParserApi, StateType, SymbolsType, TerminalsType, Pro
  * @returns Parser implementing JisonParserApi and a Lexer implementing JisonLexerApi.
  */
 
-// import {transform} from './ebnf-parser';
-    import {Choice, Concat, Empty, CaptureGroup, SpecialGroup, Cardinality, LookAhead, LookBehind, Wildcard, Begin, End, Literal, Assertion, Operator, Reference, CharacterClass, RegexpAtomToJs, StrEscapes, StrsEscaped, fromStrEscape} from './lex-types';
-let ebnf = false;
+    import {Choice, Concat, Empty, CaptureGroup, SpecialGroup, Cardinality, LookAhead, LookBehind, Wildcard, Begin, End, Literal, Assertion, Operator, Reference, CharacterClass} from './RegexpAtom';
+    let ebnf = false;
 
 
 function encodeRE (s: string) {
@@ -142,7 +141,7 @@ case 30:
 break;
 case 31:
 
-          this.$ = RegexpAtomToJs.serialize($$[$0], !(yy.options && yy.options.flex), 'preserve', true);
+          this.$ = $$[$0];
         
 break;
 case 32:

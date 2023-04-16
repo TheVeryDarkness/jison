@@ -126,9 +126,8 @@ function decodeStringEscape (c: string): string {
 %left '*' '+' '?' RANGE_REGEX
 
 %{
-// import {transform} from './ebnf-parser';
-    import {Choice, Concat, Empty, CaptureGroup, SpecialGroup, Cardinality, LookAhead, LookBehind, Wildcard, Begin, End, Literal, Assertion, Operator, Reference, CharacterClass, RegexpAtomToJs, StrEscapes, StrsEscaped, fromStrEscape} from './lex-types';
-let ebnf = false;
+    import {Choice, Concat, Empty, CaptureGroup, SpecialGroup, Cardinality, LookAhead, LookBehind, Wildcard, Begin, End, Literal, Assertion, Operator, Reference, CharacterClass} from './RegexpAtom';
+    let ebnf = false;
 %}
 
 %%
@@ -256,7 +255,7 @@ name_list
 regex
     : regex_list
         {
-          $$ = RegexpAtomToJs.serialize($1, !(yy.options && yy.options.flex), 'preserve', true);
+          $$ = $1;
         }
     ;
 

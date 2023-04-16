@@ -1,8 +1,3 @@
-type GroupControl = "capture" | "simplify" | "preserve";
-interface RegexpAtom_toString_Arg {
-    groups: GroupControl;
-    debug: boolean;
-}
 export interface RegexpAtomVisitor {
     visit_Choice(visitee: Choice, ...args: any[]): any;
     visit_Concat(visitee: Concat, ...args: any[]): any;
@@ -21,6 +16,11 @@ export interface RegexpAtomVisitor {
     visit_Assertion(visitee: EscapedCharacter, ...args: any[]): any;
     visit_Operator(visitee: EscapedCharacter, ...args: any[]): any;
     visit_SimpleCharacter(visitee: SimpleCharacter, ...args: any[]): any;
+}
+type GroupControl = "capture" | "simplify" | "preserve";
+interface RegexpAtom_toString_Arg {
+    groups: GroupControl;
+    debug: boolean;
 }
 export declare abstract class RegexpAtom_toString_Visitor implements RegexpAtomVisitor {
     groups: GroupControl;

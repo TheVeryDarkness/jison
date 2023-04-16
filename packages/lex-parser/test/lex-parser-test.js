@@ -7,6 +7,24 @@ function read (p, file) {
     return fs.readFileSync(path.join(__dirname, "../tests", p, file), "utf8");
 }
 
+const {RegexpAtom} = require('../lib/RegexpAtom');
+const {RegexpAtomToJs} = require('../lib/RegexpAtomToStringVisitor');
+
+function stringifyRules (ret) {
+  if ('macros' in ret)
+    for (const label in ret.macros)
+      ret.macros[label] = RegexpAtomToJs.serialize(ret.macros[label], !(ret.options && ret.options.flex) , 'preserve', true);
+  if ('rules' in ret)
+    ret.rules = ret.rules.map(
+      rule => rule.map(entry =>
+        entry instanceof RegexpAtom
+          ? RegexpAtomToJs.serialize(entry, !(ret.options && ret.options.flex), 'preserve', true)
+          : entry
+      )
+    );
+  return ret;
+}
+
 describe("lex-parser", () => {
 
   it("test lex grammar with macros", () => {
@@ -26,7 +44,7 @@ ID [a-zA-Z][a-zA-Z0-9]+
       ]
     };
 
-    expect(lex.parse(lexgrammar)).toEqual(expected);
+    expect(stringifyRules(lex.parse(lexgrammar))).toEqual(expected);
   });
 
   it("test escaped chars", () => {
@@ -43,7 +61,7 @@ ID [a-zA-Z][a-zA-Z0-9]+
       ]
     };
 
-    expect(lex.parse(lexgrammar)).toEqual(expected);
+    expect(stringifyRules(lex.parse(lexgrammar))).toEqual(expected);
   });
 
   it("test advanced", () => {
@@ -64,7 +82,7 @@ $ {return 'EOF';}
       ]
     };
 
-    expect(lex.parse(lexgrammar)).toEqual(expected);
+    expect(stringifyRules(lex.parse(lexgrammar))).toEqual(expected);
   });
 
   it("test [^\\]]", () => {
@@ -82,7 +100,7 @@ $ {return 'EOF';}
       ]
     };
 
-    expect(lex.parse(lexgrammar)).toEqual(expected);
+    expect(stringifyRules(lex.parse(lexgrammar))).toEqual(expected);
   });
 
   it("test multiline action", () => {
@@ -98,7 +116,7 @@ return true;
       ]
     };
 
-    expect(lex.parse(lexgrammar)).toEqual(expected);
+    expect(stringifyRules(lex.parse(lexgrammar))).toEqual(expected);
   });
 
   it("test multiline action with single braces", () => {
@@ -114,7 +132,7 @@ const b={};return true;
       ]
     };
 
-    expect(lex.parse(lexgrammar)).toEqual(expected);
+    expect(stringifyRules(lex.parse(lexgrammar))).toEqual(expected);
   });
 
   it("test multiline action with brace in a multi-line-comment", () => {
@@ -130,7 +148,7 @@ const b={}; /* { */ return true;
       ]
     };
 
-    expect(lex.parse(lexgrammar)).toEqual(expected);
+    expect(stringifyRules(lex.parse(lexgrammar))).toEqual(expected);
   });
 
   it("test multiline action with brace in a single-line-comment", () => {
@@ -147,7 +165,7 @@ return 2 / 3;
       ]
     };
 
-    expect(lex.parse(lexgrammar)).toEqual(expected);
+    expect(stringifyRules(lex.parse(lexgrammar))).toEqual(expected);
   });
 
   it("test multiline action with braces in strings", () => {
@@ -164,7 +182,7 @@ return 2 / 3;
       ]
     };
 
-    expect(lex.parse(lexgrammar)).toEqual(expected);
+    expect(stringifyRules(lex.parse(lexgrammar))).toEqual(expected);
   });
 
   it("test multiline action with braces in regexp", () => {
@@ -181,7 +199,7 @@ return 2 / 3;
       ]
     };
 
-    expect(lex.parse(lexgrammar)).toEqual(expected);
+    expect(stringifyRules(lex.parse(lexgrammar))).toEqual(expected);
   });
 
   it("test include", () => {
@@ -204,21 +222,21 @@ return true;
       ]
     };
 
-    expect(lex.parse(lexgrammar)).toEqual(expected);
+    expect(stringifyRules(lex.parse(lexgrammar))).toEqual(expected);
   });
 
   it("test bnf lex grammar", () => {
     const lexgrammar = lex.parse(read('lex', 'bnf.jisonlex'));
     const expected = JSON.parse(read('lex', 'bnf.lex.json'));
 
-    expect(lexgrammar).toEqual(expected);
+    expect(stringifyRules(lexgrammar)).toEqual(expected);
   });
 
   it("test lex grammar bootstrap", () => {
     const lexgrammar = lex.parse(read('lex', 'lex_grammar.jisonlex'));
     const expected = JSON.parse(read('lex', 'lex_grammar.lex.json'));
 
-    expect(lexgrammar).toEqual(expected);
+    expect(stringifyRules(lexgrammar)).toEqual(expected);
   });
 
   it("test ANSI C lexical grammar", () => {
@@ -238,7 +256,7 @@ return true;
       ]
     };
 
-    expect(lex.parse(lexgrammar)).toEqual(expected);
+    expect(stringifyRules(lex.parse(lexgrammar))).toEqual(expected);
   });
 
   it("test start conditions", () => {
@@ -265,7 +283,7 @@ return true;
       ]
     };
 
-    expect(lex.parse(lexgrammar)).toEqual(expected);
+    expect(stringifyRules(lex.parse(lexgrammar))).toEqual(expected);
   });
 
   it("test no brace action", () => {
@@ -281,7 +299,7 @@ return true;
       ]
     };
 
-    expect(lex.parse(lexgrammar)).toEqual(expected);
+    expect(stringifyRules(lex.parse(lexgrammar))).toEqual(expected);
   });
 
   it("test quote escape", () => {
@@ -295,7 +313,7 @@ return true;
       ]
     };
 
-    expect(lex.parse(lexgrammar)).toEqual(expected);
+    expect(stringifyRules(lex.parse(lexgrammar))).toEqual(expected);
   });
 
   it("test escape things", () => {
@@ -317,7 +335,7 @@ return true;
       ]
     };
 
-    expect(lex.parse(lexgrammar)).toEqual(expected);
+    expect(stringifyRules(lex.parse(lexgrammar))).toEqual(expected);
   });
 
   xit("test unicode encoding", () => { // need a start state for inside ""s
@@ -330,7 +348,7 @@ return true;
       ]
     };
 
-    expect(lex.parse(lexgrammar)).toEqual(expected);
+    expect(stringifyRules(lex.parse(lexgrammar))).toEqual(expected);
   });
 
   it("test unicode", () => {
@@ -343,7 +361,7 @@ return true;
       ]
     };
 
-    expect(lex.parse(lexgrammar)).toEqual(expected);
+    expect(stringifyRules(lex.parse(lexgrammar))).toEqual(expected);
   });
 
   it("test bugs", () => {
@@ -356,7 +374,7 @@ return true;
       ]
     };
 
-    expect(lex.parse(lexgrammar)).toEqual(expected);
+    expect(stringifyRules(lex.parse(lexgrammar))).toEqual(expected);
   });
 
   it("test special groupings", () => {
@@ -369,7 +387,7 @@ return true;
       ]
     };
 
-    expect(lex.parse(lexgrammar)).toEqual(expected);
+    expect(stringifyRules(lex.parse(lexgrammar))).toEqual(expected);
   });
 
   it("test trailing code include", () => {
@@ -383,7 +401,7 @@ return true;
       moduleInclude: " const bar = 1;"
     };
 
-    expect(lex.parse(lexgrammar)).toEqual(expected);
+    expect(stringifyRules(lex.parse(lexgrammar))).toEqual(expected);
   });
 
   it("test empty or regex", () => {
@@ -396,7 +414,7 @@ return true;
       ]
     };
 
-    expect(lex.parse(lexgrammar)).toEqual(expected);
+    expect(stringifyRules(lex.parse(lexgrammar))).toEqual(expected);
   });
 
   it("test options", () => {
@@ -411,7 +429,7 @@ return true;
       options: {flex: true}
     };
 
-    expect(lex.parse(lexgrammar)).toEqual(expected);
+    expect(stringifyRules(lex.parse(lexgrammar))).toEqual(expected);
   });
 
   it("test unquoted string rules", () => {
@@ -424,7 +442,7 @@ foo* return 1`;
       ]
     };
 
-    expect(lex.parse(lexgrammar)).toEqual(expected);
+    expect(stringifyRules(lex.parse(lexgrammar))).toEqual(expected);
   });
 
   it("test [^\\\\]", () => {
@@ -442,7 +460,7 @@ foo* return 1`;
       ]
     };
 
-    expect(lex.parse(lexgrammar)).toEqual(expected);
+    expect(stringifyRules(lex.parse(lexgrammar))).toEqual(expected);
   });
 
   it("test comments", () => {
@@ -456,7 +474,7 @@ foo* return 1`;
       ]
     };
 
-    expect(lex.parse(lexgrammar)).toEqual(expected);
+    expect(stringifyRules(lex.parse(lexgrammar))).toEqual(expected);
   });
 
   it("test rules with trailing escapes", () => {
@@ -470,7 +488,7 @@ foo* return 1`;
       ]
     };
 
-    expect(lex.parse(lexgrammar)).toEqual(expected);
+    expect(stringifyRules(lex.parse(lexgrammar))).toEqual(expected);
   });
 
   it("test no brace action with surplus whitespace between rules", () => {
@@ -488,7 +506,7 @@ foo* return 1`;
       ]
     };
 
-    expect(lex.parse(lexgrammar)).toEqual(expected);
+    expect(stringifyRules(lex.parse(lexgrammar))).toEqual(expected);
   });
 
   it("test windows line endings", () => {
@@ -499,7 +517,7 @@ foo* return 1`;
       ]
     };
 
-    expect(lex.parse(lexgrammar)).toEqual(expected);
+    expect(stringifyRules(lex.parse(lexgrammar))).toEqual(expected);
   });
 
   it("test braced action with surplus whitespace between rules", () => {
@@ -520,6 +538,6 @@ return true;
       ]
     };
 
-    expect(lex.parse(lexgrammar)).toEqual(expected);
+    expect(stringifyRules(lex.parse(lexgrammar))).toEqual(expected);
   });
 });
