@@ -18,7 +18,7 @@ function stringifyRules (ret) {
     ret.rules = ret.rules.map(
       rule => rule.map(entry =>
         entry instanceof RegexpAtom
-          ? RegexpAtomToJs.serialize(entry, !(ret.options && ret.options.flex), 'preserve', true)
+          ? RegexpAtomToJs.serialize(entry, 'preserve', true)
           : entry
       )
     );

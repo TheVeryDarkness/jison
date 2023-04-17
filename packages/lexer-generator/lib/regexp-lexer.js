@@ -7,6 +7,8 @@ const Fs = require('fs');
 const Path = require('path');
 const lexParser = require('@ts-jison/lex-parser').LexParser;
 const {FileTemplate} = require('@ts-jison/common-generator');
+const {RegexpAtom} = require('@ts-jison/lex-parser/lib/RegexpAtom');
+const {RegexpAtomToJs} = require('@ts-jison/lex-parser/lib/RegexpAtomToStringVisitor');
 const version = require('../package.json').version;
 
 // expand macros and convert matchers to RegExp's
@@ -31,28 +33,29 @@ function prepareRules(rules, macros, actions, tokens, startConditions, caseless)
     }
 
     for (i=0;i < rules.length; i++) {
-        if (Object.prototype.toString.apply(rules[i][0]) !== '[object Array]') {
+        let curRule = rules[i].map(elt => elt instanceof RegexpAtom ? RegexpAtomToJs.serialize(elt) : elt);
+        if (Object.prototype.toString.apply(curRule[0]) !== '[object Array]') {
             // implicit add to all inclusive start conditions
             for (k in startConditions) {
                 if (startConditions[k].inclusive) {
                     startConditions[k].rules.push(i);
                 }
             }
-        } else if (rules[i][0][0] === '*') {
+        } else if (curRule[0][0] === '*') {
             // Add to ALL start conditions
             for (k in startConditions) {
                 startConditions[k].rules.push(i);
             }
-            rules[i].shift();
+            curRule.shift();
         } else {
             // Add to explicit start conditions
-            conditions = rules[i].shift();
+            conditions = curRule.shift();
             for (k=0;k<conditions.length;k++) {
                 startConditions[conditions[k]].rules.push(i);
             }
         }
 
-        m = rules[i][0];
+        m = curRule[0];
         if (typeof m === 'string') {
             for (k in macros) {
                 if (macros.hasOwnProperty(k)) {
@@ -62,10 +65,10 @@ function prepareRules(rules, macros, actions, tokens, startConditions, caseless)
             m = new RegExp("^(?:" + m + ")", caseless ? 'i':'');
         }
         newRules.push(m);
-        if (typeof rules[i][1] === 'function') {
-            rules[i][1] = String(rules[i][1]).replace(/^\s*function\s*\(\s*\)\s*{/, '').replace(/}\s*$/, '');
+        if (typeof curRule[1] === 'function') {
+            curRule[1] = String(curRule[1]).replace(/^\s*function\s*\(\s*\)\s*{/, '').replace(/}\s*$/, '');
         }
-        action = rules[i][1];
+        action = curRule[1];
         if (tokens && action.match(/return '[^']+'/)) {
             action = action.replace(/return '([^']+)'/g, tokenNumberReplacement);
         }
@@ -95,6 +98,8 @@ function prepareMacros (macros) {
         for (i in macros) if (macros.hasOwnProperty(i)) {
             m = macros[i];
             for (k in macros) if (macros.hasOwnProperty(k) && i !== k) {
+                if (m instanceof RegexpAtom)
+                    m = RegexpAtomToJs.serialize(m, 'preserve', true);
                 mnew = m.split("{" + k + "}").join('(' + macros[k] + ')');
                 if (mnew !== m) {
                     cont = true;

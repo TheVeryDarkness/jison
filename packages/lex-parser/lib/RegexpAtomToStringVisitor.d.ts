@@ -8,7 +8,7 @@ export declare abstract class RegexpAtomToStringVisitor implements RegexpAtomVis
     groups: GroupControl;
     debug: boolean;
     constructor({ groups, debug, }: RegexpAtom_toString_Arg);
-    static serialize(atom: RegexpAtom, trailingAnchor: boolean, groups: GroupControl, debug: boolean): string;
+    static serialize(atom: RegexpAtom, groups: GroupControl, debug: boolean): string;
     protected visit_RegexpList(visitee: RegexpList, delim: string, parentPrecedence: number, ...args: any[]): any;
     visit_Choice(visitee: Choice, parentPrecedence: number, ...args: any[]): any;
     visit_Concat(visitee: Concat, parentPrecedence: number, ...args: any[]): any;

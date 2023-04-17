@@ -256,6 +256,22 @@ regex
     : regex_list
         {
           $$ = $1;
+          if (!(yy.options && yy.options.flex)) {
+            let trailingLiteral = $1;
+            // Find the right-most concatenation
+            while (trailingLiteral instanceof Concat)
+              trailingLiteral = trailingLiteral.r;
+            if (// this regexp ends with a literal
+                trailingLiteral instanceof Literal &&
+                // which ends with ID
+                trailingLiteral.literal.match(/[\w\d]$/) &&
+                // and is not part of escape
+                !trailingLiteral.literal.match(/\\(r|f|n|t|v|s|b|c[A-Z]|x[0-9a-fA-F]{2}|u[a-fA-F0-9]{4}|[0-7]{1,3})$/)
+                ) {
+                // then add a word boundry assertion
+                $$ = new Concat($1, new Assertion('b'));
+            }
+          }
         }
     ;
 

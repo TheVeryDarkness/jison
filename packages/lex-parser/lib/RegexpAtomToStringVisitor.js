@@ -6,26 +6,8 @@ class RegexpAtomToStringVisitor {
         this.groups = groups;
         this.debug = debug;
     }
-    static serialize(atom, trailingAnchor, groups, debug) {
-        const ret = atom.visit(new RegexpAtomToJs({ debug, groups }), 0);
-        /* could analyze last literal in any nesting Concats:
-        let trailingLiteral = atom;
-        if (trailingAnchor) {
-          while (trailingLiteral instanceof Concat)
-            trailingLiteral = trailingLiteral.r;
-          if (trailingLiteral instanceof Literal &&
-            trailingLiteral.literal.match(/[\w\d]$/) && // ends with ID
-            !trailingLiteral.literal.match(/\\(r|f|n|t|v|s|b|c[A-Z]|x[0-9a-fA-F]{2}|u[a-fA-F0-9]{4}|[0-7]{1,3})$/)) // not part of escape
-            return ret + "\\b";
-        }
-        return ret;
-        */
-        // or just look at ret like zaach did:
-        return (trailingAnchor &&
-            ret.match(/[\w\d]$/) && // ends with ID
-            !ret.match(/\\(r|f|n|t|v|s|b|c[A-Z]|x[0-9a-fA-F]{2}|u[a-fA-F0-9]{4}|[0-7]{1,3})$/)) // not part of escape
-            ? ret + "\\b"
-            : ret;
+    static serialize(atom, groups, debug) {
+        return atom.visit(new RegexpAtomToJs({ debug, groups }), 0);
     }
     visit_RegexpList(visitee, delim, parentPrecedence, ...args) {
         const { needParen, myPrecedence } = this.getNewPrec(visitee, parentPrecedence);
