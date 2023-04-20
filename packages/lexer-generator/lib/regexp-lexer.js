@@ -33,29 +33,29 @@ function prepareRules(rules, macros, actions, tokens, startConditions, caseless)
     }
 
     for (i=0;i < rules.length; i++) {
-        let curRule = rules[i].map(elt => elt instanceof RegexpAtom ? RegexpAtomToJs.serialize(elt) : elt);
-        if (Object.prototype.toString.apply(curRule[0]) !== '[object Array]') {
+        let curRule = rules[i];
+        if (!curRule.start) {
             // implicit add to all inclusive start conditions
             for (k in startConditions) {
                 if (startConditions[k].inclusive) {
                     startConditions[k].rules.push(i);
                 }
             }
-        } else if (curRule[0][0] === '*') {
+        } else if (curRule.start[0] === '*') {
             // Add to ALL start conditions
             for (k in startConditions) {
                 startConditions[k].rules.push(i);
             }
-            curRule.shift();
+            // curRule.shift();
         } else {
             // Add to explicit start conditions
-            conditions = curRule.shift();
+            conditions = curRule.start;
             for (k=0;k<conditions.length;k++) {
                 startConditions[conditions[k]].rules.push(i);
             }
         }
 
-        m = curRule[0];
+        m = curRule.pattern instanceof RegexpAtom ? RegexpAtomToJs.serialize(curRule.pattern) : curRule.pattern; // can pass in Regexp's directly
         if (typeof m === 'string') {
             for (k in macros) {
                 if (macros.hasOwnProperty(k)) {
@@ -65,10 +65,12 @@ function prepareRules(rules, macros, actions, tokens, startConditions, caseless)
             m = new RegExp("^(?:" + m + ")", caseless ? 'i':'');
         }
         newRules.push(m);
-        if (typeof curRule[1] === 'function') {
-            curRule[1] = String(curRule[1]).replace(/^\s*function\s*\(\s*\)\s*{/, '').replace(/}\s*$/, '');
+        if (typeof curRule.action === 'function') {
+            curRule.action = String(curRule.action) // function as a string
+                .replace(/^\s*function\s*\(\s*\)\s*{/, '') // strip 'function ( ) { ... }
+                .replace(/}\s*$/, '');
         }
-        action = curRule[1];
+        action = curRule.action;
         if (tokens && action.match(/return '[^']+'/)) {
             action = action.replace(/return '([^']+)'/g, tokenNumberReplacement);
         }
@@ -130,7 +132,7 @@ function buildActions (dict, tokens) {
     }
 
     if (dict.options && dict.options.flex) {
-        dict.rules.push([".", "console.log(yytext);"]);
+        dict.rules.push({pattern: ".", action: "console.log(yytext);"});
     }
 
     this.rules = prepareRules(dict.rules, dict.macros, actions, tokens && toks, this.conditions, this.options && this.options["case-insensitive"]);

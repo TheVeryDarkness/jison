@@ -27,8 +27,8 @@ lexData.moduleInclude
   it("new Jison.Generator(g).generateAMDModule()",() => {
     var lexData = {
       rules: [
-        ["x", "return 'x';"],
-        ["y", "return 'y';"]
+        {pattern: "x", action: "return 'x';"},
+        {pattern: "y", action: "return 'y';"}
       ]
     };
     var grammar = {
@@ -86,8 +86,8 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
   xit("new Jison.Generator(g).generateCommonJSModule()", () => {
     var lexData = {
       rules: [
-        ["x", "return 'x';"],
-        ["y", "return 'y';"]
+        {pattern: "x", action: "return 'x';"},
+        {pattern: "y", action: "return 'y';"}
       ]
     };
     var grammar = {
@@ -124,8 +124,8 @@ lexData.moduleInclude
   xit("new Jison.Generator(g).generateModule()", () => {
     var lexData = {
       rules: [
-        ["x", "return 'x';"],
-        ["y", "return 'y';"]
+        {pattern: "x", action: "return 'x';"},
+        {pattern: "y", action: "return 'y';"}
       ]
     };
     var grammar = {
@@ -151,8 +151,8 @@ lexData.moduleInclude
   xit("generate({moduleType: \"js\", moduleName: \"parsey\"})", () => {
     var lexData = {
       rules: [
-        ["x", "return 'x';"],
-        ["y", "return 'y';"]
+        {pattern: "x", action: "return 'x';"},
+        {pattern: "y", action: "return 'y';"}
       ]
     };
     var grammar = {
@@ -178,8 +178,8 @@ lexData.moduleInclude
   xit("generateModule({moduleName: \"compiler.parser\"}) (namespaced module name)", () => {
     var lexData = {
       rules: [
-        ["x", "return 'x';"],
-        ["y", "return 'y';"]
+        {pattern: "x", action: "return 'x';"},
+        {pattern: "y", action: "return 'y';"}
       ]
     };
     var grammar = {
@@ -287,7 +287,7 @@ lexData.moduleInclude
   xit("generateCommonJSModule() grammar.moduleInclude", () => {
     var lexData = {
       rules: [
-        ["y", "return 'y';"]
+        {pattern: "y", action: "return 'y';"}
       ]
     };
     var grammar = {
@@ -311,7 +311,7 @@ lexData.moduleInclude
   xit("generateCommonJSModule() lexData.moduleInclude", () => {
     var lexData = {
       rules: [
-        ["y", "return test();"]
+        {pattern: "y", action: "return test();"}
       ],
       moduleInclude: "function test() { return 1; }"
     };
@@ -336,7 +336,7 @@ lexData.moduleInclude
     var grammar = {
       lex: {
         rules: [
-          ["y", "return 'y'"]
+          {pattern: "y", action: "return 'y'"}
         ]
       },
       bnf: {
@@ -365,7 +365,7 @@ lexData.moduleInclude
   xit("new Jison.Parser(g).generateCommonJSModule()", () => {
     var lexData = {
       rules: [
-        ["y", "return 'y';"]
+        {pattern: "y", action: "return 'y';"}
       ]
     };
     var grammar = {
@@ -389,7 +389,7 @@ lexData.moduleInclude
   it("test module include with each generator type", () => {
     var lexData = {
       rules: [
-        ["y", "return 'y';"]
+        {pattern: "y", action: "return 'y';"}
       ]
     };
     var grammar = {

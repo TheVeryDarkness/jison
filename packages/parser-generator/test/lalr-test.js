@@ -8,8 +8,8 @@ describe("lalr", () => {
   it("test 0+0 grammar", () => {
     var lexData2 = {
       rules: [
-        ["0", "return 'ZERO';"],
-        ["\\+", "return 'PLUS';"]
+        {pattern: "0", action: "return 'ZERO';"},
+        {pattern: "\\+", action: "return 'PLUS';"}
       ]
     };
     var grammar = {
@@ -34,7 +34,7 @@ describe("lalr", () => {
   it("test xx nullable grammar", () => {
     var lexData = {
       rules: [
-        ["x", "return 'x';"]
+        {pattern: "x", action: "return 'x';"}
       ]
     };
     var grammar = {
@@ -57,11 +57,11 @@ describe("lalr", () => {
   it("test LALR algorithm from Bermudez, Logothetis", () => {
     var lexData = {
       rules: [
-        ["a", "return 'a';"],
-        ["b", "return 'b';"],
-        ["c", "return 'c';"],
-        ["d", "return 'd';"],
-        ["g", "return 'g';"]
+        {pattern: "a", action: "return 'a';"},
+        {pattern: "b", action: "return 'b';"},
+        {pattern: "c", action: "return 'c';"},
+        {pattern: "d", action: "return 'd';"},
+        {pattern: "g", action: "return 'g';"}
       ]
     };
     var grammar = {
@@ -96,18 +96,18 @@ describe("lalr", () => {
           "frac": "(?:\\.[0-9]+)"
         },
         "rules": [
-          ["\\s+", "/* skip whitespace */"],
-          ["{int}{frac}?{exp}?\\b", "return 'NUMBER';"],
-          ["\"(?:{esc}[\"bfnrt/{esc}]|{esc}u[a-fA-F0-9]{4}|[^\"{esc}])*\"", "yytext = yytext.substr(1,yyleng-2); return 'STRING';"],
-          ["\\{", "return '{'"],
-          ["\\}", "return '}'"],
-          ["\\[", "return '['"],
-          ["\\]", "return ']'"],
-          [",", "return ','"],
-          [":", "return ':'"],
-          ["true\\b", "return 'TRUE'"],
-          ["false\\b", "return 'FALSE'"],
-          ["null\\b", "return 'NULL'"]
+          {pattern: "\\s+", action: "/* skip whitespace */"},
+          {pattern: "{int}{frac}?{exp}?\\b", action: "return 'NUMBER';"},
+          {pattern: "\"(?:{esc}[\"bfnrt/{esc}]|{esc}u[a-fA-F0-9]{4}|[^\"{esc}])*\"", action: "yytext = yytext.substr(1,yyleng-2); return 'STRING';"},
+          {pattern: "\\{", action: "return '{'"},
+          {pattern: "\\}", action: "return '}'"},
+          {pattern: "\\[", action: "return '['"},
+          {pattern: "\\]", action: "return ']'"},
+          {pattern: ",", action: "return ','"},
+          {pattern: ":", action: "return ':'"},
+          {pattern: "true\\b", action: "return 'TRUE'"},
+          {pattern: "false\\b", action: "return 'FALSE'"},
+          {pattern: "null\\b", action: "return 'NULL'"}
         ]
       },
 

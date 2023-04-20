@@ -7,8 +7,8 @@ afterEach(Shared.nothingPrinted);
 
 const lexData = {
     rules: [
-       ["x", "return 'x';"],
-       ["y", "return 'y';"]
+      {pattern: "x", action: "return 'x';"},
+      {pattern: "y", action: "return 'y';"}
     ]
 };
 
@@ -71,8 +71,8 @@ States with conflicts:`,
   it("test 0+0 grammar", () => {
     const lexData2 = {
       rules: [
-        ["0", "return 'ZERO';"],
-        ["\\+", "return 'PLUS';"]
+        {pattern: "0", action: "return 'ZERO';"},
+        {pattern: "\\+", action: "return 'PLUS';"}
       ]
     };
     const grammar = {

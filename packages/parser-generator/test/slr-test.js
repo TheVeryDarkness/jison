@@ -6,8 +6,8 @@ afterEach(Shared.nothingPrinted);
 
 const lexData = {
     rules: [
-       ["x", "return 'x';"],
-       ["y", "return 'y';"]
+      {pattern: "x", action: "return 'x';"},
+      {pattern: "y", action: "return 'y';"}
     ]
 };
 

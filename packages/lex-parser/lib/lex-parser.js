@@ -116,7 +116,7 @@ class LexParser extends parser_1.JisonParser {
                 this.$ = [$$[$0]];
                 break;
             case 17:
-                this.$ = $$[$0 - 2] ? [$$[$0 - 2], $$[$0 - 1], $$[$0]] : [$$[$0 - 1], $$[$0]];
+                this.$ = $$[$0 - 2] ? { start: $$[$0 - 2], pattern: $$[$0 - 1], action: $$[$0] } : { pattern: $$[$0 - 1], action: $$[$0] };
                 break;
             case 18:
                 this.$ = $$[$0 - 1];

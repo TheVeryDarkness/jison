@@ -8,8 +8,8 @@ describe("actions", () => {
   it("test Semantic action basic return",() => {
     var lexData = {
       rules: [
-        ["x", "return 'x';"],
-        ["y", "return 'y';"]
+        {pattern: "x", action: "return 'x';"},
+        {pattern: "y", action: "return 'y';"}
       ]
     };
     var grammar = {
@@ -30,7 +30,7 @@ describe("actions", () => {
   it("test return null",() => {
     var lexData = {
       rules: [
-        ["x", "return 'x';"]
+        {pattern: "x", action: "return 'x';"}
       ]
     };
     var grammar = {
@@ -49,8 +49,8 @@ describe("actions", () => {
   it("test terminal semantic values are not null",() => {
     var lexData = {
       rules: [
-        ["x", "return 'x';"],
-        ["y", "return 'y';"]
+        {pattern: "x", action: "return 'x';"},
+        {pattern: "y", action: "return 'y';"}
       ]
     };
     var grammar = {
@@ -71,8 +71,8 @@ describe("actions", () => {
   it("test Semantic action stack lookup",() => {
     var lexData = {
       rules: [
-        ["x", "return 'x';"],
-        ["y", "return 'y';"]
+        {pattern: "x", action: "return 'x';"},
+        {pattern: "y", action: "return 'y';"}
       ]
     };
     var grammar = {
@@ -94,7 +94,7 @@ describe("actions", () => {
   it("test Semantic actions on nullable grammar",() => {
     var lexData = {
       rules: [
-        ["x", "return 'x';"]
+        {pattern: "x", action: "return 'x';"}
       ]
     };
     var grammar = {
@@ -114,7 +114,7 @@ describe("actions", () => {
   it("test named semantic value",() => {
     var lexData = {
       rules: [
-        ["x", "return 'x';"]
+        {pattern: "x", action: "return 'x';"}
       ]
     };
     var grammar = {
@@ -134,8 +134,8 @@ describe("actions", () => {
   it("test ambiguous named semantic value",() => {
     var lexData = {
       rules: [
-        ["x", "return 'x';"],
-        ["y", "return 'y';"]
+        {pattern: "x", action: "return 'x';"},
+        {pattern: "y", action: "return 'y';"}
       ]
     };
     var grammar = {
@@ -156,7 +156,7 @@ describe("actions", () => {
   it("test vars that look like named semantic values shouldn't be replaced",() => {
     var lexData = {
       rules: [
-        ["x", "return 'x';"]
+        {pattern: "x", action: "return 'x';"}
       ]
     };
     var grammar = {
@@ -176,8 +176,8 @@ describe("actions", () => {
   it("test previous semantic value lookup ($0)",() => {
     var lexData = {
       rules: [
-        ["x", "return 'x';"],
-        ["y", "return 'y';"]
+        {pattern: "x", action: "return 'x';"},
+        {pattern: "y", action: "return 'y';"}
       ]
     };
     var grammar = {
@@ -198,9 +198,9 @@ describe("actions", () => {
   it("test negative semantic value lookup ($-1)",() => {
     var lexData = {
       rules: [
-        ["x", "return 'x';"],
-        ["y", "return 'y';"],
-        ["z", "return 'z';"]
+        {pattern: "x", action: "return 'x';"},
+        {pattern: "y", action: "return 'y';"},
+        {pattern: "z", action: "return 'z';"}
       ]
     };
     var grammar = {
@@ -221,7 +221,7 @@ describe("actions", () => {
   it("test Build AST",() => {
     var lexData = {
       rules: [
-        ["x", "return 'x';"]
+        {pattern: "x", action: "return 'x';"}
       ]
     };
     var grammar = {
@@ -247,9 +247,9 @@ describe("actions", () => {
   it("test 0+0 grammar",() => {
     var lexData2 = {
       rules: [
-        ["0", "return 'ZERO';"],
-        ["\\+", "return 'PLUS';"],
-        ["$", "return 'EOF';"]
+        {pattern: "0", action: "return 'ZERO';"},
+        {pattern: "\\+", action: "return 'PLUS';"},
+        {pattern: "$", action: "return 'EOF';"}
       ]
     };
     var grammar = {
@@ -272,9 +272,9 @@ describe("actions", () => {
   it("test implicit $$ = $1 action",() => {
     var lexData2 = {
       rules: [
-        ["0", "return 'ZERO';"],
-        ["\\+", "return 'PLUS';"],
-        ["$", "return 'EOF';"]
+        {pattern: "0", action: "return 'ZERO';"},
+        {pattern: "\\+", action: "return 'PLUS';"},
+        {pattern: "$", action: "return 'EOF';"}
       ]
     };
     var grammar = {
@@ -297,7 +297,7 @@ describe("actions", () => {
   it("test yytext",() => {
     var lexData = {
       rules: [
-        ["x", "return 'x';"]
+        {pattern: "x", action: "return 'x';"}
       ]
     };
     var grammar = {
@@ -316,7 +316,7 @@ describe("actions", () => {
   it("test yyleng",() => {
     var lexData = {
       rules: [
-        ["x", "return 'x';"]
+        {pattern: "x", action: "return 'x';"}
       ]
     };
     var grammar = {
@@ -335,8 +335,8 @@ describe("actions", () => {
   it("test yytext more",() => {
     var lexData = {
       rules: [
-        ["x", "return 'x';"],
-        ["y", "return 'y';"]
+        {pattern: "x", action: "return 'x';"},
+        {pattern: "y", action: "return 'y';"}
       ]
     };
     var grammar = {
@@ -356,7 +356,7 @@ describe("actions", () => {
   it("test action include",() => {
     var lexData = {
       rules: [
-        ["y", "return 'y';"]
+        {pattern: "y", action: "return 'y';"}
       ]
     };
     var grammar = {
@@ -380,9 +380,9 @@ describe("actions", () => {
   it("test next token not shifted if only one action", () => {
     var lexData = {
       rules: [
-        ["\\(", "return '(';"],
-        ["\\)", "return ')';"],
-        ["y", "return yy.xed ? 'yfoo' : 'ybar';"]
+        {pattern: "\\(", action: "return '(';"},
+        {pattern: "\\)", action: "return ')';"},
+        {pattern: "y", action: "return yy.xed ? 'yfoo' : 'ybar';"}
       ]
     };
     var grammar = {
@@ -401,8 +401,8 @@ describe("actions", () => {
   xit("test token array LIFO",() => {
     var lexData = {
       rules: [
-        ["a", "return ['b','a'];"],
-        ["c", "return 'c';"]
+        {pattern: "a", action: "return ['b','a'];"},
+        {pattern: "c", action: "return 'c';"}
       ]
     };
     var grammar = {
@@ -423,8 +423,8 @@ describe("actions", () => {
   it("test YYACCEPT",() => {
     var lexData = {
       rules: [
-        ["x", "return 'x';"],
-        ["y", "return 'y';"]
+        {pattern: "x", action: "return 'x';"},
+        {pattern: "y", action: "return 'y';"}
       ]
     };
     var grammar = {
@@ -446,8 +446,8 @@ describe("actions", () => {
   it("test YYABORT",() => {
     var lexData = {
       rules: [
-        ["x", "return 'x';"],
-        ["y", "return 'y';"]
+        {pattern: "x", action: "return 'x';"},
+        {pattern: "y", action: "return 'y';"}
       ]
     };
     var grammar = {
@@ -469,7 +469,7 @@ describe("actions", () => {
   xit("test parse params",() => {
     var lexData = {
       rules: [
-        ["y", "return 'y';"]
+        {pattern: "y", action: "return 'y';"}
       ]
     };
     var grammar = {
@@ -489,9 +489,9 @@ describe("actions", () => {
   it("test symbol aliases",() => {
     var lexData = {
       rules: [
-        ["a", "return 'a';"],
-        ["b", "return 'b';"],
-        ["c", "return 'c';"]
+        {pattern: "a", action: "return 'a';"},
+        {pattern: "b", action: "return 'b';"},
+        {pattern: "c", action: "return 'c';"}
       ]
     };
     var grammar = {
@@ -511,9 +511,9 @@ describe("actions", () => {
   it("test symbol aliases in ebnf",() => {
     var lexData = {
       rules: [
-        ["a", "return 'a';"],
-        ["b", "return 'b';"],
-        ["c", "return 'c';"]
+        {pattern: "a", action: "return 'a';"},
+        {pattern: "b", action: "return 'b';"},
+        {pattern: "c", action: "return 'c';"}
       ]
     };
     var grammar = {

@@ -8,8 +8,8 @@ describe("lr1", () => {
   it("test xx nullable grammar", () => {
     var lexData = {
       rules: [
-        ["x", "return 'x';"],
-        ["y", "return 'y';"]
+        {pattern: "x", action: "return 'x';"},
+        {pattern: "y", action: "return 'y';"}
       ]
     };
     var grammar = {
@@ -32,8 +32,8 @@ describe("lr1", () => {
   it("test LR parse", () => {
     var lexData2 = {
       rules: [
-        ["0", "return 'ZERO';"],
-        ["\\+", "return 'PLUS';"]
+        {pattern: "0", action: "return 'ZERO';"},
+        {pattern: "\\+", action: "return 'PLUS';"}
       ]
     };
     var grammar = {
@@ -58,9 +58,9 @@ describe("lr1", () => {
           "digit": "[0-9]"
         },
         "rules": [
-          ["\\s+", "/* skip whitespace */"],
-          ["{digit}+(\\.{digit}+)?", "return 'NUMBER';"],
-          ["\"[^\"]*", function(){
+          {pattern: "\\s+", action: "/* skip whitespace */"},
+          {pattern: "{digit}+(\\.{digit}+)?", action: "return 'NUMBER';"},
+          {pattern: "\"[^\"]*", action: function(){
             if(yytext.charAt(yyleng-1) == '\\') {
               // remove escape
               yytext = yytext.substr(0,yyleng-2);
@@ -70,16 +70,16 @@ describe("lr1", () => {
               this.input(); // swallow end quote
               return "STRING";
             }
-          }],
-          ["\\{", "return '{'"],
-          ["\\}", "return '}'"],
-          ["\\[", "return '['"],
-          ["\\]", "return ']'"],
-          [",", "return ','"],
-          [":", "return ':'"],
-          ["true\\b", "return 'TRUE'"],
-          ["false\\b", "return 'FALSE'"],
-          ["null\\b", "return 'NULL'"]
+          }},
+          {pattern: "\\{", action: "return '{'"},
+          {pattern: "\\}", action: "return '}'"},
+          {pattern: "\\[", action: "return '['"},
+          {pattern: "\\]", action: "return ']'"},
+          {pattern: ",", action: "return ','"},
+          {pattern: ":", action: "return ':'"},
+          {pattern: "true\\b", action: "return 'TRUE'"},
+          {pattern: "false\\b", action: "return 'FALSE'"},
+          {pattern: "null\\b", action: "return 'NULL'"}
         ]
       },
 
@@ -88,14 +88,16 @@ describe("lr1", () => {
         "JsonThing": [ "JsonObject",
                        "JsonArray" ],
 
-        "JsonObject": [ "{ JsonPropertyList }" ],
+        "JsonObject": [ "{ JsonPropertyList }",
+                        "{ }" ],
 
         "JsonPropertyList": [ "JsonProperty",
                               "JsonPropertyList , JsonProperty" ],
 
         "JsonProperty": [ "StringLiteral : JsonValue" ],
 
-        "JsonArray": [ "[ JsonValueList ]" ],
+        "JsonArray": [ "[ JsonValueList ]" ,
+                       "[ ]" ],
 
         "JsonValueList": [ "JsonValue",
                            "JsonValueList , JsonValue" ],
@@ -114,16 +116,31 @@ describe("lr1", () => {
       },
     };
 
-    var source = '{"foo": "Bar", "hi": 42, "array": [1,2,3.004,4], "false": false, "true":true, "null": null, "obj": {"ha":"ho"}, "string": "string\\"sgfg" }';
-
     var parser = new Jison.Parser(grammar, {type: "lr"});
-    expect(parser.parse(source)).toBe(true);
-  })
+    expect(parser.parse(`{ }`)).toBe(true);
+    expect(parser.parse(`{ "foo": "Bar" }`)).toBe(true);
+    expect(parser.parse(`{ "array": [1,2,3.004,4] }`)).toBe(true);
+    expect(parser.parse(`{ "empty array": [] }`)).toBe(true);
+    expect(parser.parse(`{ "empty array ws": [\n\t ] }`)).toBe(true);
+    expect(parser.parse(`{ "deep array": [ [ [ 1,2,3 ] ] ] }`)).toBe(true);
+    expect(parser.parse(`{ "foo": "Bar", "array": [1] }`)).toBe(true);
+    expect(parser.parse(`{ "hi": 42 }`)).toBe(true);
+    expect(parser.parse(`{ "false": false }`)).toBe(true);
+    expect(parser.parse(`{ "true":true }`)).toBe(true);
+    expect(parser.parse(`{ "null": null }`)).toBe(true);
+    expect(parser.parse(`{ "obj": {"ha":"ho"} }`)).toBe(true);
+    expect(parser.parse(`{ "string": "string\\"sgfg" }`)).toBe(true);
+    expect(() => parser.parse(`{ { "a": 1 }: "val" }`)).toThrow(/Expecting '}', 'STRING', got '{'/);
+    expect(() => parser.parse(`{ "a": 1, }`)).toThrow(/Expecting 'STRING', got '}'/);
+    expect(() => parser.parse(`{ null: "null" }`)).toThrow(/Expecting '}', 'STRING', got 'NULL'/);
+    expect(() => parser.parse(`{ "unterminated string": "string }`)).toThrow(/Expecting '}', ',', got '1'/);
+    expect(() => parser.parse(`{ "unterminated escaped string": "string\\"sgfg }`)).toThrow(/Expecting '}', ',', got '1'/);
+  });
 
   it("test compilers test grammar", () => {
     var lexData = {
       rules: [
-        ["x", "return 'x';"]
+        {pattern: "x", action: "return 'x';"}
       ]
     };
     var grammar = {
@@ -194,10 +211,10 @@ States with conflicts:`,
   it("test nullables", () => {
     var lexData = {
       rules: [
-        ["x", "return 'x';"],
-        ["y", "return 'y';"],
-        ["z", "return 'z';"],
-        [";", "return ';';"]
+        {pattern: "x", action: "return 'x';"},
+        {pattern: "y", action: "return 'y';"},
+        {pattern: "z", action: "return 'z';"},
+        {pattern: ";", action: "return ';';"}
       ]
     };
     var grammar = {

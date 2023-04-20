@@ -8,22 +8,22 @@ describe("bnf", () => {
     const grammar = {
       "lex": {
         "rules": [
-          ["\\s+", "/* skip whitespace */"],
-          ["[a-zA-Z][a-zA-Z0-9_-]*", "return 'ID';"],
-          ["\"[^\"]+\"", "yytext = yytext.substr(1, yyleng-2); return 'STRING';"],
-          ["'[^']+'", "yytext = yytext.substr(1, yyleng-2); return 'STRING';"],
-          [":", "return ':';"],
-          [";", "return ';';"],
-          ["\\|", "return '|';"],
-          ["%%", "return '%%';"],
-          ["%prec", "return 'PREC';"],
-          ["%start", "return 'START';"],
-          ["%left", "return 'LEFT';"],
-          ["%right", "return 'RIGHT';"],
-          ["%nonassoc", "return 'NONASSOC';"],
-          ["\\{[^}]*\\}", "yytext = yytext.substr(1, yyleng-2); return 'ACTION';"],
-          [".", "/* ignore bad characters */"],
-          ["$", "return 'EOF';"]
+          {pattern: "\\s+", action: "/* skip whitespace */"},
+          {pattern: "[a-zA-Z][a-zA-Z0-9_-]*", action: "return 'ID';"},
+          {pattern: "\"[^\"]+\"", action: "yytext = yytext.substr(1, yyleng-2); return 'STRING';"},
+          {pattern: "'[^']+'", action: "yytext = yytext.substr(1, yyleng-2); return 'STRING';"},
+          {pattern: ":", action: "return ':';"},
+          {pattern: ";", action: "return ';';"},
+          {pattern: "\\|", action: "return '|';"},
+          {pattern: "%%", action: "return '%%';"},
+          {pattern: "%prec", action: "return 'PREC';"},
+          {pattern: "%start", action: "return 'START';"},
+          {pattern: "%left", action: "return 'LEFT';"},
+          {pattern: "%right", action: "return 'RIGHT';"},
+          {pattern: "%nonassoc", action: "return 'NONASSOC';"},
+          {pattern: "\\{[^}]*\\}", action: "yytext = yytext.substr(1, yyleng-2); return 'ACTION';"},
+          {pattern: ".", action: "/* ignore bad characters */"},
+          {pattern: "$", action: "return 'EOF';"}
         ]
       },
       "bnf": {

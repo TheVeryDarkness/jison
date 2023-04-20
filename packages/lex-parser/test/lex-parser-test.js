@@ -16,11 +16,11 @@ function stringifyRules (ret) {
       ret.macros[label] = RegexpAtomToJs.serialize(ret.macros[label], !(ret.options && ret.options.flex) , 'preserve', true);
   if ('rules' in ret)
     ret.rules = ret.rules.map(
-      rule => rule.map(entry =>
-        entry instanceof RegexpAtom
-          ? RegexpAtomToJs.serialize(entry, 'preserve', true)
-          : entry
-      )
+      rule => ({
+        start: rule.start,
+        pattern: rule.pattern ? RegexpAtomToJs.serialize(rule.pattern, 'preserve', true) : undefined,
+        action: rule.action,
+      })
     );
   return ret;
 }
@@ -39,8 +39,8 @@ ID [a-zA-Z][a-zA-Z0-9]+
     const expected = {
       macros: {"D": "[0-9]", "ID": "[a-zA-Z][a-zA-Z0-9]+"},
       rules: [
-        ["{D}ohhai\\b", "print(9);"],
-        ["\\{", "return '{';"]
+        {pattern: "{D}ohhai\\b", action: "print(9);"},
+        {pattern: "\\{", action: "return '{';"}
       ]
     };
 
@@ -55,9 +55,9 @@ ID [a-zA-Z][a-zA-Z0-9]+
 \\s+ {/* skip */}`;
     const expected = {
       rules: [
-        ["\\\\n+", "return 'NL';"],
-        ["\\n+", "return 'NL2';"],
-        ["\\s+", "/* skip */"]
+        {pattern: "\\\\n+", action: "return 'NL';"},
+        {pattern: "\\n+", action: "return 'NL2';"},
+        {pattern: "\\s+", action: "/* skip */"}
       ]
     };
 
@@ -75,10 +75,10 @@ $ {return 'EOF';}
 `;
     const expected = {
       rules: [
-        ["$", "return 'EOF';"],
-        [".", "/* skip */"],
-        ["stuff*(?=(\\{|;))", "/* ok */"],
-        ["(.+)[a-z]{1,2}hi*?", "/* skip */"]
+        {pattern: "$", action: "return 'EOF';"},
+        {pattern: ".", action: "/* skip */"},
+        {pattern: "stuff*(?=(\\{|;))", action: "/* ok */"},
+        {pattern: "(.+)[a-z]{1,2}hi*?", action: "/* skip */"}
       ]
     };
 
@@ -94,9 +94,9 @@ $ {return 'EOF';}
 `;
     const expected = {
       rules: [
-        ["\\[[^\\]]\\]", "return true;"],
-        ["f\"oo'bar\\b", "return 'baz2';"],
-        ['fo"obar\\b', "return 'baz';"]
+        {pattern: "\\[[^\\]]\\]", action: "return true;"},
+        {pattern: "f\"oo'bar\\b", action: "return 'baz2';"},
+        {pattern: 'fo"obar\\b', action: "return 'baz';"}
       ]
     };
 
@@ -112,7 +112,7 @@ return true;
 `;
     const expected = {
       rules: [
-        ["\\[[^\\]]\\]", "\nreturn true;\n"]
+        {pattern: "\\[[^\\]]\\]", action: "\nreturn true;\n"}
       ]
     };
 
@@ -128,7 +128,7 @@ const b={};return true;
 `;
     const expected = {
       rules: [
-        ["\\[[^\\]]\\]", "\nconst b={};return true;\n"]
+        {pattern: "\\[[^\\]]\\]", action: "\nconst b={};return true;\n"}
       ]
     };
 
@@ -144,7 +144,7 @@ const b={}; /* { */ return true;
 `;
     const expected = {
       rules: [
-        ["\\[[^\\]]\\]", "\nconst b={}; /* { */ return true;\n"]
+        {pattern: "\\[[^\\]]\\]", action: "\nconst b={}; /* { */ return true;\n"}
       ]
     };
 
@@ -161,7 +161,7 @@ return 2 / 3;
 `;
     const expected = {
       rules: [
-        ["\\[[^\\]]\\]", "\nconst b={}; // { \nreturn 2 / 3;\n"]
+        {pattern: "\\[[^\\]]\\]", action: "\nconst b={}; // { \nreturn 2 / 3;\n"}
       ]
     };
 
@@ -178,7 +178,7 @@ return 2 / 3;
 `;
     const expected = {
       rules: [
-        ["\\[[^\\]]\\]", "\nconst b='{' + \"{\"; // { \nreturn 2 / 3;\n"]
+        {pattern: "\\[[^\\]]\\]", action: "\nconst b='{' + \"{\"; // { \nreturn 2 / 3;\n"}
       ]
     };
 
@@ -195,7 +195,7 @@ return 2 / 3;
 `;
     const expected = {
       rules: [
-        ["\\[[^\\]]\\]", "\nconst b=/{/; // { \nreturn 2 / 3;\n"]
+        {pattern: "\\[[^\\]]\\]", action: "\nconst b=/{/; // { \nreturn 2 / 3;\n"}
       ]
     };
 
@@ -218,7 +218,7 @@ return true;
       macros: {"RULE": "[0-9]"},
       actionInclude: "\n hi <stuff> \n",
       rules: [
-        ["\\[[^\\]]\\]", "\nreturn true;\n"]
+        {pattern: "\\[[^\\]]\\]", action: "\nreturn true;\n"}
       ]
     };
 
@@ -252,7 +252,7 @@ return true;
 `;
     const expected = {
       rules: [
-        ["stuff*(?!(\\{|;))", "/* ok */"],
+        {pattern: "stuff*(?!(\\{|;))", action: "/* ok */"},
       ]
     };
 
@@ -276,10 +276,10 @@ return true;
         "EAT": 1,
       },
       rules: [
-        ["enter-test\\b", "this.begin('TEST');" ],
-        [["TEST","EAT"], "x\\b", "return 'T';" ],
-        [["*"], "z\\b", "return 'Z';" ],
-        [["TEST"], "y\\b", "this.begin('INITIAL'); return 'TY';" ]
+        {pattern: "enter-test\\b", action: "this.begin('TEST');"},
+        {start: ["TEST","EAT"], pattern: "x\\b", action: "return 'T';" },
+        {start: ["*"], pattern: "z\\b", action: "return 'Z';" },
+        {start: ["TEST"], pattern: "y\\b", action: "this.begin('INITIAL'); return 'TY';" }
       ]
     };
 
@@ -294,8 +294,8 @@ return true;
 `;
     const expected = {
       rules: [
-        ["\\[[^\\]]\\]", "return true;"],
-        ["x\\b", "return 1;"]
+        {pattern: "\\[[^\\]]\\]", action: "return true;"},
+        {pattern: "x\\b", action: "return 1;"}
       ]
     };
 
@@ -309,7 +309,7 @@ return true;
 `;
     const expected = {
       rules: [
-        ["\"'x\\b", "return 1;"]
+        {pattern: "\"'x\\b", action: "return 1;"}
       ]
     };
 
@@ -327,11 +327,11 @@ return true;
 `;
     const expected = {
       rules: [
-        ["\"'\\\\\\*i\\b", "return 1;"], // "'\\\*i\b
-        ["a\\b", "return 2;"],           // a\b
-        ["\\x01", ""],                   // \x01 -- not \cA
-        ["\\n", ""],                     // \n -- not \x10
-        ["\\xff", ""]                    // \xff
+        {pattern: "\"'\\\\\\*i\\b", action: "return 1;"}, // "'\\\*i\b
+        {pattern: "a\\b", action: "return 2;"},           // a\b
+        {pattern: "\\x01", action: ""},                   // \x01 -- not \cA
+        {pattern: "\\n", action: ""},                     // \n -- not \x10
+        {pattern: "\\xff", action: ""}                    // \xff
       ]
     };
 
@@ -344,7 +344,7 @@ return true;
 "\\u03c0" return 1;`;
     const expected = {
       rules: [
-        ["\\u03c0", "return 1;"]
+        {pattern: "\\u03c0", action: "return 1;"}
       ]
     };
 
@@ -357,7 +357,7 @@ return true;
 "π" return 1;`; // GREEK SMALL LETTER PI
     const expected = {
       rules: [
-        ["\\u03c0", "return 1;"] // \uxxxx representation of pi
+        {pattern: "\\u03c0", action: "return 1;"} // \uxxxx representation of pi
       ]
     };
 
@@ -370,7 +370,7 @@ return true;
 \\\'([^\\\\\']+|\\\\(\\n|.))*?\\\' return 1;`;
     const expected = {
       rules: [
-        ["'([^\\\\']+|\\\\(\\n|.))*?'", "return 1;"]
+        {pattern: "'([^\\\\']+|\\\\(\\n|.))*?'", action: "return 1;"}
       ]
     };
 
@@ -383,7 +383,7 @@ return true;
 (?:"foo"|"bar")\\(\\) return 1;`;
     const expected = {
       rules: [
-        ["(?:foo|bar)\\(\\)", "return 1;"]
+        {pattern: "(?:foo|bar)\\(\\)", action: "return 1;"}
       ]
     };
 
@@ -396,7 +396,7 @@ return true;
 %% const bar = 1;`;
     const expected = {
       rules: [
-        ['foo\\b', "return bar;"]
+        {pattern: 'foo\\b', action: "return bar;"}
       ],
       moduleInclude: " const bar = 1;"
     };
@@ -410,7 +410,7 @@ return true;
 (|"bar")("foo"|)(|) return 1;`;
     const expected = {
       rules: [
-        ["(|bar)(foo|)(|)", "return 1;"]
+        {pattern: "(|bar)(foo|)(|)", action: "return 1;"}
       ]
     };
 
@@ -424,7 +424,7 @@ return true;
 "foo" return 1;`;
     const expected = {
       rules: [
-        ["foo", "return 1;"]
+        {pattern: "foo", action: "return 1;"}
       ],
       options: {flex: true}
     };
@@ -438,7 +438,7 @@ return true;
 foo* return 1`;
     const expected = {
       rules: [
-        ["foo*", "return 1"]
+        {pattern: "foo*", action: "return 1"}
       ]
     };
 
@@ -454,9 +454,9 @@ foo* return 1`;
 `;
     const expected = {
       rules: [
-        ["\\[[^\\\\]\\]", "return true;"],
-        ["f\"oo'bar\\b", "return 'baz2';"],
-        ['fo"obar\\b', "return 'baz';"]
+        {pattern: "\\[[^\\\\]\\]", action: "return true;"},
+        {pattern: "f\"oo'bar\\b", action: "return 'baz2';"},
+        {pattern: 'fo"obar\\b', action: "return 'baz';"}
       ]
     };
 
@@ -470,7 +470,7 @@ foo* return 1`;
 foo* return 1`;
     const expected = {
       rules: [
-        ["foo*", "return 1"]
+        {pattern: "foo*", action: "return 1"}
       ]
     };
 
@@ -484,7 +484,7 @@ foo* return 1`;
 `;
     const expected = {
       rules: [
-        ["#[^\\n]*\\n", "/* ok */"],
+        {pattern: "#[^\\n]*\\n", action: "/* ok */"},
       ]
     };
 
@@ -501,8 +501,8 @@ foo* return 1`;
 `;
     const expected = {
       rules: [
-        ["a\\b", "return true;"],
-        ["b\\b", "return 1;"]
+        {pattern: "a\\b", action: "return true;"},
+        {pattern: "b\\b", action: "return 1;"}
       ]
     };
 
@@ -513,7 +513,7 @@ foo* return 1`;
     const lexgrammar = '%%\r\n"["[^\\]]"]" %{\r\nreturn true;\r\n%}\r\n';
     const expected = {
       rules: [
-        ["\\[[^\\]]\\]", "\r\nreturn true;\r\n"]
+        {pattern: "\\[[^\\]]\\]", action: "\r\nreturn true;\r\n"}
       ]
     };
 
@@ -533,8 +533,8 @@ return true;
 `;
     const expected = {
       rules: [
-        ["a\\b", "  \nreturn true;\n"],
-        ["b\\b", "    return 1;\n"]
+        {pattern: "a\\b", action: "  \nreturn true;\n"},
+        {pattern: "b\\b", action: "    return 1;\n"}
       ]
     };
 

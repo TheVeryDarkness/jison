@@ -9,8 +9,8 @@ afterEach(Shared.nothingPrinted);
 
 const lexData = {
     rules: [
-       ["x", "return 'x';"],
-       ["y", "return 'y';"]
+      {pattern: "x", action: "return 'x';"},
+      {pattern: "y", action: "return 'y';"}
     ]
 };
 
@@ -161,8 +161,8 @@ describe("api", () => {
   it("test yy shared scope",  () => {
     const lexData = {
       rules: [
-        ["x", "return 'x';"],
-        ["y", "return yy.xed ? 'yfoo' : 'ybar';"]
+        {pattern: "x", action: "return 'x';"},
+        {pattern: "y", action: "return yy.xed ? 'yfoo' : 'ybar';"}
       ]
     };
     const grammar = {
@@ -200,11 +200,11 @@ describe("api", () => {
   it("test custom parse error method",  () => {
     const lexData = {
       rules: [
-        ["a", "return 'a';"],
-        ["b", "return 'b';"],
-        ["c", "return 'c';"],
-        ["d", "return 'd';"],
-        ["g", "return 'g';"]
+        {pattern: "a", action: "return 'a';"},
+        {pattern: "b", action: "return 'b';"},
+        {pattern: "c", action: "return 'c';"},
+        {pattern: "d", action: "return 'd';"},
+        {pattern: "g", action: "return 'g';"}
       ]
     };
     const grammar = {
@@ -304,9 +304,9 @@ describe("api", () => {
 
     const lexData = {
       rules: [
-        ["\\s", "/*ignore*/"],
-        ["x", "return 'x';"],
-        ["y", "return 'y';"]
+        {pattern: "\\s", action: "/*ignore*/"},
+        {pattern: "x", action: "return 'x';"},
+        {pattern: "y", action: "return 'y';"}
       ]
     };
     const gen = new Jison.Generator(grammar);
@@ -333,9 +333,9 @@ describe("api", () => {
 
     const lexData = {
       rules: [
-        ["\\s", "/*ignore*/"],
-        ["x", "return 'x';"],
-        ["y", "return 'y';"]
+        {pattern: "\\s", action: "/*ignore*/"},
+        {pattern: "x", action: "return 'x';"},
+        {pattern: "y", action: "return 'y';"}
       ]
     };
     const gen = new Jison.Generator(grammar);
@@ -363,9 +363,9 @@ describe("api", () => {
 
     const lexData = {
       rules: [
-        ["\\s", "/*ignore*/"],
-        ["x", "return 'x';"],
-        ["y", "return 'y';"]
+        {pattern: "\\s", action: "/*ignore*/"},
+        {pattern: "x", action: "return 'x';"},
+        {pattern: "y", action: "return 'y';"}
       ]
     };
     const gen = new Jison.Generator(grammar);
@@ -454,11 +454,11 @@ describe("api", () => {
 
     const lexData = {
       rules: [
-        ["\\s", "/*ignore*/"],
-        ["w", "return 'w';"],
-        ["x", "return 'x';"],
-        ["y", "return 'y';"],
-        ["$", "return 'EOF';"]
+        {pattern: "\\s", action: "/*ignore*/"},
+        {pattern: "w", action: "return 'w';"},
+        {pattern: "x", action: "return 'x';"},
+        {pattern: "y", action: "return 'y';"},
+        {pattern: "$", action: "return 'EOF';"}
       ]
     };
     const gen = new Jison.Generator(grammar);

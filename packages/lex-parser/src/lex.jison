@@ -208,7 +208,7 @@ rules
 
 rule
     : start_conditions regex action
-        { $$ = $1 ? [$1, $2, $3] : [$2,$3]; }
+        { $$ = $1 ? {start: $1, pattern: $2, action: $3} : {pattern: $2, action: $3}; }
     ;
 
 action

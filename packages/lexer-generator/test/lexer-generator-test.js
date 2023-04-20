@@ -8,9 +8,9 @@ describe("", () => {
   it("test basic matchers", () => {
     const dict = {
       rules: [
-        ["x", "return 'X';" ],
-        ["y", "return 'Y';" ],
-        ["$", "return 'EOF';" ]
+        {pattern: "x", action: "return 'X';"},
+        {pattern: "y", action: "return 'Y';"},
+        {pattern: "$", action: "return 'EOF';"}
       ]
     };
 
@@ -27,9 +27,9 @@ describe("", () => {
   it("test set yy", () => {
     const dict = {
       rules: [
-        ["x", "return yy.x;" ],
-        ["y", "return 'Y';" ],
-        ["$", "return 'EOF';" ]
+        {pattern: "x", action: "return yy.x;"},
+        {pattern: "y", action: "return 'Y';"},
+        {pattern: "$", action: "return 'EOF';"}
       ]
     };
 
@@ -43,9 +43,9 @@ describe("", () => {
   it("test set input after", () => {
     const dict = {
       rules: [
-        ["x", "return 'X';" ],
-        ["y", "return 'Y';" ],
-        ["$", "return 'EOF';" ]
+        {pattern: "x", action: "return 'X';"},
+        {pattern: "y", action: "return 'Y';"},
+        {pattern: "$", action: "return 'EOF';"}
       ]
     };
 
@@ -64,9 +64,9 @@ describe("", () => {
   it("test unrecognized char", () => {
     const dict = {
       rules: [
-        ["x", "return 'X';" ],
-        ["y", "return 'Y';" ],
-        ["$", "return 'EOF';" ]
+        {pattern: "x", action: "return 'X';"},
+        {pattern: "y", action: "return 'Y';"},
+        {pattern: "$", action: "return 'EOF';"}
       ]
     };
 
@@ -85,10 +85,10 @@ describe("", () => {
         "digit": "[0-9]"
       },
       rules: [
-        ["x", "return 'X';" ],
-        ["y", "return 'Y';" ],
-        ["{digit}+", "return 'NAT';" ],
-        ["$", "return 'EOF';" ]
+        {pattern: "x", action: "return 'X';"},
+        {pattern: "y", action: "return 'Y';"},
+        {pattern: "{digit}+", action: "return 'NAT';"},
+        {pattern: "$", action: "return 'EOF';"}
       ]
     };
 
@@ -108,9 +108,9 @@ describe("", () => {
         "hex": "[0-9]|[a-f]"
       },
       rules: [
-        ["-", "return '-';" ],
-        ["{hex}+", "return 'HEX';" ],
-        ["$", "return 'EOF';" ]
+        {pattern: "-", action: "return '-';"},
+        {pattern: "{hex}+", action: "return 'HEX';"},
+        {pattern: "$", action: "return 'EOF';"}
       ]
     };
 
@@ -135,12 +135,12 @@ describe("", () => {
         "3digit": "{2digit}{digit}"
       },
       rules: [
-        ["x", "return 'X';" ],
-        ["y", "return 'Y';" ],
-        ["{3digit}", "return 'NNN';" ],
-        ["{2digit}", "return 'NN';" ],
-        ["{digit}", "return 'N';" ],
-        ["$", "return 'EOF';" ]
+        {pattern: "x", action: "return 'X';"},
+        {pattern: "y", action: "return 'Y';"},
+        {pattern: "{3digit}", action: "return 'NNN';"},
+        {pattern: "{2digit}", action: "return 'NN';"},
+        {pattern: "{digit}", action: "return 'N';"},
+        {pattern: "$", action: "return 'EOF';"}
       ]
     };
 
@@ -163,9 +163,9 @@ describe("", () => {
         "col": "#{hex}+"
       },
       rules: [
-        ["-", "return '-';" ],
-        ["{col}", "return 'HEX';" ],
-        ["$", "return 'EOF';" ]
+        {pattern: "-", action: "return '-';"},
+        {pattern: "{col}", action: "return 'HEX';"},
+        {pattern: "$", action: "return 'EOF';"}
       ]
     };
 
@@ -185,8 +185,8 @@ describe("", () => {
   it("test action include", () => {
     const dict = {
       rules: [
-        ["x", "return included ? 'Y' : 'N';" ],
-        ["$", "return 'EOF';" ]
+        {pattern: "x", action: "return included ? 'Y' : 'N';"},
+        {pattern: "$", action: "return 'EOF';"}
       ],
       actionInclude: "const included = true;"
     };
@@ -201,10 +201,10 @@ describe("", () => {
   it("test ignored", () => {
     const dict = {
       rules: [
-        ["x", "return 'X';" ],
-        ["y", "return 'Y';" ],
-        ["\\s+", "/* skip whitespace */" ],
-        ["$", "return 'EOF';" ]
+        {pattern: "x", action: "return 'X';"},
+        {pattern: "y", action: "return 'Y';"},
+        {pattern: "\\s+", action: "/* skip whitespace */"},
+        {pattern: "$", action: "return 'EOF';"}
       ]
     };
 
@@ -221,11 +221,11 @@ describe("", () => {
   it("test disambiguate", () => {
     const dict = {
       rules: [
-        ["for\\b", "return 'FOR';" ],
-        ["if\\b", "return 'IF';" ],
-        ["[a-z]+", "return 'IDENTIFIER';" ],
-        ["\\s+", "/* skip whitespace */" ],
-        ["$", "return 'EOF';" ]
+        {pattern: "for\\b", action: "return 'FOR';"},
+        {pattern: "if\\b", action: "return 'IF';"},
+        {pattern: "[a-z]+", action: "return 'IDENTIFIER';"},
+        {pattern: "\\s+", action: "/* skip whitespace */"},
+        {pattern: "$", action: "return 'EOF';"}
       ]
     };
 
@@ -242,7 +242,7 @@ describe("", () => {
   it("test yytext overwrite", () => {
     const dict = {
       rules: [
-        ["x", "yytext = 'hi der'; return 'X';" ]
+        {pattern: "x", action: "yytext = 'hi der'; return 'X';"}
       ]
     };
 
@@ -256,9 +256,9 @@ describe("", () => {
   it("test yylineno", () => {
     const dict = {
       rules: [
-        ["\\s+", "/* skip whitespace */" ],
-        ["x", "return 'x';" ],
-        ["y", "return 'y';" ]
+        {pattern: "\\s+", action: "/* skip whitespace */"},
+        {pattern: "x", action: "return 'x';"},
+        {pattern: "y", action: "return 'y';"}
       ]
     };
 
@@ -278,9 +278,9 @@ describe("", () => {
   it("test yylloc", () => {
     const dict = {
       rules: [
-        ["\\s+", "/* skip whitespace */" ],
-        ["x", "return 'x';" ],
-        ["y", "return 'y';" ]
+        {pattern: "\\s+", action: "/* skip whitespace */"},
+        {pattern: "x", action: "return 'x';"},
+        {pattern: "y", action: "return 'y';"}
       ]
     };
 
@@ -310,16 +310,16 @@ describe("", () => {
   it("test more()", () => {
     const dict = {
       rules: [
-        ["x", "return 'X';" ],
-        ['"[^"]*', function(){
+        {pattern: "x", action: "return 'X';"},
+        {pattern: '"[^"]*', action: function () {
           if(yytext.charAt(yyleng-1) == '\\') {
             this.more();
           } else {
             yytext += this.input(); // swallow end quote
             return "STRING";
           }
-        } ],
-        ["$", "return 'EOF';" ]
+        }},
+        {pattern: "$", action: "return 'EOF';"}
       ]
     };
 
@@ -336,9 +336,9 @@ describe("", () => {
     const tokens = {"2":"X", "3":"Y", "4":"EOF"};
     const dict = {
       rules: [
-        ["x", "return 'X';" ],
-        ["y", "return 'Y';" ],
-        ["$", "return 'EOF';" ]
+        {pattern: "x", action: "return 'X';"},
+        {pattern: "y", action: "return 'Y';"},
+        {pattern: "$", action: "return 'EOF';"}
       ]
     };
 
@@ -356,9 +356,9 @@ describe("", () => {
   it("test module generator from constructor", () => {
     const dict = {
       rules: [
-        ["x", "return 'X';" ],
-        ["y", "return 'Y';" ],
-        ["$", "return 'EOF';" ]
+        {pattern: "x", action: "return 'X';"},
+        {pattern: "y", action: "return 'Y';"},
+        {pattern: "$", action: "return 'EOF';"}
       ],
       options: { makeGenerators: true, template: "javascript" }
     };
@@ -381,9 +381,9 @@ describe("", () => {
   it("test module generator", () => {
     const dict = {
       rules: [
-        ["x", "return 'X';" ],
-        ["y", "return 'Y';" ],
-        ["$", "return 'EOF';" ]
+        {pattern: "x", action: "return 'X';"},
+        {pattern: "y", action: "return 'Y';"},
+        {pattern: "$", action: "return 'EOF';"}
       ]
     };
 
@@ -406,16 +406,16 @@ describe("", () => {
   it("test generator with more complex lexer", () => {
     const dict = {
       rules: [
-        ["x", "return 'X';" ],
-        ['"[^"]*', function(){
+        {pattern: "x", action: "return 'X';"},
+        {pattern: '"[^"]*', action: function () {
           if(yytext.charAt(yyleng-1) == '\\') {
             this.more();
           } else {
             yytext += this.input(); // swallow end quote
             return "STRING";
           }
-        } ],
-        ["$", "return 'EOF';" ]
+        }},
+        {pattern: "$", action: "return 'EOF';"}
       ]
     };
 
@@ -437,9 +437,9 @@ describe("", () => {
   it("test commonjs module generator", () => {
     const dict = {
       rules: [
-        ["x", "return 'X';" ],
-        ["y", "return 'Y';" ],
-        ["$", "return 'EOF';" ]
+        {pattern: "x", action: "return 'X';"},
+        {pattern: "y", action: "return 'Y';"},
+        {pattern: "$", action: "return 'EOF';"}
       ]
     };
 
@@ -461,12 +461,12 @@ describe("", () => {
     expect(generated.lex()).toEqual("EOF");
   });
 
-  if (false) it("test amd module generator", () => { // TODO
+  xit("test amd module generator", () => { // TODO
     const dict = {
       rules: [
-        ["x", "return 'X';" ],
-        ["y", "return 'Y';" ],
-        ["$", "return 'EOF';" ]
+        {pattern: "x", action: "return 'X';"},
+        {pattern: "y", action: "return 'Y';"},
+        {pattern: "$", action: "return 'EOF';"}
       ]
     };
 
@@ -499,39 +499,39 @@ describe("", () => {
         },
 
         "rules": [
-          ["\\/\\/.*",       "/* ignore comment */"],
-          ["main\\b",     "return 'MAIN';"],
-          ["class\\b",    "return 'CLASS';"],
-          ["extends\\b",  "return 'EXTENDS';"],
-          ["nat\\b",      "return 'NATTYPE';"],
-          ["if\\b",       "return 'IF';"],
-          ["else\\b",     "return 'ELSE';"],
-          ["for\\b",      "return 'FOR';"],
-          ["printNat\\b", "return 'PRINTNAT';"],
-          ["readNat\\b",  "return 'READNAT';"],
-          ["this\\b",     "return 'THIS';"],
-          ["new\\b",      "return 'NEW';"],
-          ["var\\b",      "return 'VAR';"],
-          ["null\\b",     "return 'NUL';"],
-          ["{digit}+",   "return 'NATLITERAL';"],
-          ["{id}",       "return 'ID';"],
-          ["==",         "return 'EQUALITY';"],
-          ["=",          "return 'ASSIGN';"],
-          ["\\+",        "return 'PLUS';"],
-          ["-",          "return 'MINUS';"],
-          ["\\*",        "return 'TIMES';"],
-          [">",          "return 'GREATER';"],
-          ["\\|\\|",     "return 'OR';"],
-          ["!",          "return 'NOT';"],
-          ["\\.",        "return 'DOT';"],
-          ["\\{",        "return 'LBRACE';"],
-          ["\\}",        "return 'RBRACE';"],
-          ["\\(",        "return 'LPAREN';"],
-          ["\\)",        "return 'RPAREN';"],
-          [";",          "return 'SEMICOLON';"],
-          ["\\s+",       "/* skip whitespace */"],
-          [".",          "print('Illegal character');throw 'Illegal character';"],
-          ["$",          "return 'ENDOFFILE';"]
+          {pattern: "\\/\\/.*", action: "/* ignore comment */"},
+          {pattern: "main\\b", action: "return 'MAIN';"},
+          {pattern: "class\\b", action: "return 'CLASS';"},
+          {pattern: "extends\\b", action: "return 'EXTENDS';"},
+          {pattern: "nat\\b", action: "return 'NATTYPE';"},
+          {pattern: "if\\b", action: "return 'IF';"},
+          {pattern: "else\\b", action: "return 'ELSE';"},
+          {pattern: "for\\b", action: "return 'FOR';"},
+          {pattern: "printNat\\b", action: "return 'PRINTNAT';"},
+          {pattern: "readNat\\b", action: "return 'READNAT';"},
+          {pattern: "this\\b", action: "return 'THIS';"},
+          {pattern: "new\\b", action: "return 'NEW';"},
+          {pattern: "var\\b", action: "return 'VAR';"},
+          {pattern: "null\\b", action: "return 'NUL';"},
+          {pattern: "{digit}+", action: "return 'NATLITERAL';"},
+          {pattern: "{id}", action: "return 'ID';"},
+          {pattern: "==", action: "return 'EQUALITY';"},
+          {pattern: "=", action: "return 'ASSIGN';"},
+          {pattern: "\\+", action: "return 'PLUS';"},
+          {pattern: "-", action: "return 'MINUS';"},
+          {pattern: "\\*", action: "return 'TIMES';"},
+          {pattern: ">", action: "return 'GREATER';"},
+          {pattern: "\\|\\|", action: "return 'OR';"},
+          {pattern: "!", action: "return 'NOT';"},
+          {pattern: "\\.", action: "return 'DOT';"},
+          {pattern: "\\{", action: "return 'LBRACE';"},
+          {pattern: "\\}", action: "return 'RBRACE';"},
+          {pattern: "\\(", action: "return 'LPAREN';"},
+          {pattern: "\\)", action: "return 'RPAREN';"},
+          {pattern: ";", action: "return 'SEMICOLON';"},
+          {pattern: "\\s+", action: "/* skip whitespace */"},
+          {pattern: ".", action: "print('Illegal character');throw 'Illegal character';"},
+          {pattern: "$", action: "return 'ENDOFFILE';"}
         ]
       }
     };
@@ -616,12 +616,12 @@ describe("", () => {
         "TEST": 0,
       },
       rules: [
-        ["enter-test", "this.begin('TEST');" ],
-        [["TEST"], "x", "return 'T';" ],
-        [["TEST"], "y", "this.begin('INITIAL'); return 'TY';" ],
-        ["x", "return 'X';" ],
-        ["y", "return 'Y';" ],
-        ["$", "return 'EOF';" ]
+        {pattern: "enter-test", action: "this.begin('TEST');"},
+        {start: ["TEST"], pattern: "x", action: "return 'T';"},
+        {start: ["TEST"], pattern: "y", action: "this.begin('INITIAL'); return 'TY';"},
+        {pattern: "x", action: "return 'X';"},
+        {pattern: "y", action: "return 'Y';"},
+        {pattern: "$", action: "return 'EOF';"}
       ]
     };
     const input = "xenter-testxyy";
@@ -642,12 +642,12 @@ describe("", () => {
         "EAT": 1,
       },
       rules: [
-        ["\\/\\/", "this.begin('EAT');" ],
-        [["EAT"], ".", "" ],
-        [["EAT"], "\\n", "this.begin('INITIAL');" ],
-        ["x", "return 'X';" ],
-        ["y", "return 'Y';" ],
-        ["$", "return 'EOF';" ]
+        {pattern: "\\/\\/", action: "this.begin('EAT');"},
+        {start: ["EAT"], pattern: ".", action: ""},
+        {start: ["EAT"], pattern: "\\n", action: "this.begin('INITIAL');"},
+        {pattern: "x", action: "return 'X';"},
+        {pattern: "y", action: "return 'Y';"},
+        {pattern: "$", action: "return 'EOF';"}
       ]
     };
     const input = "xy//yxteadh//ste\ny";
@@ -667,12 +667,12 @@ describe("", () => {
         "EAT": 1,
       },
       rules: [
-        ["\\/\\/", "this.begin('EAT');" ],
-        [["EAT"], ".", "" ],
-        [["EAT"], "\\n", "this.popState();" ],
-        ["x", "return 'X';" ],
-        ["y", "return 'Y';" ],
-        ["$", "return 'EOF';" ]
+        {pattern: "\\/\\/", action: "this.begin('EAT');"},
+        {start: ["EAT"], pattern: ".", action: ""},
+        {start: ["EAT"], pattern: "\\n", action: "this.popState();"},
+        {pattern: "x", action: "return 'X';"},
+        {pattern: "y", action: "return 'Y';"},
+        {pattern: "$", action: "return 'EOF';"}
       ]
     };
     const input = "xy//yxteadh//ste\ny";
@@ -686,18 +686,17 @@ describe("", () => {
     expect(lexer.lex()).toEqual("EOF");
   });
 
-
   it("test star start condition", () => {
     const dict = {
       startConditions: {
         "EAT": 1,
       },
       rules: [
-        ["\\/\\/", "this.begin('EAT');" ],
-        [["EAT"], ".", "" ],
-        ["x", "return 'X';" ],
-        ["y", "return 'Y';" ],
-        [["*"],"$", "return 'EOF';" ]
+        {pattern: "\\/\\/", action: "this.begin('EAT');"},
+        {start: ["EAT"], pattern: ".", action: ""},
+        {pattern: "x", action: "return 'X';"},
+        {pattern: "y", action: "return 'Y';"},
+        {start: ["*"], pattern: "$", action: "return 'EOF';"}
       ]
     };
     const input = "xy//yxteadh//stey";
@@ -716,11 +715,11 @@ describe("", () => {
         "EAT": 1,
       },
       rules: [
-        ["\\/\\/", "this.begin('EAT');" ],
-        [["EAT"], ".", "if (YYSTATE==='EAT') return 'E';" ],
-        ["x", "if (YY_START==='INITIAL') return 'X';" ],
-        ["y", "return 'Y';" ],
-        [["*"],"$", "return 'EOF';" ]
+        {pattern: "\\/\\/", action: "this.begin('EAT');"},
+        {start: ["EAT"], pattern: ".", action: "if (YYSTATE==='EAT') return 'E';"},
+        {pattern: "x", action: "if (YY_START==='INITIAL') return 'X';"},
+        {pattern: "y", action: "return 'Y';"},
+        {start: ["*"], pattern: "$", action: "return 'EOF';"}
       ]
     };
     const input = "xy//y";
@@ -737,9 +736,9 @@ describe("", () => {
   it("test unicode encoding", () => {
     const dict = {
       rules: [
-        ["\\u2713", "return 'CHECK';" ],
-        ["\\u03c0", "return 'PI';" ],
-        ["y", "return 'Y';" ]
+        {pattern: "\\u2713", action: "return 'CHECK';"},
+        {pattern: "\\u03c0", action: "return 'PI';"},
+        {pattern: "y", action: "return 'Y';"}
       ]
     };
     const input = "\u2713\u03c0y";
@@ -755,8 +754,8 @@ describe("", () => {
   it("test unicode", () => {
     const dict = {
       rules: [
-        ["π", "return 'PI';" ],
-        ["y", "return 'Y';" ]
+        {pattern: "π", action: "return 'PI';"},
+        {pattern: "y", action: "return 'Y';"}
       ]
     };
     const input = "πy";
@@ -771,8 +770,8 @@ describe("", () => {
   it("test longest match returns", () => {
     const dict = {
       rules: [
-        [".", "return 'DOT';" ],
-        ["cat", "return 'CAT';" ]
+        {pattern: ".", action: "return 'DOT';"},
+        {pattern: "cat", action: "return 'CAT';"}
       ],
       options: {flex: true}
     };
@@ -788,7 +787,7 @@ describe("", () => {
   it("test case insensitivity", () => {
     const dict = {
       rules: [
-        ["cat", "return 'CAT';" ]
+        {pattern: "cat", action: "return 'CAT';"}
       ],
       options: {'case-insensitive': true}
     };
@@ -803,8 +802,8 @@ describe("", () => {
   it("test less", () => {
     const dict = {
       rules: [
-        ["cat", "this.less(2); return 'CAT';" ],
-        ["t", "return 'T';" ]
+        {pattern: "cat", action: "this.less(2); return 'CAT';"},
+        {pattern: "t", action: "return 'T';"}
       ],
     };
     const input = "cat";
@@ -822,10 +821,10 @@ describe("", () => {
         "UN": 1,
       },
       rules: [
-        ["U", "this.begin('UN');return 'U';" ],
-        [["UN"],"$", "this.unput('X')" ],
-        [["UN"],"X", "this.popState();return 'X';" ],
-        ["$", "return 'EOF'" ]
+        {pattern: "U", action: "this.begin('UN');return 'U';"},
+        {start: ["UN"], pattern: "$", action: "this.unput('X')"},
+        {start: ["UN"], pattern: "X", action: "this.popState();return 'X';"},
+        {pattern: "$", action: "return 'EOF'"}
       ]
     };
     const input = "U";
@@ -841,7 +840,7 @@ describe("", () => {
   it("test flex mode default rule", () => {
     const dict = {
       rules: [
-        ["x", "return 'X';" ]
+        {pattern: "x", action: "return 'X';"}
       ],
       options: {flex: true}
     };
@@ -862,8 +861,8 @@ describe("", () => {
   it("test pipe precedence", () => {
     const dict = {
       rules: [
-        ["x|y", "return 'X_Y';" ],
-        [".",   "return 'N';"]
+        {pattern: "x|y", action: "return 'X_Y';"},
+        {pattern: ".", action:   "return 'N';"}
       ]
     };
     const input = "xny";
@@ -879,8 +878,8 @@ describe("", () => {
   it("test ranges", () => {
     const dict = {
       rules: [
-        ["x+", "return 'X';" ],
-        [".",   "return 'N';"]
+        {pattern: "x+", action: "return 'X';"},
+        {pattern: ".", action:   "return 'N';"}
       ],
       options: {ranges: true}
     };
@@ -896,11 +895,11 @@ describe("", () => {
   it("test unput location", () => {
     const dict = {
       rules: [
-        ["x+", "return 'X';" ],
-        ["y\\n", "this.unput('\\n'); return 'Y';" ],
-        ["\\ny", "this.unput('y'); return 'BR';" ],
-        ["y", "return 'Y';" ],
-        [".",   "return 'N';"]
+        {pattern: "x+", action: "return 'X';"},
+        {pattern: "y\\n", action: "this.unput('\\n'); return 'Y';"},
+        {pattern: "\\ny", action: "this.unput('y'); return 'BR';"},
+        {pattern: "y", action: "return 'Y';"},
+        {pattern: ".", action:   "return 'N';"}
       ],
       options: {ranges: true}
     };
@@ -940,11 +939,11 @@ describe("", () => {
   it("test unput location again", () => {
     const dict = {
       rules: [
-        ["x+", "return 'X';" ],
-        ["y\\ny\\n", "this.unput('\\n'); return 'YY';" ],
-        ["\\ny", "this.unput('y'); return 'BR';" ],
-        ["y", "return 'Y';" ],
-        [".",   "return 'N';"]
+        {pattern: "x+", action: "return 'X';"},
+        {pattern: "y\\ny\\n", action: "this.unput('\\n'); return 'YY';"},
+        {pattern: "\\ny", action: "this.unput('y'); return 'BR';"},
+        {pattern: "y", action: "return 'Y';"},
+        {pattern: ".", action:   "return 'N';"}
       ],
       options: {ranges: true}
     };
@@ -984,9 +983,9 @@ describe("", () => {
   it("test backtracking lexer reject() method", () => {
     const dict = {
       rules: [
-        ["[A-Z]+([0-9]+)", "if (this.matches[1].length) this.reject(); else return 'ID';" ],
-        ["[A-Z]+", "return 'WORD';" ],
-        ["[0-9]+", "return 'NUM';" ]
+        {pattern: "[A-Z]+([0-9]+)", action: "if (this.matches[1].length) this.reject(); else return 'ID';"},
+        {pattern: "[A-Z]+", action: "return 'WORD';"},
+        {pattern: "[0-9]+", action: "return 'NUM';"}
       ],
       options: {backtrack_lexer: true}
     };
@@ -1002,9 +1001,9 @@ describe("", () => {
   it("test lexer reject() exception when not in backtracking mode", () => {
     const dict = {
       rules: [
-        ["[A-Z]+([0-9]+)", "if (this.matches[1].length) this.reject(); else return 'ID';" ],
-        ["[A-Z]+", "return 'WORD';" ],
-        ["[0-9]+", "return 'NUM';" ]
+        {pattern: "[A-Z]+([0-9]+)", action: "if (this.matches[1].length) this.reject(); else return 'ID';"},
+        {pattern: "[A-Z]+", action: "return 'WORD';"},
+        {pattern: "[0-9]+", action: "return 'NUM';"}
       ],
       options: {backtrack_lexer: false}
     };
@@ -1022,9 +1021,9 @@ describe("", () => {
   it("test yytext state after unput", () => {
     const dict = {
       rules: [
-        ["cat4", "this.unput('4'); return 'CAT';" ],
-        ["4", "return 'NUMBER';" ],
-        ["$", "return 'EOF';"]
+        {pattern: "cat4", action: "this.unput('4'); return 'CAT';"},
+        {pattern: "4", action: "return 'NUMBER';"},
+        {pattern: "$", action: "return 'EOF';"}
       ]
     };
 

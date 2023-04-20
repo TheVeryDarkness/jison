@@ -8,9 +8,9 @@ describe("errorlab", () => {
   it("test error caught", () => {
     var lexData = {
       rules: [
-        ["x", "return 'x';"],
-        ["y", "return 'y';"],
-        [".", "return 'ERR';"]
+        {pattern: "x", action: "return 'x';"},
+        {pattern: "y", action: "return 'y';"},
+        {pattern: ".", action: "return 'ERR';"}
       ]
     };
     var grammar = {
@@ -31,9 +31,9 @@ describe("errorlab", () => {
   it("test error recovery", () => {
     var lexData = {
       rules: [
-        ["x", "return 'x';"],
-        ["y", "return 'y';"],
-        [".", "return 'ERR';"]
+        {pattern: "x", action: "return 'x';"},
+        {pattern: "y", action: "return 'y';"},
+        {pattern: ".", action: "return 'ERR';"}
       ]
     };
     var grammar = {
@@ -53,11 +53,11 @@ describe("errorlab", () => {
   it("test deep error recovery", () => {
     var lexData = {
       rules: [
-        ["x", "return 'x';"],
-        ["y", "return 'y';"],
-        ["g", "return 'g';"],
-        [";", "return ';';"],
-        [".", "return 'ERR';"]
+        {pattern: "x", action: "return 'x';"},
+        {pattern: "y", action: "return 'y';"},
+        {pattern: "g", action: "return 'g';"},
+        {pattern: ";", action: "return ';';"},
+        {pattern: ".", action: "return 'ERR';"}
       ]
     };
     var grammar = {
@@ -79,9 +79,9 @@ describe("errorlab", () => {
   it("test no recovery", () => {
     var lexData = {
       rules: [
-        ["x", "return 'x';"],
-        ["y", "return 'y';"],
-        [".", "return 'ERR';"]
+        {pattern: "x", action: "return 'x';"},
+        {pattern: "y", action: "return 'y';"},
+        {pattern: ".", action: "return 'ERR';"}
       ]
     };
     var grammar = {
@@ -100,10 +100,10 @@ describe("errorlab", () => {
   it("test error after error recovery", () => {
     var lexData = {
       rules: [
-        ["x", "return 'x';"],
-        ["y", "return 'y';"],
-        ["g", "return 'g';"],
-        [".", "return 'ERR';"]
+        {pattern: "x", action: "return 'x';"},
+        {pattern: "y", action: "return 'y';"},
+        {pattern: "g", action: "return 'g';"},
+        {pattern: ".", action: "return 'ERR';"}
       ]
     };
     var grammar = {
@@ -124,11 +124,11 @@ describe("errorlab", () => {
   it("test throws error despite recovery rule",() => {
     var lexData2 = {
       rules: [
-        ["0", "return 'ZERO';"],
-        ["\\+", "return 'PLUS';"],
-        [";", "return ';';"],
-        [".", "return 'INVALID'"],
-        ["$", "return 'EOF';"]
+        {pattern: "0", action: "return 'ZERO';"},
+        {pattern: "\\+", action: "return 'PLUS';"},
+        {pattern: ";", action: "return ';';"},
+        {pattern: ".", action: "return 'INVALID'"},
+        {pattern: "$", action: "return 'EOF';"}
       ]
     };
     var grammar = {
@@ -227,11 +227,11 @@ transitions ->  {}`,
   it("test correct AST after error recovery abrupt end",() => {
     var lexData2 = {
       rules: [
-        ["0", "return 'ZERO';"],
-        ["\\+", "return 'PLUS';"],
-        [";", "return ';';"],
-        ["$", "return 'EOF';"],
-        [".", "return 'INVALID';"]
+        {pattern: "0", action: "return 'ZERO';"},
+        {pattern: "\\+", action: "return 'PLUS';"},
+        {pattern: ";", action: "return ';';"},
+        {pattern: "$", action: "return 'EOF';"},
+        {pattern: ".", action: "return 'INVALID';"}
       ]
     };
     var grammar = {
@@ -257,11 +257,11 @@ transitions ->  {}`,
   it("test bison error recovery example",() => {
     var lexData2 = {
       rules: [
-        ["0", "return 'ZERO';"],
-        ["\\+", "return 'PLUS';"],
-        [";", "return ';';"],
-        ["$", "return 'EOF';"],
-        [".", "return 'INVALID';"]
+        {pattern: "0", action: "return 'ZERO';"},
+        {pattern: "\\+", action: "return 'PLUS';"},
+        {pattern: ";", action: "return ';';"},
+        {pattern: "$", action: "return 'EOF';"},
+        {pattern: ".", action: "return 'INVALID';"}
       ]
     };
     var grammar = {

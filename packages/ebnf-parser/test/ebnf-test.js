@@ -7,10 +7,10 @@ function testParse(top, strings) {
     var grammar = {
       "lex": {
         "rules": [
-          ["\\s+", ''],
-          ["[A-Za-z]+", "return 'word';"],
-          [",", "return ',';"],
-          ["$", "return 'EOF';"]
+          {pattern: "\\s+", action: ''},
+          {pattern: "[A-Za-z]+", action: "return 'word';"},
+          {pattern: ",", action: "return ',';"},
+          {pattern: "$", action: "return 'EOF';"}
         ]
       },
       "start": "top",
@@ -28,10 +28,10 @@ function testBadParse(top, strings) {
     var grammar = {
       "lex": {
         "rules": [
-          ["\\s+", ''],
-          ["[A-Za-z]+", "return 'word';"],
-          [",", "return ',';"],
-          ["$", "return 'EOF';"]
+          {pattern: "\\s+", action: ''},
+          {pattern: "[A-Za-z]+", action: "return 'word';"},
+          {pattern: ",", action: "return ',';"},
+          {pattern: "$", action: "return 'EOF';"}
         ]
       },
       "start": "top",
@@ -49,10 +49,10 @@ function testAlias(top, obj, str) {
     var grammar = {
       "lex": {
         "rules": [
-          ["\\s+", ''],
-          ["[A-Za-z]+", "return 'word';"],
-          [",", "return ',';"],
-          ["$", "return 'EOF';"]
+          {pattern: "\\s+", action: ''},
+          {pattern: "[A-Za-z]+", action: "return 'word';"},
+          {pattern: ",", action: "return ',';"},
+          {pattern: "$", action: "return 'EOF';"}
         ]
       },
       "start": "top",

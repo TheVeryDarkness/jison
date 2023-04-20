@@ -7,18 +7,18 @@ afterEach(Shared.nothingPrinted);
 describe("tables", () => {
   var lexData = {
     rules: [
-      ["x", "return 'x';"],
-      ["\\+", "return '+';"],
-      ["$", "return 'EOF';"]
+      {pattern: "x", action: "return 'x';"},
+      {pattern: "\\+", action: "return '+';"},
+      {pattern: "$", action: "return 'EOF';"}
     ]
   };
 
   it("test Left associative rule", () => {
     var lexData = {
       rules: [
-        ["x", "return 'x';"],
-        ["\\+", "return '+';"],
-        ["$", "return 'EOF';"]
+        {pattern: "x", action: "return 'x';"},
+        {pattern: "\\+", action: "return '+';"},
+        {pattern: "$", action: "return 'EOF';"}
       ]
     };
     var grammar = {
@@ -46,9 +46,9 @@ describe("tables", () => {
   it("test Right associative rule", () => {
     var lexData = {
       rules: [
-        ["x", "return 'x';"],
-        ["\\+", "return '+';"],
-        ["$", "return 'EOF';"]
+        {pattern: "x", action: "return 'x';"},
+        {pattern: "\\+", action: "return '+';"},
+        {pattern: "$", action: "return 'EOF';"}
       ]
     };
     var grammar = {
@@ -76,10 +76,10 @@ describe("tables", () => {
   it("test Multiple precedence operators", () => {
     var lexData = {
       rules: [
-        ["x", "return 'x';"],
-        ["\\+", "return '+';"],
-        ["\\*", "return '*';"],
-        ["$", "return 'EOF';"]
+        {pattern: "x", action: "return 'x';"},
+        {pattern: "\\+", action: "return '+';"},
+        {pattern: "\\*", action: "return '*';"},
+        {pattern: "$", action: "return 'EOF';"}
       ]
     };
     var grammar = {
@@ -109,10 +109,10 @@ describe("tables", () => {
   it("test Multiple precedence operators", () => {
     var lexData = {
       rules: [
-        ["x", "return 'x';"],
-        ["\\+", "return '+';"],
-        ["\\*", "return '*';"],
-        ["$", "return 'EOF';"]
+        {pattern: "x", action: "return 'x';"},
+        {pattern: "\\+", action: "return '+';"},
+        {pattern: "\\*", action: "return '*';"},
+        {pattern: "$", action: "return 'EOF';"}
       ]
     };
     var grammar = {
@@ -142,9 +142,9 @@ describe("tables", () => {
   it("test Non-associative operator", () => {
     var lexData = {
       rules: [
-        ["x", "return 'x';"],
-        ["=", "return '=';"],
-        ["$", "return 'EOF';"]
+        {pattern: "x", action: "return 'x';"},
+        {pattern: "=", action: "return '=';"},
+        {pattern: "$", action: "return 'EOF';"}
       ]
     };
     var grammar = {
@@ -170,11 +170,11 @@ describe("tables", () => {
   it("test Context-dependent precedence", () => {
     var lexData = {
       rules: [
-        ["x", "return 'x';"],
-        ["-", "return '-';"],
-        ["\\+", "return '+';"],
-        ["\\*", "return '*';"],
-        ["$", "return 'EOF';"]
+        {pattern: "x", action: "return 'x';"},
+        {pattern: "-", action: "return '-';"},
+        {pattern: "\\+", action: "return '+';"},
+        {pattern: "\\*", action: "return '*';"},
+        {pattern: "$", action: "return 'EOF';"}
       ]
     };
     var grammar = {
@@ -207,12 +207,12 @@ describe("tables", () => {
   it("test multi-operator rules", () => {
     var lexData = {
       rules: [
-        ["x", "return 'ID';"],
-        ["\\.", "return 'DOT';"],
-        ["=", "return 'ASSIGN';"],
-        ["\\(", "return 'LPAREN';"],
-        ["\\)", "return 'RPAREN';"],
-        ["$", "return 'EOF';"]
+        {pattern: "x", action: "return 'ID';"},
+        {pattern: "\\.", action: "return 'DOT';"},
+        {pattern: "=", action: "return 'ASSIGN';"},
+        {pattern: "\\(", action: "return 'LPAREN';"},
+        {pattern: "\\)", action: "return 'RPAREN';"},
+        {pattern: "$", action: "return 'EOF';"}
       ]
     };
     var grammar = {

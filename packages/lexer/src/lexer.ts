@@ -99,6 +99,10 @@ export abstract class JisonLexer {
 
   // consumes and returns one char from the input
   input(): string {
+    if (this._input!.length === 0) {
+      this.done = true;
+      return '' + this.EOF;
+    }
     var ch = this._input![0];
     this.yytext += ch;
     this.yyleng++;
