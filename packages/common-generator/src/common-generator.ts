@@ -16,6 +16,7 @@ export class FileTemplate extends Map<string, string> {
 
   substitute(key: string, mappings: {token: string, value: string}[]): string {
     if (!this.has(key))
+      /* instanbul ignore next */
       throw new Error(`key ${key} not found in ${this.from}`)
     const raw = this.get(key)!;
     return mappings.reduce(

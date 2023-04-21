@@ -10,7 +10,7 @@ test:
 src/lex-parser.ts: src/lex.jison
 	node $(JISON) -t typescript -n Lex -o $@ $<
 
-lib/lex-parser.js: src/lex-parser.ts src/RegexpAtom.ts src/RegexpAtomToStringVisitor.ts
+lib/lex-parser.js: src/lex-parser.ts src/RegexpAtom.ts src/RegexpAtomToStringVisitor.ts src/RegexpAtomSubstitutionVisitor.ts
 	npx tsc -p tsconfig.package.json
 
 src/lex-regexp-parser.ts: src/lex-regexp.jison

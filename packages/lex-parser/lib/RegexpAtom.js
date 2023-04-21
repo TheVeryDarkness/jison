@@ -6,7 +6,7 @@
 .replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Operator = exports.Assertion = exports.EscapedCharacter = exports.CharacterClass = exports.Literal = exports.Reference = exports.End = exports.Begin = exports.Anchor = exports.Wildcard = exports.LookBehind = exports.LookAhead = exports.LookOut = exports.Cardinality = exports.Empty = exports.SpecialGroup = exports.CaptureGroup = exports.Concat = exports.Choice = exports.RegexpList = exports.RegexpAtom = void 0;
+exports.RegexpAtomCopyVisitor = exports.Operator = exports.Assertion = exports.EscapedCharacter = exports.CharacterClass = exports.Literal = exports.Reference = exports.End = exports.Begin = exports.Anchor = exports.Wildcard = exports.LookBehind = exports.LookAhead = exports.LookOut = exports.Cardinality = exports.Empty = exports.SpecialGroup = exports.CaptureGroup = exports.Concat = exports.Choice = exports.RegexpList = exports.RegexpAtom = void 0;
 /**
 @startuml
 abstract class RegexpList extends RegexpAtom
@@ -108,14 +108,14 @@ class LookOut extends RegexpAtom {
 }
 exports.LookOut = LookOut;
 class LookAhead extends LookOut {
-    constructor(inner) { super(inner); }
+    constructor(lookFor) { super(lookFor); }
     visit(visitor, ...args) {
         return visitor.visit_LookAhead(this, args);
     }
 }
 exports.LookAhead = LookAhead;
 class LookBehind extends LookOut {
-    constructor(inner) { super(inner); }
+    constructor(lookFor) { super(lookFor); }
     visit(visitor, ...args) {
         return visitor.visit_LookBehind(this, args);
     }
@@ -200,4 +200,60 @@ class Operator extends EscapedCharacter {
     }
 }
 exports.Operator = Operator;
+class RegexpAtomCopyVisitor {
+    static copy(atom) {
+        return atom.visit(new RegexpAtomCopyVisitor());
+    }
+    visit_Choice(visitee, ...args) {
+        return new Choice(visitee.l.visit(this), visitee.r.visit(this));
+    }
+    visit_Concat(visitee, ...args) {
+        return new Concat(visitee.l.visit(this), visitee.r.visit(this));
+    }
+    visit_CaptureGroup(visitee, ...args) {
+        return new CaptureGroup(visitee.list.visit(this));
+    }
+    visit_SpecialGroup(visitee, ...args) {
+        return new SpecialGroup(visitee.specialty, visitee.list.visit(this));
+    }
+    visit_Empty(visitee, ...args) {
+        return new Empty();
+    }
+    visit_Cardinality(visitee, ...args) {
+        return new Cardinality(visitee.repeated.visit(this), visitee.card);
+    }
+    visit_LookAhead(visitee, ...args) {
+        return new LookAhead(visitee.lookFor.visit(this));
+    }
+    visit_LookBehind(visitee, ...args) {
+        return new LookBehind(visitee.lookFor.visit(this));
+    }
+    visit_Wildcard(visitee, ...args) {
+        return new Wildcard();
+    }
+    // protected visit_Anchor (visitee: Anchor, operator: string, ...args: any[]): any {}
+    visit_Begin(visitee, ...args) {
+        return new Begin();
+    }
+    visit_End(visitee, ...args) {
+        return new End();
+    }
+    visit_Reference(visitee, ...args) {
+        return new Reference(visitee.ref);
+    }
+    visit_Literal(visitee, ...args) {
+        return new Literal(visitee.literal);
+    }
+    visit_CharacterClass(visitee, ...args) {
+        return new CharacterClass(visitee.charClass);
+    }
+    // protected visit_EscapedCharacter (visitee: EscapedCharacter, ...args: any[]): any {}
+    visit_Assertion(visitee, ...args) {
+        return new Assertion(visitee.escapedChar);
+    }
+    visit_Operator(visitee, ...args) {
+        return new Operator(visitee.escapedChar);
+    }
+}
+exports.RegexpAtomCopyVisitor = RegexpAtomCopyVisitor;
 //# sourceMappingURL=RegexpAtom.js.map

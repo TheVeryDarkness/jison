@@ -32,7 +32,7 @@ class SimpleCharacter extends RegexpAtom
  */
 
 export abstract class RegexpAtom {
-  abstract visit (visitor: RegexpAtomVisitor, ...args: any[]): string;
+  abstract visit (visitor: RegexpAtomVisitor, ...args: any[]): any;
   abstract getPrecedence (): number;
 }
 
@@ -59,7 +59,7 @@ export class Concat extends RegexpList {
 
 export class CaptureGroup extends RegexpAtom {
   constructor (
-    public list: RegexpList,
+    public list: RegexpList, // TODO: should this just be a RegexpAtom
   ) { super(); }
   getPrecedence (): number { return 7; }
   visit (visitor: RegexpAtomVisitor, ...args: any[]): any {
@@ -104,14 +104,14 @@ export abstract class LookOut extends RegexpAtom {
 }
 
 export class LookAhead extends LookOut {
-  constructor (inner: RegexpAtom) { super(inner); }
+  constructor (lookFor: RegexpAtom) { super(lookFor); }
   visit (visitor: RegexpAtomVisitor, ...args: any[]): any {
     return visitor.visit_LookAhead(this, args);
   }
 }
 
 export class LookBehind extends LookOut {
-  constructor (inner: RegexpAtom) { super(inner); }
+  constructor (lookFor: RegexpAtom) { super(lookFor); }
   visit (visitor: RegexpAtomVisitor, ...args: any[]): any {
     return visitor.visit_LookBehind(this, args);
   }
@@ -218,7 +218,68 @@ export interface RegexpAtomVisitor {
   visit_Reference (visitee: Reference, ...args: any[]): any;
   visit_Literal (visitee: Literal, ...args: any[]): any;
   visit_CharacterClass (visitee: CharacterClass, ...args: any[]): any;
-  visit_Assertion (visitee: EscapedCharacter, ...args: any[]): any;
-  visit_Operator (visitee: EscapedCharacter, ...args: any[]): any;
+  visit_Assertion (visitee: Assertion, ...args: any[]): any;
+  visit_Operator (visitee: Operator, ...args: any[]): any;
   // visit_SimpleCharacter (visitee: SimpleCharacter, ...args: any[]): any;
+}
+
+export class RegexpAtomCopyVisitor implements RegexpAtomVisitor {
+  static copy (atom: RegexpAtom): string {
+    return atom.visit(new RegexpAtomCopyVisitor());
+  }
+
+  visit_Choice (visitee: Choice, ...args: any[]): any {
+    return new Choice(visitee.l.visit(this), visitee.r.visit(this));
+  }
+  visit_Concat (visitee: Concat, ...args: any[]): any {
+    return new Concat(visitee.l.visit(this), visitee.r.visit(this));
+  }
+  visit_CaptureGroup (visitee: CaptureGroup, ...args: any[]): any {
+    return new CaptureGroup(visitee.list.visit(this));
+  }
+  visit_SpecialGroup (visitee: SpecialGroup, ...args: any[]): any {
+    return new SpecialGroup(visitee.specialty, visitee.list.visit(this));
+  }
+  visit_Empty (visitee: Empty, ...args: any[]): any {
+    return new Empty();
+  }
+  visit_Cardinality (visitee: Cardinality, ...args: any[]): any {
+    return new Cardinality(visitee.repeated.visit(this), visitee.card);
+  }
+  visit_LookAhead (visitee: LookAhead, ...args: any[]): any {
+    return new LookAhead(visitee.lookFor.visit(this));
+  }
+  visit_LookBehind (visitee: LookBehind, ...args: any[]): any {
+    return new LookBehind(visitee.lookFor.visit(this));
+  }
+  visit_Wildcard (visitee: Wildcard, ...args: any[]): any {
+    return new Wildcard();
+  }
+  // protected visit_Anchor (visitee: Anchor, operator: string, ...args: any[]): any {}
+  visit_Begin (visitee: Begin, ...args: any[]): any {
+    return new Begin();
+  }
+  visit_End (visitee: End, ...args: any[]): any {
+    return new End();
+  }
+  visit_Reference (visitee: Reference, ...args: any[]): any {
+    return new Reference(visitee.ref);
+  }
+  visit_Literal (visitee: Literal, ...args: any[]): any {
+    return new Literal(visitee.literal);
+  }
+  visit_CharacterClass (visitee: CharacterClass, ...args: any[]): any {
+    return new CharacterClass(visitee.charClass);
+  }
+  // protected visit_EscapedCharacter (visitee: EscapedCharacter, ...args: any[]): any {}
+  visit_Assertion (visitee: Assertion, ...args: any[]): any {
+    return new Assertion(visitee.escapedChar);
+  }
+  visit_Operator (visitee: Operator, ...args: any[]): any {
+    return new Operator(visitee.escapedChar);
+  }
+  // visit_SimpleCharacter (visitee: SimpleCharacter, ...args: any[]): any {
+  //   return this.escapeLiteral(visitee.simpleChar);
+  // }
+
 }

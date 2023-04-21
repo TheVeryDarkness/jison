@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+
 const Shared = {
   printed: [],
   print: function () {

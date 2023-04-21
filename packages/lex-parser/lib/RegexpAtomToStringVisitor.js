@@ -126,7 +126,6 @@ class RegexpAtomToJs extends RegexpAtomToStringVisitor {
             return '\\u' + uni.charCodeAt(0).toString(16).padStart(4, '0');
         if (operator)
             return '\\' + operator;
-        /* istanbul ignore next */
         throw Error(`none of str, crl, uni set in ${arguments}`);
     }
 }

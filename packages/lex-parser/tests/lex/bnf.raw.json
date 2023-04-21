@@ -1,7 +1,11 @@
-[
+{
+    "macros": {
+      "IDCHAR": "[a-zA-Z]"
+    },
+    "rules": [
       {"pattern": "\\s+",                   "action": "/* skip whitespace */"},
       {"pattern": "\\/\\*[^*]*\\*",         "action": "return yy.lexComment(this);"},
-      {"pattern": "[a-zA-Z](?:[a-zA-Z]|[0-9_-])*", "action": "return 'ID';"},
+      {"pattern": "{IDCHAR}(?:{IDCHAR}|[0-9_-])*", "action": "return 'ID';"},
       {"pattern": "\"[^\"]+\"",             "action": "yytext = yytext.substr(1, yyleng-2); return 'STRING';"},
       {"pattern": "'[^']+'",                "action": "yytext = yytext.substr(1, yyleng-2); return 'STRING';"},
       {"pattern": ":",                      "action": "return ':';"},
@@ -13,10 +17,11 @@
       {"pattern": "%left\\b",               "action": "return 'LEFT';"},
       {"pattern": "%right\\b",              "action": "return 'RIGHT';"},
       {"pattern": "%nonassoc\\b",           "action": "return 'NONASSOC';"},
-      {"pattern": "%[a-zA-Z]+[^\\n]*",      "action": "/* ignore unrecognized decl */"},
+      {"pattern": "%{IDCHAR}+[^\\n]*",      "action": "/* ignore unrecognized decl */"},
       {"pattern": "\\{\\{[^}]*\\}",         "action": "return yy.lexAction(this);"},
       {"pattern": "\\{[^}]*\\}",            "action": "yytext = yytext.substr(1, yyleng-2); return 'ACTION';"},
       {"pattern": "<[^>]*>",                "action": "yytext = yytext.substr(1, yyleng-2); return 'ACTION';"},
       {"pattern": ".",                      "action": "/* ignore bad characters */"},
       {"pattern": "$",                      "action": "return 'EOF';"}
-]
+    ]
+}
