@@ -15,7 +15,7 @@ class RegexpAtomToStringVisitor {
             + delim
             + visitee.r.visit(this, myPrecedence);
         return needParen
-            ? '(' + innerStr + ')'
+            ? '(?:' + innerStr + ')'
             : innerStr;
     }
     visit_Choice(visitee, parentPrecedence, ...args) {
@@ -27,7 +27,7 @@ class RegexpAtomToStringVisitor {
     visit_CaptureGroup(visitee, parentPrecedence, ...args) {
         switch (this.groups) {
             case "simplify": return visitee.list.visit(this, parentPrecedence);
-            case "preserve": return '(' + visitee.list.visit(this, 1) + ')';
+            case "preserve": return '(?:' + visitee.list.visit(this, 1) + ')';
             case "capture":
             default: return '(' + visitee.list.visit(this, 1) + ')';
         }
@@ -43,7 +43,7 @@ class RegexpAtomToStringVisitor {
         const { needParen, myPrecedence } = this.getNewPrec(visitee, parentPrecedence);
         const innerStr = visitee.repeated.visit(this, myPrecedence) + visitee.card;
         return needParen
-            ? '(' + innerStr + ')'
+            ? '(?:' + innerStr + ')'
             : innerStr;
     }
     visit_LookOut(visitee, operator, parentPrecedence, ...args) {
@@ -85,9 +85,9 @@ class RegexpAtomToStringVisitor {
     visit_Operator(visitee, parentPrecedence, ...args) {
         return '\\' + visitee.escapedChar;
     }
-    visit_SimpleCharacter(visitee, parentPrecedence, ...args) {
-        return this.escapeLiteral(visitee.simpleChar);
-    }
+    // visit_SimpleCharacter (visitee: SimpleCharacter, parentPrecedence: number, ...args: any[]): any {
+    //   return this.escapeLiteral(visitee.simpleChar);
+    // }
     getNewPrec(visitee, parentPrecedence) {
         const myPrecedence = visitee.getPrecedence();
         return parentPrecedence > myPrecedence
@@ -126,6 +126,7 @@ class RegexpAtomToJs extends RegexpAtomToStringVisitor {
             return '\\u' + uni.charCodeAt(0).toString(16).padStart(4, '0');
         if (operator)
             return '\\' + operator;
+        /* istanbul ignore next */
         throw Error(`none of str, crl, uni set in ${arguments}`);
     }
 }

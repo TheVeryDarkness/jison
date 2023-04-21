@@ -193,15 +193,15 @@ export class Operator extends EscapedCharacter {
 }
 
 
-export class SimpleCharacter extends RegexpAtom {
-  constructor (
-    public simpleChar: string,
-  ) { super(); }
-  getPrecedence (): number { return 7; }
-  visit (visitor: RegexpAtomVisitor, ...args: any[]): any {
-    return visitor.visit_SimpleCharacter(this, args);
-  }
-}
+// export class SimpleCharacter extends RegexpAtom {
+//   constructor (
+//     public simpleChar: string,
+//   ) { super(); }
+//   getPrecedence (): number { return 7; }
+//   visit (visitor: RegexpAtomVisitor, ...args: any[]): any {
+//     return visitor.visit_SimpleCharacter(this, args);
+//   }
+// }
 
 export interface RegexpAtomVisitor {
   visit_Choice (visitee: Choice, ...args: any[]): any;
@@ -220,5 +220,5 @@ export interface RegexpAtomVisitor {
   visit_CharacterClass (visitee: CharacterClass, ...args: any[]): any;
   visit_Assertion (visitee: EscapedCharacter, ...args: any[]): any;
   visit_Operator (visitee: EscapedCharacter, ...args: any[]): any;
-  visit_SimpleCharacter (visitee: SimpleCharacter, ...args: any[]): any;
+  // visit_SimpleCharacter (visitee: SimpleCharacter, ...args: any[]): any;
 }

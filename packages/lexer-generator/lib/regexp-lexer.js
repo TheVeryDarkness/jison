@@ -55,7 +55,7 @@ function prepareRules(rules, macros, actions, tokens, startConditions, caseless)
             }
         }
 
-        m = curRule.pattern instanceof RegexpAtom ? RegexpAtomToJs.serialize(curRule.pattern) : curRule.pattern; // can pass in Regexp's directly
+        m = curRule.pattern instanceof RegexpAtom ? RegexpAtomToJs.serialize(curRule.pattern, 'preserve', true) : curRule.pattern; // can pass in Regexp's directly
         if (typeof m === 'string') {
             for (k in macros) {
                 if (macros.hasOwnProperty(k)) {

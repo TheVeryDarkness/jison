@@ -16,49 +16,9 @@ CONTROL_CHARS     [A-Z]
 
 %%
 
-<action>"/*"(.|\n|\r)*?"*/"           return 'ACTION_BODY';
-<action>"//".*                        return 'ACTION_BODY';
-<action>"/"[^ /]*?['"{}'][^ ]*?"/"    return 'ACTION_BODY'; // regexp with braces or quotes (and no spaces)
-<action>\"("\\\\"|'\"'|[^"])*\"       return 'ACTION_BODY';
-<action>"'"("\\\\"|"\'"|[^'])*"'"     return 'ACTION_BODY';
-<action>[/"'][^{}/"']+                return 'ACTION_BODY';
-<action>[^{}/"']+                     return 'ACTION_BODY';
-<action>"{"                           yy.depth++; return '{'
-<action>"}"                           yy.depth == 0 ? this.begin('trail') : yy.depth--; return '}'
-
-<conditions>{NAME}                    return 'NAME';
-<conditions>">"                       this.popState(); return '>';
-<conditions>","                       return ',';
-<conditions>"*"                       return '*';
-
-<rules>{BR}+                          /* */
-<rules>\s+{BR}+                       /* */
-<rules>\s+                            this.begin('indented')
-<rules>"%%"                           this.begin('code'); return '%%'
-<rules>[a-zA-Z0-9_]+                  return 'CHARACTER_LIT'
-
-<options>{NAME}                       yy.options[yytext] = true
-<options>{BR}+                        this.begin('INITIAL')
-<options>\s+{BR}+                     this.begin('INITIAL')
-<options>\s+                          /* empty */
-
-<start_condition>{NAME}               return 'START_COND'
-<start_condition>{BR}+                this.begin('INITIAL')
-<start_condition>\s+{BR}+             this.begin('INITIAL')
-<start_condition>\s+                  /* empty */
-
-<trail>.*{BR}+                        this.begin('rules')
-
-<indented>"{"                         yy.depth = 0; this.begin('action'); return '{'
-<indented>"%{"(.|{BR})*?"%}"          this.begin('trail'); yytext = yytext.substr(2, yytext.length-4);return 'ACTION'
-"%{"(.|{BR})*?"%}"                    yytext = yytext.substr(2, yytext.length-4); return 'ACTION'
-<indented>.+                          this.begin('rules'); return 'ACTION'
-
 "/*"(.|\n|\r)*?"*/"             /* ignore */
 "//".*                          /* ignore */
 
-{BR}+                           /* */
-\s+                             /* */
 {NAME}                          return 'NAME';
 \"("\\\\"|'\"'|[^"])*\"         yytext = yytext.replace(/\\"/g,'"'); return 'STRING_LIT';
 "'"("\\\\"|"\'"|[^'])*"'"       yytext = yytext.replace(/\\'/g,"'"); return 'STRING_LIT';
@@ -89,17 +49,12 @@ CONTROL_CHARS     [A-Z]
 "$"                             return '$';
 "."                             return '.';
 "%options"                      yy.options = {}; this.begin('options');
-"%s"                            this.begin('start_condition'); return 'START_INC';
-"%x"                            this.begin('start_condition'); return 'START_EXC';
-"%%"                            this.begin('rules'); return '%%';
 "{"\d+(","\s?\d+|",")?"}"       return 'RANGE_REGEX';
 "{"{NAME}"}"                    return 'NAME_BRACE';
 "{"                             return '{';
 "}"                             return '}';
 .                               /* ignore bad characters */
 <*><<EOF>>                      return 'EOF';
-
-<code>(.|{BR})+                 return 'CODE';
 
 %%
 
@@ -117,7 +72,7 @@ function decodeStringEscape (c: string): string {
 
 /lex
 
-%start lex
+%start regex
 
 /* Jison lexer file format grammar */
 
@@ -127,133 +82,12 @@ function decodeStringEscape (c: string): string {
 
 %{
     import {Choice, Concat, Empty, CaptureGroup, SpecialGroup, Cardinality, LookAhead, LookBehind, Wildcard, Begin, End, Literal, Assertion, Operator, Reference, CharacterClass} from './RegexpAtom';
-    let ebnf = false;
 %}
 
 %%
 
-lex
-    : definitions '%%' rules epilogue
-        { 
-          $$ = { rules: $rules };
-          if ($definitions[0]) $$.macros = $definitions[0];
-          if ($definitions[1]) $$.startConditions = $definitions[1];
-          if ($epilogue) $$.moduleInclude = $epilogue;
-          if (yy.options) $$.options = yy.options;
-          if (yy.actionInclude) $$.actionInclude = yy.actionInclude;
-          delete yy.options;
-          delete yy.actionInclude;
-          return $$; 
-        }
-    ;
-
-epilogue
-    : EOF
-      { $$ = null; }
-    | '%%' EOF
-      { $$ = null; }
-    | '%%' CODE EOF
-      { $$ = $2; }
-    ;
-
-definitions
-    : definition definitions
-        {
-          $$ = $definitions;
-          if ('length' in $definition) {
-            $$[0] = $$[0] || {};
-            $$[0][$definition[0]] = $definition[1];
-          } else {
-            $$[1] = $$[1] || {};
-            for (var name in $definition) {
-              $$[1][name] = $definition[name];
-            }
-          }
-        }
-    | ACTION definitions
-        { yy.actionInclude += $1; $$ = $definitions; }
-    |
-        { yy.actionInclude = ''; $$ = [null,null]; }
-    ;
-
-definition
-    : NAME regex
-        { $$ = [$1, $2]; }
-    | START_INC names_inclusive
-        { $$ = $2; }
-    | START_EXC names_exclusive
-        { $$ = $2; }
-    ;
-
-names_inclusive
-    : START_COND
-        { $$ = {}; $$[$1] = 0; }
-    | names_inclusive START_COND
-        { $$ = $1; $$[$2] = 0; }
-    ;
-
-names_exclusive
-    : START_COND
-        { $$ = {}; $$[$1] = 1; }
-    | names_exclusive START_COND
-        { $$ = $1; $$[$2] = 1; }
-    ;
-
-rules
-    : rules rule
-        { $$ = $1; $$.push($2); }
-    | rule
-        { $$ = [$1]; }
-    ;
-
-rule
-    : start_conditions regex action
-        { $$ = $1 ? {start: $1, pattern: $2, action: $3} : {pattern: $2, action: $3}; }
-    ;
-
-action
-    : '{' action_body '}'
-        {$$ = $2;}
-    | ACTION
-        {$$ = $1;}
-    ;
-
-action_body
-    :
-        {$$ = '';}
-    | action_comments_body
-        {$$ = $1;}
-    | action_body '{' action_body '}' action_comments_body
-        {$$ = $1+$2+$3+$4+$5;}
-    | action_body '{' action_body '}'
-        {$$ = $1 + $2 + $3 + $4;}
-    ;
-
-action_comments_body
-    : ACTION_BODY
-        { $$ = yytext; }
-    | action_comments_body ACTION_BODY
-        { $$ = $1+$2; }
-    ;
-
-
-start_conditions
-    : '<' name_list '>'
-        { $$ = $2; }
-    | '<' '*' '>'
-        { $$ = ['*']; }
-    |
-    ;
-
-name_list
-    : NAME
-        { $$ = [$1]; }
-    | name_list ',' NAME
-        { $$ = $1; $$.push($3); }
-    ;
-
 regex
-    : regex_list
+    : regex_list EOF
         {
           $$ = $1;
           if (!(yy.options && yy.options.flex)) {
@@ -272,6 +106,7 @@ regex
                 $$ = new Concat($1, new Assertion('b'));
             }
           }
+          return $$;
         }
     ;
 

@@ -7,7 +7,7 @@ import {
   Empty, End, Literal, LookAhead, LookBehind, LookOut, Operator, Reference,
   RegexpAtom,
   RegexpAtomVisitor,
-  RegexpList, SimpleCharacter,
+  RegexpList,
   SpecialGroup, Wildcard
 } from "./RegexpAtom";
 
@@ -39,7 +39,7 @@ export abstract class RegexpAtomToStringVisitor implements RegexpAtomVisitor {
       + delim
       + visitee.r.visit(this, myPrecedence);
     return needParen
-      ? '(' + innerStr + ')'
+      ? '(?:' + innerStr + ')'
       : innerStr;
   }
   visit_Choice (visitee: Choice, parentPrecedence: number, ...args: any[]): any {
@@ -51,7 +51,7 @@ export abstract class RegexpAtomToStringVisitor implements RegexpAtomVisitor {
   visit_CaptureGroup (visitee: CaptureGroup, parentPrecedence: number, ...args: any[]): any {
     switch (this.groups) {
       case "simplify": return visitee.list.visit(this, parentPrecedence)
-      case "preserve": return '(' + visitee.list.visit(this, 1) + ')';
+      case "preserve": return '(?:' + visitee.list.visit(this, 1) + ')';
       case "capture":
       default: return '(' + visitee.list.visit(this, 1) + ')';
     }
@@ -67,7 +67,7 @@ export abstract class RegexpAtomToStringVisitor implements RegexpAtomVisitor {
     const {needParen, myPrecedence} = this.getNewPrec(visitee, parentPrecedence);
     const innerStr = visitee.repeated.visit(this, myPrecedence) + visitee.card;
     return needParen
-      ? '(' + innerStr + ')'
+      ? '(?:' + innerStr + ')'
       : innerStr;
   }
   protected visit_LookOut (visitee: LookOut, operator: string, parentPrecedence: number, ...args: any[]): any {
@@ -108,9 +108,9 @@ export abstract class RegexpAtomToStringVisitor implements RegexpAtomVisitor {
   visit_Operator (visitee: Operator, parentPrecedence: number, ...args: any[]): any {
     return '\\' + visitee.escapedChar;
   }
-  visit_SimpleCharacter (visitee: SimpleCharacter, parentPrecedence: number, ...args: any[]): any {
-    return this.escapeLiteral(visitee.simpleChar);
-  }
+  // visit_SimpleCharacter (visitee: SimpleCharacter, parentPrecedence: number, ...args: any[]): any {
+  //   return this.escapeLiteral(visitee.simpleChar);
+  // }
 
   getNewPrec (visitee: RegexpAtom, parentPrecedence: number) {
     const myPrecedence = visitee.getPrecedence();

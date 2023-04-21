@@ -8,18 +8,12 @@ const parser_1 = require("@ts-jison/parser");
  */
 const RegexpAtom_1 = require("./RegexpAtom");
 let ebnf = false;
-function encodeRE(s) {
-    return s.replace(/([.*+?^${}()|[\]\/\\])/g, '\\$1').replace(/\\\\u([a-fA-F0-9]{4})/g, '\\u$1');
-}
-function prepareString(s) {
-    // unescape slashes
-    /* s = s.replace(/\\(.)/g, "$1"); */
-    /* s = encodeRE(s); */
-    return s;
-}
-;
 function prepareCharacterClass(s) {
+    s = s.replace(/\\r/g, "\r");
+    s = s.replace(/\\f/g, "\f");
     s = s.replace(/\\n/g, "\n");
+    s = s.replace(/\\t/g, "\t");
+    s = s.replace(/\\v/g, "\v");
     s = s.replace(/\\(.)/g, "$1");
     return s;
 }
@@ -224,10 +218,10 @@ class LexParser extends parser_1.JisonParser {
                 this.$ = new RegexpAtom_1.Operator(yytext.substring(1));
                 break;
             case 58:
-                this.$ = new RegexpAtom_1.Literal(prepareString(yytext.substr(1, yytext.length - 2)));
+                this.$ = new RegexpAtom_1.Literal(yytext.substr(1, yytext.length - 2));
                 break;
             case 59:
-                this.$ = new RegexpAtom_1.Literal(prepareString(yytext));
+                this.$ = new RegexpAtom_1.Literal(yytext);
                 break;
         }
     }

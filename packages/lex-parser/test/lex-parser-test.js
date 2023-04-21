@@ -16,8 +16,7 @@ function stringifyRules (ret) {
       ret.macros[label] = RegexpAtomToJs.serialize(ret.macros[label], !(ret.options && ret.options.flex) , 'preserve', true);
   if ('rules' in ret)
     ret.rules = ret.rules.map(
-      rule => ({
-        start: rule.start,
+      rule => Object.assign(rule.start ? {start: rule.start} : {}, {        
         pattern: rule.pattern ? RegexpAtomToJs.serialize(rule.pattern, 'preserve', true) : undefined,
         action: rule.action,
       })
@@ -26,7 +25,6 @@ function stringifyRules (ret) {
 }
 
 describe("lex-parser", () => {
-
   it("test lex grammar with macros", () => {
     const lexgrammar = `
 D [0-9]
@@ -64,7 +62,7 @@ ID [a-zA-Z][a-zA-Z0-9]+
     expect(stringifyRules(lex.parse(lexgrammar))).toEqual(expected);
   });
 
-  it("test advanced", () => {
+  it("test positive lookahead, cardinalities", () => {
     const lexgrammar = `
 %%
 $ {return 'EOF';}
@@ -77,8 +75,8 @@ $ {return 'EOF';}
       rules: [
         {pattern: "$", action: "return 'EOF';"},
         {pattern: ".", action: "/* skip */"},
-        {pattern: "stuff*(?=(\\{|;))", action: "/* ok */"},
-        {pattern: "(.+)[a-z]{1,2}hi*?", action: "/* skip */"}
+        {pattern: "stuff*(?=(?:\\{|;))", action: "/* ok */"},
+        {pattern: "(?:.+)[a-z]{1,2}hi*?", action: "/* skip */"}
       ]
     };
 
@@ -245,14 +243,14 @@ return true;
     assert.ok(lexgrammar);
   });
 
-  it("test advanced", () => {
+  it("test negative lookahead", () => {
     const lexgrammar = `
 %%
 "stuff"*/!("{"|";") {/* ok */}
 `;
     const expected = {
       rules: [
-        {pattern: "stuff*(?!(\\{|;))", action: "/* ok */"},
+        {pattern: "stuff*(?!(?:\\{|;))", action: "/* ok */"},
       ]
     };
 
@@ -370,7 +368,7 @@ return true;
 \\\'([^\\\\\']+|\\\\(\\n|.))*?\\\' return 1;`;
     const expected = {
       rules: [
-        {pattern: "'([^\\\\']+|\\\\(\\n|.))*?'", action: "return 1;"}
+        {pattern: "'(?:[^\\\\']+|\\\\(?:\\n|.))*?'", action: "return 1;"}
       ]
     };
 
@@ -410,7 +408,7 @@ return true;
 (|"bar")("foo"|)(|) return 1;`;
     const expected = {
       rules: [
-        {pattern: "(|bar)(foo|)(|)", action: "return 1;"}
+        {pattern: "(?:|bar)(?:foo|)(?:|)", action: "return 1;"}
       ]
     };
 

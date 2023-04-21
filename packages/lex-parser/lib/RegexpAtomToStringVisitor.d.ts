@@ -1,4 +1,4 @@
-import { Assertion, Begin, CaptureGroup, Cardinality, CharacterClass, Choice, Concat, Empty, End, Literal, LookAhead, LookBehind, LookOut, Operator, Reference, RegexpAtom, RegexpAtomVisitor, RegexpList, SimpleCharacter, SpecialGroup, Wildcard } from "./RegexpAtom";
+import { Assertion, Begin, CaptureGroup, Cardinality, CharacterClass, Choice, Concat, Empty, End, Literal, LookAhead, LookBehind, LookOut, Operator, Reference, RegexpAtom, RegexpAtomVisitor, RegexpList, SpecialGroup, Wildcard } from "./RegexpAtom";
 type GroupControl = "capture" | "simplify" | "preserve";
 interface RegexpAtom_toString_Arg {
     groups: GroupControl;
@@ -27,7 +27,6 @@ export declare abstract class RegexpAtomToStringVisitor implements RegexpAtomVis
     visit_CharacterClass(visitee: CharacterClass, parentPrecedence: number, ...args: any[]): any;
     visit_Assertion(visitee: Assertion, parentPrecedence: number, ...args: any[]): any;
     visit_Operator(visitee: Operator, parentPrecedence: number, ...args: any[]): any;
-    visit_SimpleCharacter(visitee: SimpleCharacter, parentPrecedence: number, ...args: any[]): any;
     getNewPrec(visitee: RegexpAtom, parentPrecedence: number): {
         needParen: boolean;
         myPrecedence: number;

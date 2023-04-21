@@ -8,19 +8,12 @@ import { JisonParser, JisonParserApi, StateType, SymbolsType, TerminalsType, Pro
     let ebnf = false;
 
 
-function encodeRE (s: string) {
-    return s.replace(/([.*+?^${}()|[\]\/\\])/g, '\\$1').replace(/\\\\u([a-fA-F0-9]{4})/g,'\\u$1');
-}
-
-function prepareString (s: string) {
-    // unescape slashes
-    /* s = s.replace(/\\(.)/g, "$1"); */
-    /* s = encodeRE(s); */
-    return s;
-};
-
 function prepareCharacterClass (s: string) {
+    s = s.replace(/\\r/g, "\r");
+    s = s.replace(/\\f/g, "\f");
     s = s.replace(/\\n/g, "\n");
+    s = s.replace(/\\t/g, "\t");
+    s = s.replace(/\\v/g, "\v");
     s = s.replace(/\\(.)/g, "$1");
     return s;
 }
@@ -218,10 +211,10 @@ case 56:
  this.$ = new Operator(yytext.substring(1)); 
 break;
 case 58:
- this.$ = new Literal(prepareString(yytext.substr(1, yytext.length - 2))); 
+ this.$ = new Literal(yytext.substr(1, yytext.length - 2)); 
 break;
 case 59:
- this.$ = new Literal(prepareString(yytext)); 
+ this.$ = new Literal(yytext); 
 break;
         }
     }
