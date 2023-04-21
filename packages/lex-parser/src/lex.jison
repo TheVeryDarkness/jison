@@ -344,11 +344,16 @@ range_regex
 
 string
     : STRING_LIT
-        { $$ = new Literal(yytext.substr(1, yytext.length - 2)); }
+        { $$ = new Literal(prepareString(yytext.substr(1, yytext.length - 2))); }
     | CHARACTER_LIT { $$ = new Literal(yytext); }
     ;
 
 %%
+
+function prepareString (s: string) {
+    s = s.replace(/\\\\/g, '\\');
+    return s;
+}
 
 function prepareCharacterClass (s: string) {
     s = s.replace(/\\r/g, "\r");

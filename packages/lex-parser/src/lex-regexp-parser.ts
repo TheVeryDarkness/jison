@@ -7,6 +7,11 @@ import { JisonParser, JisonParserApi, StateType, SymbolsType, TerminalsType, Pro
     import {Choice, Concat, Empty, CaptureGroup, SpecialGroup, Cardinality, LookAhead, LookBehind, Wildcard, Begin, End, Literal, Assertion, Operator, Reference, CharacterClass} from './RegexpAtom';
 
 
+function prepareString (s: string) {
+    s = s.replace(/\\\\/g, '\\');
+    return s;
+}
+
 function prepareCharacterClass (s: string) {
     s = s.replace(/\\r/g, "\r");
     s = s.replace(/\\f/g, "\f");
@@ -121,7 +126,7 @@ case 27:
  this.$ = yytext; 
 break;
 case 28:
- this.$ = new Literal(yytext.substr(1, yytext.length - 2)); 
+ this.$ = new Literal(prepareString(yytext.substr(1, yytext.length - 2))); 
 break;
 case 29:
  this.$ = new Literal(yytext); 

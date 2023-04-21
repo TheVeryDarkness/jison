@@ -8,6 +8,11 @@ import { JisonParser, JisonParserApi, StateType, SymbolsType, TerminalsType, Pro
     let ebnf = false;
 
 
+function prepareString (s: string) {
+    s = s.replace(/\\\\/g, '\\');
+    return s;
+}
+
 function prepareCharacterClass (s: string) {
     s = s.replace(/\\r/g, "\r");
     s = s.replace(/\\f/g, "\f");
@@ -211,7 +216,7 @@ case 56:
  this.$ = new Operator(yytext.substring(1)); 
 break;
 case 58:
- this.$ = new Literal(yytext.substr(1, yytext.length - 2)); 
+ this.$ = new Literal(prepareString(yytext.substr(1, yytext.length - 2))); 
 break;
 case 59:
  this.$ = new Literal(yytext); 

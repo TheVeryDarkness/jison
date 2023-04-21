@@ -8,6 +8,10 @@ const parser_1 = require("@ts-jison/parser");
  */
 const RegexpAtom_1 = require("./RegexpAtom");
 let ebnf = false;
+function prepareString(s) {
+    s = s.replace(/\\\\/g, '\\');
+    return s;
+}
 function prepareCharacterClass(s) {
     s = s.replace(/\\r/g, "\r");
     s = s.replace(/\\f/g, "\f");
@@ -218,7 +222,7 @@ class LexParser extends parser_1.JisonParser {
                 this.$ = new RegexpAtom_1.Operator(yytext.substring(1));
                 break;
             case 58:
-                this.$ = new RegexpAtom_1.Literal(yytext.substr(1, yytext.length - 2));
+                this.$ = new RegexpAtom_1.Literal(prepareString(yytext.substr(1, yytext.length - 2)));
                 break;
             case 59:
                 this.$ = new RegexpAtom_1.Literal(yytext);
