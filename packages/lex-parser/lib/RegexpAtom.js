@@ -1,7 +1,7 @@
 "use strict";
-/* This captures RegularExpression strings, not ASTs.
+/** This captures RegularExpression strings, not ASTs.
    To wit, a RegExp ASt would reduce strings to lists of Literals.
-   TBH: I didn't know Lookahead existed in Lex. Folloing Zaach's port to JS:
+   This uses lex conventions for lookahead and lookbehind, per Zaach's implementation:
    https://github.com/zaach/lex-parser/blob/f75c7db2e2a176f618ccd354e1897ed73d8fdb40/lex.y#L168-L169
 .replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
  */

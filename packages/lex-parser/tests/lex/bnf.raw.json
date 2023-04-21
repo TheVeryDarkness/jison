@@ -1,27 +1,29 @@
 {
     "macros": {
-      "IDCHAR": "[a-zA-Z]"
+      "ID1": "[a-zA-Z]",
+      "IDN": "{ID1}|[0-9_-]",
+      "ID": "{ID1}{IDN}*"
     },
     "rules": [
-      {"pattern": "\\s+",                   "action": "/* skip whitespace */"},
-      {"pattern": "\\/\\*[^*]*\\*",         "action": "return yy.lexComment(this);"},
-      {"pattern": "{IDCHAR}(?:{IDCHAR}|[0-9_-])*", "action": "return 'ID';"},
-      {"pattern": "\"[^\"]+\"",             "action": "yytext = yytext.substr(1, yyleng-2); return 'STRING';"},
-      {"pattern": "'[^']+'",                "action": "yytext = yytext.substr(1, yyleng-2); return 'STRING';"},
-      {"pattern": ":",                      "action": "return ':';"},
-      {"pattern": ";",                      "action": "return ';';"},
-      {"pattern": "\\|",                    "action": "return '|';"},
-      {"pattern": "%%",                     "action": "return '%%';"},
-      {"pattern": "%prec\\b",               "action": "return 'PREC';"},
-      {"pattern": "%start\\b",              "action": "return 'START';"},
-      {"pattern": "%left\\b",               "action": "return 'LEFT';"},
-      {"pattern": "%right\\b",              "action": "return 'RIGHT';"},
-      {"pattern": "%nonassoc\\b",           "action": "return 'NONASSOC';"},
-      {"pattern": "%{IDCHAR}+[^\\n]*",      "action": "/* ignore unrecognized decl */"},
-      {"pattern": "\\{\\{[^}]*\\}",         "action": "return yy.lexAction(this);"},
-      {"pattern": "\\{[^}]*\\}",            "action": "yytext = yytext.substr(1, yyleng-2); return 'ACTION';"},
-      {"pattern": "<[^>]*>",                "action": "yytext = yytext.substr(1, yyleng-2); return 'ACTION';"},
-      {"pattern": ".",                      "action": "/* ignore bad characters */"},
-      {"pattern": "$",                      "action": "return 'EOF';"}
+      {"pattern": "\\s+",           "action": "/* skip whitespace */"},
+      {"pattern": "\\/\\*[^*]*\\*", "action": "return yy.lexComment(this);"},
+      {"pattern": "{ID}",           "action": "return 'ID';"},
+      {"pattern": "\"[^\"]+\"",     "action": "yytext = yytext.substr(1, yyleng-2); return 'STRING';"},
+      {"pattern": "'[^']+'",        "action": "yytext = yytext.substr(1, yyleng-2); return 'STRING';"},
+      {"pattern": ":",              "action": "return ':';"},
+      {"pattern": ";",              "action": "return ';';"},
+      {"pattern": "\\|",            "action": "return '|';"},
+      {"pattern": "%%",             "action": "return '%%';"},
+      {"pattern": "%prec\\b",       "action": "return 'PREC';"},
+      {"pattern": "%start\\b",      "action": "return 'START';"},
+      {"pattern": "%left\\b",       "action": "return 'LEFT';"},
+      {"pattern": "%right\\b",      "action": "return 'RIGHT';"},
+      {"pattern": "%nonassoc\\b",   "action": "return 'NONASSOC';"},
+      {"pattern": "%{ID1}+[^\\n]*", "action": "/* ignore unrecognized decl */"},
+      {"pattern": "\\{\\{[^}]*\\}", "action": "return yy.lexAction(this);"},
+      {"pattern": "\\{[^}]*\\}",    "action": "yytext = yytext.substr(1, yyleng-2); return 'ACTION';"},
+      {"pattern": "<[^>]*>",        "action": "yytext = yytext.substr(1, yyleng-2); return 'ACTION';"},
+      {"pattern": ".",              "action": "/* ignore bad characters */"},
+      {"pattern": "$",              "action": "return 'EOF';"}
     ]
 }

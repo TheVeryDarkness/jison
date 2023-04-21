@@ -59,7 +59,7 @@ function prepareRules(rules, macros, actions, tokens, startConditions, caseless)
         if (typeof m === 'string') {
             for (k in macros) {
                 if (macros.hasOwnProperty(k)) {
-                    m = m.split("{" + k + "}").join('(' + macros[k] + ')');
+                    m = m.split("{" + k + "}").join('(' + (macros[k] instanceof RegexpAtom ? RegexpAtomToJs.serialize(macros[k], 'preserve', true) : macros[k]) + ')');
                 }
             }
             m = new RegExp("^(?:" + m + ")", caseless ? 'i':'');
