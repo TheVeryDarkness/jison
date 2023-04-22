@@ -115,7 +115,7 @@ class RegexpAtomToJs extends RegexpAtomToStringVisitor {
         return literal.replace(/([\r\f\n\t\v])|([\x00-\x1f\x7f-\xff])|([\u0100-\ufffd])|([.*+?^${}()|[\]\/\\])/g, RegexpAtomToJs.escapeGroupMatch);
     }
     escapeCharacterClass(literal) {
-        return literal.replace(/([\r\f\n\t\v])|([\x00-\x1f\x7f-\xff])|([\u0100-\ufffd])|([[\]\\])/g, RegexpAtomToJs.escapeGroupMatch);
+        return literal.replace(/([\r\f\n\t\v])|([\x00-\x1f\x7f-\xff])|([\u0100-\ufffd])/g, RegexpAtomToJs.escapeGroupMatch);
     }
     static escapeGroupMatch(text, str, crl, uni, operator) {
         if (str)

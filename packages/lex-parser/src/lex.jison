@@ -361,6 +361,5 @@ function prepareCharacterClass (s: string) {
     s = s.replace(/\\n/g, "\n");
     s = s.replace(/\\t/g, "\t");
     s = s.replace(/\\v/g, "\v");
-    s = s.replace(/\\(.)/g, "$1");
     return s;
 }

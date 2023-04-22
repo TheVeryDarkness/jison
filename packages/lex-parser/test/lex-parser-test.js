@@ -102,12 +102,14 @@ $ {return 'EOF';}
   it("test [^\\]]", () => {
     const lexgrammar = `
 %%
+[%]"lex"[\\w\\W]*?[/]"lex" return 'LEX_BLOCK';
 "["[^\\]]"]" {return true;}
 'f"oo\\'bar'  {return 'baz2';}
 "fo\\"obar"  {return 'baz';}
 `;
     const expected = {
       rules: [
+        {pattern: '[%]lex[\\w\\W]*?[/]lex\\b', action: "return 'LEX_BLOCK';"},
         {pattern: "\\[[^\\]]\\]", action: "return true;"},
         {pattern: "f\"oo'bar\\b", action: "return 'baz2';"},
         {pattern: 'fo"obar\\b', action: "return 'baz';"}

@@ -67,7 +67,7 @@ id                [a-zA-Z][a-zA-Z0-9_-]*
 
 %{
 // import {transform} from './ebnf-parser';
-const transform = require('./ebnf-parser').transform;
+const transform = require('../ebnf-parser').transform;
 import {Bnf, Grammar, BnfWithGrammar} from './bnf-types';
 let ebnf = false;
 %}
