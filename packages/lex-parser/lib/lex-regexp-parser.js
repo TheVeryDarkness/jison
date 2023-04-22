@@ -17,7 +17,6 @@ function prepareCharacterClass(s) {
     s = s.replace(/\\n/g, "\n");
     s = s.replace(/\\t/g, "\t");
     s = s.replace(/\\v/g, "\v");
-    s = s.replace(/\\(.)/g, "$1");
     return s;
 }
 class LexRegexpParser extends parser_1.JisonParser {
@@ -131,13 +130,13 @@ class LexRegexpLexer extends lexer_1.JisonLexer {
     constructor(yy = {}) {
         super(yy);
         this.options = { "moduleName": "LexRegexp" };
-        this.rules = [/^(?:\/\*(.|\n|\r)*?\*\/)/,
+        this.rules = [/^(?:\/\*(?:.|\n|\r)*?\*\/)/,
             /^(?:\/\/.*)/,
             /^(?:([a-zA-Z_][a-zA-Z0-9_-]*))/,
-            /^(?:"(\\\\|\\"|[^"])*")/,
-            /^(?:'(\\\\|\\'|[^'])*')/,
+            /^(?:"(?:\\\\|\\"|[^"])*")/,
+            /^(?:'(?:\\\\|\\'|[^'])*')/,
             /^(?:\|)/,
-            /^(?:\[(\\\\|\\\]|[^\]])*\])/,
+            /^(?:\[(?:\\\\|\\\]|[^\]])*\])/,
             /^(?:\(\?:)/,
             /^(?:\(\?=)/,
             /^(?:\(\?!)/,
@@ -163,7 +162,7 @@ class LexRegexpLexer extends lexer_1.JisonLexer {
             /^(?:\$)/,
             /^(?:\.)/,
             /^(?:%options\b)/,
-            /^(?:\{\d+(,\s?\d+|,)?\})/,
+            /^(?:\{\d+(?:,\s?\d+|,)?\})/,
             /^(?:\{([a-zA-Z_][a-zA-Z0-9_-]*)\})/,
             /^(?:\{)/,
             /^(?:\})/,

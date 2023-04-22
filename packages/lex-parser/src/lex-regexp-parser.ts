@@ -18,7 +18,6 @@ function prepareCharacterClass (s: string) {
     s = s.replace(/\\n/g, "\n");
     s = s.replace(/\\t/g, "\t");
     s = s.replace(/\\v/g, "\v");
-    s = s.replace(/\\(.)/g, "$1");
     return s;
 }
 
@@ -145,13 +144,13 @@ export class LexRegexpLexer extends JisonLexer implements JisonLexerApi {
         super(yy);
     }
 
-    rules: RegExp[] = [/^(?:\/\*(.|\n|\r)*?\*\/)/,
+    rules: RegExp[] = [/^(?:\/\*(?:.|\n|\r)*?\*\/)/,
           /^(?:\/\/.*)/,
           /^(?:([a-zA-Z_][a-zA-Z0-9_-]*))/,
-          /^(?:"(\\\\|\\"|[^"])*")/,
-          /^(?:'(\\\\|\\'|[^'])*')/,
+          /^(?:"(?:\\\\|\\"|[^"])*")/,
+          /^(?:'(?:\\\\|\\'|[^'])*')/,
           /^(?:\|)/,
-          /^(?:\[(\\\\|\\\]|[^\]])*\])/,
+          /^(?:\[(?:\\\\|\\\]|[^\]])*\])/,
           /^(?:\(\?:)/,
           /^(?:\(\?=)/,
           /^(?:\(\?!)/,
@@ -177,7 +176,7 @@ export class LexRegexpLexer extends JisonLexer implements JisonLexerApi {
           /^(?:\$)/,
           /^(?:\.)/,
           /^(?:%options\b)/,
-          /^(?:\{\d+(,\s?\d+|,)?\})/,
+          /^(?:\{\d+(?:,\s?\d+|,)?\})/,
           /^(?:\{([a-zA-Z_][a-zA-Z0-9_-]*)\})/,
           /^(?:\{)/,
           /^(?:\})/,

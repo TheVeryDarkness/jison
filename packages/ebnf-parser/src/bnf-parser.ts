@@ -5,7 +5,7 @@ import { JisonParser, JisonParserApi, StateType, SymbolsType, TerminalsType, Pro
  */
 
 // import {transform} from './ebnf-parser';
-const transform = require('./ebnf-parser').transform;
+const transform = require('../ebnf-transform').transform;
 import {Bnf, Grammar, BnfWithGrammar} from './bnf-types';
 let ebnf = false;
 
@@ -204,7 +204,7 @@ export class BnfLexer extends JisonLexer implements JisonLexerApi {
           /^(?:\+)/,
           /^(?:\s+)/,
           /^(?:\/\/.*)/,
-          /^(?:\/\*(.|\n|\r)*?\*\/)/,
+          /^(?:\/\*(?:.|\n|\r)*?\*\/)/,
           /^(?:\[([a-zA-Z][a-zA-Z0-9_-]*)\])/,
           /^(?:([a-zA-Z][a-zA-Z0-9_-]*))/,
           /^(?:"[^"]+")/,
@@ -225,21 +225,21 @@ export class BnfLexer extends JisonLexer implements JisonLexerApi {
           /^(?:%[a-zA-Z]+[^\r\n]*)/,
           /^(?:<[a-zA-Z]*>)/,
           /^(?:\{\{[\w\W]*?\}\})/,
-          /^(?:%\{(.|\r|\n)*?%\})/,
+          /^(?:%\{(?:.|\r|\n)*?%\})/,
           /^(?:\{)/,
           /^(?:->.*)/,
           /^(?:.)/,
           /^(?:$)/,
-          /^(?:\/\*(.|\n|\r)*?\*\/)/,
+          /^(?:\/\*(?:.|\n|\r)*?\*\/)/,
           /^(?:\/\/.*)/,
           /^(?:\/[^ /]*?['"{}'][^ ]*?\/)/,
-          /^(?:"(\\\\|\\"|[^"])*")/,
-          /^(?:'(\\\\|\\'|[^'])*')/,
+          /^(?:"(?:\\\\|\\"|[^"])*")/,
+          /^(?:'(?:\\\\|\\'|[^'])*')/,
           /^(?:[/"'][^{}/"']+)/,
           /^(?:[^{}/"']+)/,
           /^(?:\{)/,
           /^(?:\})/,
-          /^(?:(.|\n|\r)+)/
+          /^(?:(?:.|\n|\r)+)/
         ];
     conditions: any = {"bnf":{"rules":[0,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33],"inclusive":true},"ebnf":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33],"inclusive":true},"action":{"rules":[33,34,35,36,37,38,39,40,41,42],"inclusive":false},"code":{"rules":[33,43],"inclusive":false},"INITIAL":{"rules":[6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33],"inclusive":true}}
     performAction (yy:any,yy_:any,$avoiding_name_collisions:any,YY_START:any): any {
