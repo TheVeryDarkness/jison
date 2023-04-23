@@ -7,11 +7,6 @@ import { JisonParser, JisonParserApi, StateType, SymbolsType, TerminalsType, Pro
     import {Choice, Concat, Empty, CaptureGroup, SpecialGroup, Cardinality, LookAhead, LookBehind, Wildcard, Begin, End, Literal, Assertion, Operator, Reference, CharacterClass} from './RegexpAtom';
 
 
-function prepareString (s: string) {
-    s = s.replace(/\\\\/g, '\\');
-    return s;
-}
-
 function prepareCharacterClass (s: string) {
     s = s.replace(/\\r/g, "\r");
     s = s.replace(/\\f/g, "\f");
@@ -43,26 +38,7 @@ export class LexRegexpParser extends JisonParser implements JisonParserApi {
           var $0 = $$.length - 1;
         switch (yystate) {
 case 1:
-
-          this.$ = $$[$0-1];
-          if (!(yy.options && yy.options.flex)) {
-            let trailingLiteral = $$[$0-1];
-            // Find the right-most concatenation
-            while (trailingLiteral instanceof Concat)
-              trailingLiteral = trailingLiteral.r;
-            if (// this regexp ends with a literal
-                trailingLiteral instanceof Literal &&
-                // which ends with ID
-                trailingLiteral.literal.match(/[\w\d]$/) &&
-                // and is not part of escape
-                !trailingLiteral.literal.match(/\\(r|f|n|t|v|s|b|c[A-Z]|x[0-9a-fA-F]{2}|u[a-fA-F0-9]{4}|[0-7]{1,3})$/)
-                ) {
-                // then add a word boundry assertion
-                this.$ = new Concat($$[$0-1], new Assertion('b'));
-            }
-          }
-          return this.$;
-        
+ return $$[$0-1]; 
 break;
 case 2:
  this.$ = new Choice($$[$0-2], $$[$0]); 
@@ -124,10 +100,7 @@ break;
 case 27:
  this.$ = yytext; 
 break;
-case 28:
- this.$ = new Literal(prepareString(yytext.substr(1, yytext.length - 2))); 
-break;
-case 29:
+case 28: case 29:
  this.$ = new Literal(yytext); 
 break;
         }
@@ -144,125 +117,88 @@ export class LexRegexpLexer extends JisonLexer implements JisonLexerApi {
         super(yy);
     }
 
-    rules: RegExp[] = [/^(?:\/\*(?:.|\n|\r)*?\*\/)/,
-          /^(?:\/\/.*)/,
-          /^(?:([a-zA-Z_][a-zA-Z0-9_-]*))/,
-          /^(?:"(?:\\\\|\\"|[^"])*")/,
-          /^(?:'(?:\\\\|\\'|[^'])*')/,
-          /^(?:\|)/,
-          /^(?:\[(?:\\\\|\\\]|[^\]])*\])/,
-          /^(?:\(\?:)/,
-          /^(?:\(\?=)/,
-          /^(?:\(\?!)/,
-          /^(?:\()/,
-          /^(?:\))/,
-          /^(?:\+)/,
-          /^(?:\*)/,
-          /^(?:\?)/,
-          /^(?:\^)/,
-          /^(?:,)/,
-          /^(?:<<EOF>>)/,
-          /^(?:<)/,
-          /^(?:\/!)/,
-          /^(?:\/)/,
-          /^(?:\\x([0-9A-F]{2}))/,
-          /^(?:\\u([0-9a-fA-F]{4}))/,
-          /^(?:\\c([A-Z]))/,
-          /^(?:\\([rfntv]))/,
-          /^(?:\\([0-7]{1,3}))/,
-          /^(?:\\([sSbBwWdD]))/,
-          /^(?:\\([\\*+()${}|[\]\/.^?]))/,
-          /^(?:\\.)/,
-          /^(?:\$)/,
-          /^(?:\.)/,
-          /^(?:%options\b)/,
-          /^(?:\{\d+(?:,\s?\d+|,)?\})/,
-          /^(?:\{([a-zA-Z_][a-zA-Z0-9_-]*)\})/,
-          /^(?:\{)/,
-          /^(?:\})/,
-          /^(?:.)/,
-          /^(?:$)/
-        ];
-    conditions: any = {"code":{"rules":[37],"inclusive":false},"start_condition":{"rules":[37],"inclusive":false},"options":{"rules":[37],"inclusive":false},"conditions":{"rules":[37],"inclusive":false},"action":{"rules":[37],"inclusive":false},"indented":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37],"inclusive":true},"trail":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37],"inclusive":true},"rules":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37],"inclusive":true},"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37],"inclusive":true}}
+    rules: RegExp[] = [
+        /^(?:(\\[rfntv]))/,
+        /^(?:\/\*(?:.|\n|\r)*?\*\/)/,
+        /^(?:\/\/.*)/,
+        /^(?:([^\\*+()${}|[\]\/.^?]+))/,
+        /^(?:\|)/,
+        /^(?:\[(?:\\\\|\\\]|[^\]])*\])/,
+        /^(?:\(\?:)/,
+        /^(?:\(\?=)/,
+        /^(?:\(\?!)/,
+        /^(?:\()/,
+        /^(?:\))/,
+        /^(?:\+)/,
+        /^(?:\*)/,
+        /^(?:\?)/,
+        /^(?:\^)/,
+        /^(?:,)/,
+        /^(?:<<EOF>>)/,
+        /^(?:<)/,
+        /^(?:\/!)/,
+        /^(?:\/)/,
+        /^(?:(\\x[0-9A-F]{2}))/,
+        /^(?:(\\u[0-9a-fA-F]{4}))/,
+        /^(?:(\\c[A-Z]))/,
+        /^(?:(\\[0-7]{1,3}))/,
+        /^(?:(\\[sSbBwWdD]))/,
+        /^(?:(\\[\\*+()${}|[\]\/.^?]))/,
+        /^(?:\\.)/,
+        /^(?:\$)/,
+        /^(?:\.)/,
+        /^(?:%options\b)/,
+        /^(?:\{\d+(?:,\s?\d+|,)?\})/,
+        /^(?:(\{[a-zA-Z_][a-zA-Z0-9_-]*\}))/,
+        /^(?:\{)/,
+        /^(?:\})/,
+        /^(?:.)/,
+        /^(?:$)/
+    ];
+    conditions: any = {"code":{"rules":[35],"inclusive":false},"start_condition":{"rules":[35],"inclusive":false},"options":{"rules":[35],"inclusive":false},"conditions":{"rules":[35],"inclusive":false},"action":{"rules":[35],"inclusive":false},"indented":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35],"inclusive":true},"trail":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35],"inclusive":true},"rules":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35],"inclusive":true},"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35],"inclusive":true}}
     performAction (yy:any,yy_:any,$avoiding_name_collisions:any,YY_START:any): any {
           var YYSTATE=YY_START;
         switch($avoiding_name_collisions) {
-    case 0:/* ignore */
-      break;
+    case 0:yy_.yytext = decodeStringEscape(yy_.yytext.substring(1));                return 31;
     case 1:/* ignore */
       break;
-    case 2:return 'NAME';
+    case 2:/* ignore */
       break;
-    case 3:yy_.yytext = yy_.yytext.replace(/\\"/g,'"'); return 30;
-      break;
-    case 4:yy_.yytext = yy_.yytext.replace(/\\'/g,"'"); return 30;
-      break;
-    case 5:return 6;
-      break;
-    case 6:return 26;
-      break;
+    case 3:return 30;
+    case 4:return 6;
+    case 5:return 26;
+    case 6:return 11;
     case 7:return 11;
-      break;
     case 8:return 11;
-      break;
-    case 9:return 11;
-      break;
-    case 10:return 9;
-      break;
-    case 11:return 10;
-      break;
-    case 12:return 12;
-      break;
-    case 13:return 13;
-      break;
-    case 14:return 14;
-      break;
-    case 15:return 21;
-      break;
-    case 16:return ',';
-      break;
-    case 17:return 22;
-      break;
-    case 18:this.begin('conditions'); return '<';
-      break;
-    case 19:return 16;
-      break;
-    case 20:return 15;
-      break;
+    case 9:return 9;
+    case 10:return 10;
+    case 11:return 12;
+    case 12:return 13;
+    case 13:return 14;
+    case 14:return 21;
+    case 15:return ',';
+    case 16:return 22;
+    case 17:this.begin('conditions'); return '<';
+    case 18:return 16;
+    case 19:return 15;
+    case 20:yy_.yytext = String.fromCharCode(parseInt(yy_.yytext.substring(2), 16)); return 31;
     case 21:yy_.yytext = String.fromCharCode(parseInt(yy_.yytext.substring(2), 16)); return 31;
+    case 22:yy_.yytext = String.fromCodePoint(yy_.yytext.charCodeAt(2) - 64);        return 31;
+    case 23:yy_.yytext = String.fromCharCode(parseInt(yy_.yytext.substring(1),  8)); return 31;
+    case 24:return 27;
+    case 25:return 28;
+    case 26:yy_.yytext = yy_.yytext.replace(/^\\/g,''); return 31; // escaped special chars like '"'s
+    case 27:return 22;
+    case 28:return 20;
+    case 29:yy.options = {}; this.begin('options');
       break;
-    case 22:yy_.yytext = String.fromCharCode(parseInt(yy_.yytext.substring(2), 16)); return 31;
+    case 30:return 29;
+    case 31:return 25;
+    case 32:return '{';
+    case 33:return '}';
+    case 34:/* ignore bad characters */
       break;
-    case 23:yy_.yytext = String.fromCodePoint(yy_.yytext.charCodeAt(2) - 64);        return 31;
-      break;
-    case 24:yy_.yytext = decodeStringEscape(yy_.yytext.substring(1));                return 31;
-      break;
-    case 25:yy_.yytext = String.fromCharCode(parseInt(yy_.yytext.substring(1),  8)); return 31;
-      break;
-    case 26:return 27;
-      break;
-    case 27:return 28;
-      break;
-    case 28:yy_.yytext = yy_.yytext.replace(/^\\/g,''); return 31; // escaped special chars like '"'s
-      break;
-    case 29:return 22;
-      break;
-    case 30:return 20;
-      break;
-    case 31:yy.options = {}; this.begin('options');
-      break;
-    case 32:return 29;
-      break;
-    case 33:return 25;
-      break;
-    case 34:return '{';
-      break;
-    case 35:return '}';
-      break;
-    case 36:/* ignore bad characters */
-      break;
-    case 37:return 5;
-      break;
+    case 35:return 5;
         }
     }
 }

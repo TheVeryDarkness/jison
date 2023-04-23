@@ -6,8 +6,9 @@
 const Fs = require('fs');
 const Path = require('path');
 const lexParser = require('@ts-jison/lex-parser').LexParser;
+const LexRegexpParser = new (require('@ts-jison/lex-parser/lib/lex-regexp-parser').LexRegexpParser)();
 const {FileTemplate} = require('@ts-jison/common-generator');
-const {RegexpAtom} = require('@ts-jison/lex-parser/lib/RegexpAtom');
+const {RegexpAtom, Wildcard} = require('@ts-jison/lex-parser/lib/RegexpAtom');
 const {RegexpAtomToJs} = require('@ts-jison/lex-parser/lib/RegexpAtomToStringVisitor');
 const version = require('../package.json').version;
 
@@ -26,7 +27,7 @@ function prepareRules(rules, macros, actions, tokens, startConditions, caseless)
                                  ? '$.' // nothing can follow '$'
                                  : macros['no-break-if'] === ''
                                  ? '.*'
-                                 : '^(?:' + macros['no-break-if'] + ')$');
+                                 : '^(?:' + RegexpAtomToJs.serialize(macros['no-break-if'], 'simplifiy', false) + ')$');
 
     function tokenNumberReplacement (str, token) {
         return "return " + (tokens[token] || "'" + token + "'");
@@ -55,7 +56,7 @@ function prepareRules(rules, macros, actions, tokens, startConditions, caseless)
             }
         }
 
-        m = curRule.pattern instanceof RegexpAtom ? RegexpAtomToJs.serialize(curRule.pattern, 'preserve', true) : curRule.pattern; // can pass in Regexp's directly
+        m = RegexpAtomToJs.serialize(curRule.pattern, 'preserve', true); // can pass in Regexp's directly
         if (typeof m === 'string') {
             for (k in macros) {
                 if (macros.hasOwnProperty(k)) {
@@ -132,7 +133,7 @@ function buildActions (dict, tokens) {
     }
 
     if (dict.options && dict.options.flex) {
-        dict.rules.push({pattern: ".", action: "console.log(yytext);"});
+        dict.rules.push({pattern: new Wildcard(), action: "console.log(yytext);"});
     }
 
     this.rules = prepareRules(dict.rules, dict.macros, actions, tokens && toks, this.conditions, this.options && this.options["case-insensitive"]);
@@ -181,6 +182,11 @@ function processGrammar(dict, tokens) {
     var opts = {};
     if (typeof dict === 'string') {
         dict = new lexParser().parse(dict);
+    } else {
+        dict.rules.forEach(rule => {
+            if (typeof rule.pattern === 'string')
+                rule.pattern = LexRegexpParser.parse(rule.pattern);
+        })
     }
     dict = dict || {};
 
@@ -225,7 +231,7 @@ function generateModuleBody (opt, templateParm) {
     }
 
     lexer.strs.performAction = String(opt.performAction);
-    lexer.strs.rules = "[" + opt.rules.join(",\n          ") + "\n        ]";
+    lexer.strs.rules = "[\n" + opt.rules.map(r => "        " + r).join(",\n") + "\n    ]";
     lexer.strs.conditions = JSON.stringify(opt.conditions);
     return lexer;
 }

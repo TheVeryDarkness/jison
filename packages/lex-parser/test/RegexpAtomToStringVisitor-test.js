@@ -161,26 +161,26 @@ describe('RegexpAtomToStringVisitor', () => {
   });
 // TODO: \\b
   // Literal
-  test("'abc'[a-z0-9]+", G.preserve, "abc[a-z0-9]+");
-  test("[a-z]'abc'", G.preserve, "[a-z]abc\\b");
-  test("('abc'([a-z0-9]+))", G.preserve, "(?:abc(?:[a-z0-9]+))");
-  test("(([a-z])'abc')", G.preserve, "(?:(?:[a-z])abc)");
-  test("('abc'[a-z0-9])+", G.preserve, "(?:abc[a-z0-9])+");
-  test("([a-z]'abc')+", G.preserve, "(?:[a-z]abc)+");
+  test("abc[a-z0-9]+", G.preserve, "abc[a-z0-9]+");
+  test("[a-z]abc", G.preserve, "[a-z]abc");
+  test("(abc([a-z0-9]+))", G.preserve, "(?:abc(?:[a-z0-9]+))");
+  test("(([a-z])abc)", G.preserve, "(?:(?:[a-z])abc)");
+  test("(abc[a-z0-9])+", G.preserve, "(?:abc[a-z0-9])+");
+  test("([a-z]abc)+", G.preserve, "(?:[a-z]abc)+");
 
-  test("'abc'[a-z0-9]+", G.capture, "abc[a-z0-9]+");
-  test("[a-z]'abc'", G.capture, "[a-z]abc\\b");
-  test("('abc'([a-z0-9]+))", G.capture, "(abc([a-z0-9]+))");
-  test("(([a-z])'abc')", G.capture, "(([a-z])abc)");
-  test("('abc'[a-z0-9])+", G.capture, "(abc[a-z0-9])+");
-  test("([a-z]'abc')+", G.capture, "([a-z]abc)+");
+  test("abc[a-z0-9]+", G.capture, "abc[a-z0-9]+");
+  test("[a-z]abc", G.capture, "[a-z]abc");
+  test("(abc([a-z0-9]+))", G.capture, "(abc([a-z0-9]+))");
+  test("(([a-z])abc)", G.capture, "(([a-z])abc)");
+  test("(abc[a-z0-9])+", G.capture, "(abc[a-z0-9])+");
+  test("([a-z]abc)+", G.capture, "([a-z]abc)+");
 
-  test("'abc'[a-z0-9]+", G.simplify, "abc[a-z0-9]+");
-  test("[a-z]'abc'", G.simplify, "[a-z]abc\\b");
-  test("('abc'([a-z0-9]+))", G.simplify, "abc[a-z0-9]+");
-  test("(([a-z])'abc')", G.simplify, "[a-z]abc");
-  test("('abc'[a-z0-9])+", G.simplify, "(?:abc[a-z0-9])+");
-  test("([a-z]'abc')+", G.simplify, "(?:[a-z]abc)+");
+  test("abc[a-z0-9]+", G.simplify, "abc[a-z0-9]+");
+  test("[a-z]abc", G.simplify, "[a-z]abc");
+  test("(abc([a-z0-9]+))", G.simplify, "abc[a-z0-9]+");
+  test("(([a-z])abc)", G.simplify, "[a-z]abc");
+  test("(abc[a-z0-9])+", G.simplify, "(?:abc[a-z0-9])+");
+  test("([a-z]abc)+", G.simplify, "(?:[a-z]abc)+");
   }
   // Operator
   test(`\\/*(.|\\n|\\r)*?`, G.simplify, `\\/*(?:.|\\n|\\r)*?`);

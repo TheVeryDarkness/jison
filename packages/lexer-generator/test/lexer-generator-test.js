@@ -4,7 +4,7 @@ Shared = require("../../parser-generator/tests/extend-expect");
 JisonLexer.print = Shared.print;
 afterEach(Shared.nothingPrinted);
 
-describe("", () => {
+describe("", () => {  if (true) {
   it("test basic matchers", () => {
     const dict = {
       rules: [
@@ -131,14 +131,14 @@ describe("", () => {
     const dict = {
       macros: {
         "digit": "[0-9]",
-        "2digit": "{digit}{digit}",
-        "3digit": "{2digit}{digit}"
+        "digit2": "{digit}{digit}",
+        "digit3": "{digit2}{digit}"
       },
       rules: [
         {pattern: "x", action: "return 'X';"},
         {pattern: "y", action: "return 'Y';"},
-        {pattern: "{3digit}", action: "return 'NNN';"},
-        {pattern: "{2digit}", action: "return 'NN';"},
+        {pattern: "{digit3}", action: "return 'NNN';"},
+        {pattern: "{digit2}", action: "return 'NN';"},
         {pattern: "{digit}", action: "return 'N';"},
         {pattern: "$", action: "return 'EOF';"}
       ]
@@ -836,7 +836,7 @@ describe("", () => {
     expect(lexer.lex()).toEqual("X");
     expect(lexer.lex()).toEqual("EOF");
   });
-
+  }
   it("test flex mode default rule", () => {
     const dict = {
       rules: [
@@ -857,7 +857,7 @@ describe("", () => {
 
     logSpy.mockRestore();
   });
-
+  if (true) {
   it("test pipe precedence", () => {
     const dict = {
       rules: [
@@ -983,7 +983,7 @@ describe("", () => {
   it("test backtracking lexer reject() method", () => {
     const dict = {
       rules: [
-        {pattern: "[A-Z]+([0-9]+)", action: "if (this.matches[1].length) this.reject(); else return 'ID';"},
+        {pattern: "[A-Z]+([0-9]+)", action: "if (this.matches[0].length) this.reject(); else return 'ID';"},
         {pattern: "[A-Z]+", action: "return 'WORD';"},
         {pattern: "[0-9]+", action: "return 'NUM';"}
       ],
@@ -1001,7 +1001,7 @@ describe("", () => {
   it("test lexer reject() exception when not in backtracking mode", () => {
     const dict = {
       rules: [
-        {pattern: "[A-Z]+([0-9]+)", action: "if (this.matches[1].length) this.reject(); else return 'ID';"},
+        {pattern: "[A-Z]+([0-9]+)", action: "if (this.matches[0].length) this.reject(); else return 'ID';"},
         {pattern: "[A-Z]+", action: "return 'WORD';"},
         {pattern: "[0-9]+", action: "return 'NUM';"}
       ],
@@ -1037,4 +1037,4 @@ describe("", () => {
     expect(lexer.lex()).toEqual("NUMBER");
     expect(lexer.lex()).toEqual("EOF");
   });
-});
+}});

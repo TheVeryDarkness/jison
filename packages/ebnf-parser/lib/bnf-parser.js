@@ -194,7 +194,8 @@ class BnfLexer extends lexer_1.JisonLexer {
     constructor(yy = {}) {
         super(yy);
         this.options = { "moduleName": "Bnf" };
-        this.rules = [/^(?:%%)/,
+        this.rules = [
+            /^(?:%%)/,
             /^(?:\()/,
             /^(?:\))/,
             /^(?:\*)/,

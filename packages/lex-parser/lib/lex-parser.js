@@ -236,7 +236,8 @@ class LexLexer extends lexer_1.JisonLexer {
     constructor(yy = {}) {
         super(yy);
         this.options = { "moduleName": "Lex" };
-        this.rules = [/^(?:\/\*(?:.|\n|\r)*?\*\/)/,
+        this.rules = [
+            /^(?:\/\*(?:.|\n|\r)*?\*\/)/,
             /^(?:\/\/.*)/,
             /^(?:\/[^ /]*?['"{}'][^ ]*?\/)/,
             /^(?:"(?:\\\\|\\"|[^"])*")/,

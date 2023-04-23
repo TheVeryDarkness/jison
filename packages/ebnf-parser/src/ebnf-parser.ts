@@ -65,20 +65,21 @@ export class EbnfLexer extends JisonLexer implements JisonLexerApi {
         super(yy);
     }
 
-    rules: RegExp[] = [/^(?:\s+)/,
-          /^(?:([a-zA-Z][a-zA-Z0-9_-]*))/,
-          /^(?:\[([a-zA-Z][a-zA-Z0-9_-]*)\])/,
-          /^(?:'[^']*')/,
-          /^(?:\.)/,
-          /^(?:bar\b)/,
-          /^(?:\()/,
-          /^(?:\))/,
-          /^(?:\*)/,
-          /^(?:\?)/,
-          /^(?:\|)/,
-          /^(?:\+)/,
-          /^(?:$)/
-        ];
+    rules: RegExp[] = [
+        /^(?:\s+)/,
+        /^(?:([a-zA-Z][a-zA-Z0-9_-]*))/,
+        /^(?:\[([a-zA-Z][a-zA-Z0-9_-]*)\])/,
+        /^(?:'[^']*')/,
+        /^(?:\.)/,
+        /^(?:bar\b)/,
+        /^(?:\()/,
+        /^(?:\))/,
+        /^(?:\*)/,
+        /^(?:\?)/,
+        /^(?:\|)/,
+        /^(?:\+)/,
+        /^(?:$)/
+    ];
     conditions: any = {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12],"inclusive":true}}
     performAction (yy:any,yy_:any,$avoiding_name_collisions:any,YY_START:any): any {
           var YYSTATE=YY_START;

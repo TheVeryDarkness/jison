@@ -62,7 +62,8 @@ class EbnfLexer extends lexer_1.JisonLexer {
     constructor(yy = {}) {
         super(yy);
         this.options = { "moduleName": "Ebnf" };
-        this.rules = [/^(?:\s+)/,
+        this.rules = [
+            /^(?:\s+)/,
             /^(?:([a-zA-Z][a-zA-Z0-9_-]*))/,
             /^(?:\[([a-zA-Z][a-zA-Z0-9_-]*)\])/,
             /^(?:'[^']*')/,
