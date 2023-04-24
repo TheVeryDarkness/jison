@@ -24,7 +24,6 @@ abstract class Anchor extends RegexpAtom
 class Reference extends RegexpAtom
 class PatternLiteral extends RegexpAtom
 class CharacterClass extends RegexpAtom
-class CharacterAtomClass extends RegexpAtom
 class CharClassLiteral extends RegexpAtom
 class EscapedCharacter extends RegexpAtom
   class Assertion extends EscapedCharacter
@@ -165,22 +164,12 @@ export class PatternLiteral extends RegexpAtom {
 
 export class CharacterClass extends RegexpAtom {
   constructor (
-    public charClass: string,
-  ) { super(); }
-  getPrecedence (): number { return 7; }
-  visit (visitor: RegexpAtomVisitor, ...args: any[]): any {
-    return visitor.visit_CharacterClass(this, args);
-  }
-}
-
-export class CharacterAtomClass extends RegexpAtom {
-  constructor (
     public negated: boolean,
     public ranges: (CharClassLiteral | Reference)[],
   ) { super(); }
   getPrecedence (): number { return 7; }
   visit (visitor: RegexpAtomVisitor, ...args: any[]): any {
-    return visitor.visit_CharacterAtomClass(this, args);
+    return visitor.visit_CharacterClass(this, args);
   }
 }
 
@@ -241,7 +230,6 @@ export interface RegexpAtomVisitor {
   visit_Reference (visitee: Reference, ...args: any[]): any;
   visit_PatternLiteral (visitee: PatternLiteral, ...args: any[]): any;
   visit_CharacterClass (visitee: CharacterClass, ...args: any[]): any;
-  visit_CharacterAtomClass (visitee: CharacterAtomClass, ...args: any[]): any;
   visit_CharClassLiteral (visitee: CharClassLiteral, ...args: any[]): any;
   visit_Assertion (visitee: Assertion, ...args: any[]): any;
   visit_Operator (visitee: Operator, ...args: any[]): any;
@@ -294,10 +282,7 @@ export class RegexpAtomCopyVisitor implements RegexpAtomVisitor {
     return new PatternLiteral(visitee.literal);
   }
   visit_CharacterClass (visitee: CharacterClass, ...args: any[]): any {
-    return new CharacterClass(visitee.charClass);
-  }
-  visit_CharacterAtomClass (visitee: CharacterAtomClass, ...args: any[]): any {
-    return new CharacterAtomClass(visitee.negated, visitee.ranges.map(range => range.visit(this) as Reference | CharClassLiteral));
+    return new CharacterClass(visitee.negated, visitee.ranges.map(range => range.visit(this) as Reference | CharClassLiteral));
   }
   visit_CharClassLiteral (visitee: CharClassLiteral, ...args: any[]): any {
     return new CharClassLiteral(visitee.literal);

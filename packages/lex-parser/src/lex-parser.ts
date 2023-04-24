@@ -4,7 +4,7 @@ import { JisonParser, JisonParserApi, StateType, SymbolsType, TerminalsType, Pro
  * @returns Parser implementing JisonParserApi and a Lexer implementing JisonLexerApi.
  */
 
-    import {Choice, Concat, Empty, CaptureGroup, SpecialGroup, Cardinality, LookAhead, LookBehind, Wildcard, Begin, End, PatternLiteral, CharClassLiteral, Assertion, Operator, Reference, CharacterAtomClass} from './RegexpAtom';
+    import {Choice, Concat, Empty, CaptureGroup, SpecialGroup, Cardinality, LookAhead, LookBehind, Wildcard, Begin, End, PatternLiteral, CharClassLiteral, Assertion, Operator, Reference, CharacterClass} from './RegexpAtom';
     let ebnf = false;
 
 
@@ -194,7 +194,7 @@ case 46:
  this.$ = new Cardinality($$[$0-1], $$[$0]); 
 break;
 case 47:
- this.$ = new CharacterAtomClass($$[$0-2].length === 2, $$[$0-1]); 
+ this.$ = new CharacterClass($$[$0-2].length === 2, $$[$0-1]); 
 break;
 case 48:
  this.$ = new Wildcard(); 

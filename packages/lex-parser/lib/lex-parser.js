@@ -200,7 +200,7 @@ class LexParser extends parser_1.JisonParser {
                 this.$ = new RegexpAtom_1.Cardinality($$[$0 - 1], $$[$0]);
                 break;
             case 47:
-                this.$ = new RegexpAtom_1.CharacterAtomClass($$[$0 - 2].length === 2, $$[$0 - 1]);
+                this.$ = new RegexpAtom_1.CharacterClass($$[$0 - 2].length === 2, $$[$0 - 1]);
                 break;
             case 48:
                 this.$ = new RegexpAtom_1.Wildcard();

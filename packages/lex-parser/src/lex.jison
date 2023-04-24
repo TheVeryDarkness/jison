@@ -136,7 +136,7 @@ function decodeStringEscape (c: string): string {
 %left '*' '+' '?' RANGE_REGEX
 
 %{
-    import {Choice, Concat, Empty, CaptureGroup, SpecialGroup, Cardinality, LookAhead, LookBehind, Wildcard, Begin, End, PatternLiteral, CharClassLiteral, Assertion, Operator, Reference, CharacterAtomClass} from './RegexpAtom';
+    import {Choice, Concat, Empty, CaptureGroup, SpecialGroup, Cardinality, LookAhead, LookBehind, Wildcard, Begin, End, PatternLiteral, CharClassLiteral, Assertion, Operator, Reference, CharacterClass} from './RegexpAtom';
     let ebnf = false;
 %}
 
@@ -320,7 +320,7 @@ regex_base
     | regex_base range_regex
         { $$ = new Cardinality($1, $2); }
     | ANY_GROUP_REGEX char_class_rangeStar END_CHAR_CLASS
-        { $$ = new CharacterAtomClass($1.length === 2, $2); }
+        { $$ = new CharacterClass($1.length === 2, $2); }
     | '.'
         { $$ = new Wildcard(); }
     | '^'

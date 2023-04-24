@@ -23,7 +23,6 @@ abstract class Anchor extends RegexpAtom
 class Reference extends RegexpAtom
 class PatternLiteral extends RegexpAtom
 class CharacterClass extends RegexpAtom
-class CharacterAtomClass extends RegexpAtom
 class CharClassLiteral extends RegexpAtom
 class EscapedCharacter extends RegexpAtom
   class Assertion extends EscapedCharacter
@@ -111,12 +110,6 @@ export declare class PatternLiteral extends RegexpAtom {
     visit(visitor: RegexpAtomVisitor, ...args: any[]): any;
 }
 export declare class CharacterClass extends RegexpAtom {
-    charClass: string;
-    constructor(charClass: string);
-    getPrecedence(): number;
-    visit(visitor: RegexpAtomVisitor, ...args: any[]): any;
-}
-export declare class CharacterAtomClass extends RegexpAtom {
     negated: boolean;
     ranges: (CharClassLiteral | Reference)[];
     constructor(negated: boolean, ranges: (CharClassLiteral | Reference)[]);
@@ -157,7 +150,6 @@ export interface RegexpAtomVisitor {
     visit_Reference(visitee: Reference, ...args: any[]): any;
     visit_PatternLiteral(visitee: PatternLiteral, ...args: any[]): any;
     visit_CharacterClass(visitee: CharacterClass, ...args: any[]): any;
-    visit_CharacterAtomClass(visitee: CharacterAtomClass, ...args: any[]): any;
     visit_CharClassLiteral(visitee: CharClassLiteral, ...args: any[]): any;
     visit_Assertion(visitee: Assertion, ...args: any[]): any;
     visit_Operator(visitee: Operator, ...args: any[]): any;
@@ -178,7 +170,6 @@ export declare class RegexpAtomCopyVisitor implements RegexpAtomVisitor {
     visit_Reference(visitee: Reference, ...args: any[]): any;
     visit_PatternLiteral(visitee: PatternLiteral, ...args: any[]): any;
     visit_CharacterClass(visitee: CharacterClass, ...args: any[]): any;
-    visit_CharacterAtomClass(visitee: CharacterAtomClass, ...args: any[]): any;
     visit_CharClassLiteral(visitee: CharClassLiteral, ...args: any[]): any;
     visit_Assertion(visitee: Assertion, ...args: any[]): any;
     visit_Operator(visitee: Operator, ...args: any[]): any;
