@@ -67,8 +67,8 @@ export class EbnfLexer extends JisonLexer implements JisonLexerApi {
 
     rules: RegExp[] = [
         /^(?:\s+)/,
-        /^(?:([a-zA-Z][a-zA-Z0-9_-]*))/,
-        /^(?:\[([a-zA-Z][a-zA-Z0-9_-]*)\])/,
+        /^(?:[a-zA-Z][a-zA-Z0-9_-]*)/,
+        /^(?:\[[a-zA-Z][a-zA-Z0-9_-]*\])/,
         /^(?:'[^']*')/,
         /^(?:\.)/,
         /^(?:bar\b)/,
