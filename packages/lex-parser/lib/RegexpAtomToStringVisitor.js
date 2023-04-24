@@ -72,7 +72,7 @@ class RegexpAtomToStringVisitor {
             return `{${visitee.ref}}`;
         throw Error('Reference.visit() should never be called (unless you\'re debugging)');
     }
-    visit_Literal(visitee, parentPrecedence, ...args) {
+    visit_PatternLiteral(visitee, parentPrecedence, ...args) {
         return this.escapeLiteral(visitee.literal);
     }
     visit_CharacterClass(visitee, parentPrecedence, ...args) {
@@ -80,6 +80,9 @@ class RegexpAtomToStringVisitor {
     }
     visit_CharacterAtomClass(visitee, parentPrecedence, ...args) {
         return '[' + (visitee.negated ? '^' : '') + visitee.ranges.map(range => this.escapeCharacterClass(range.visit(this, parentPrecedence))).join('') + ']';
+    }
+    visit_CharClassLiteral(visitee, parentPrecedence, ...args) {
+        return this.escapeCharacterClass(visitee.literal);
     }
     // protected visit_EscapedCharacter (visitee: EscapedCharacter, parentPrecedence: number, ...args: any[]): any {}
     visit_Assertion(visitee, parentPrecedence, ...args) {

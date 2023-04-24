@@ -2,15 +2,16 @@
 
 %no-break-if       (.*[^a-z] | '') 'return' ([^a-z].* | '') // elide trailing 'break;'
 
-BRACED            "{"[a-zA-Z_][a-zA-Z0-9_-]*"}"
+NAME              [a-zA-Z_][a-zA-Z0-9_-]*
 HEX               \\"x"[0-9A-F]{2}
 UNICODE           \\"u"[0-9a-fA-F]{4}
 CONTROL_CHARS     \\"c"[A-Z]
 STR_ESCAPE        \\[rfntv]
 OCTAL             \\[0-7]{1,3}
 REGEXP_ASSERTIONS \\[sSbBwWdD]
-OPERATORS         \\[\\*+()${}|[\]\/.^?]
-BARE              [^\\*+()${}|[\]\/.^?]+
+ESCAPES           \\\\
+OPERATORS         \\[*+()${}|[\]/.^?]
+BARE              [^\\*+()${}|[\]/.^?]+
 
 %x char_class
 
@@ -20,7 +21,9 @@ BARE              [^\\*+()${}|[\]\/.^?]+
 <char_class>"\\\\"              return 'CHAR_CLASS';
 <char_class>"\]"                return 'CHAR_CLASS';
 <char_class>[^\]{]              return 'CHAR_CLASS';
-<INITIAL,char_class>{BRACED}    return 'NAME_BRACE';
+<INITIAL,char_class>"{"{NAME}"}"        return 'NAME_BRACE';
+<INITIAL,char_class>{REGEXP_ASSERTIONS} return 'ASSERTION';
+<INITIAL,char_class>{ESCAPES}           return 'ESCAPE';
 <char_class>"{"                 return 'CHAR_CLASS';
 
 {STR_ESCAPE}                    yytext = decodeStringEscape(yytext.substring(1));                return 'CHARACTER_LIT';
@@ -47,7 +50,6 @@ BARE              [^\\*+()${}|[\]\/.^?]+
 {UNICODE}                       yytext = String.fromCharCode(parseInt(yytext.substring(2), 16)); return 'CHARACTER_LIT';
 {CONTROL_CHARS}                 yytext = String.fromCodePoint(yytext.charCodeAt(2) - 64);        return 'CHARACTER_LIT';
 {OCTAL}                         yytext = String.fromCharCode(parseInt(yytext.substring(1),  8)); return 'CHARACTER_LIT';
-{REGEXP_ASSERTIONS}             return 'ASSERTION';
 {OPERATORS}                     return 'OPERATOR';
 "\\".                           yytext = yytext.replace(/^\\/g,''); return 'CHARACTER_LIT'; // escaped special chars like '"'s
 "$"                             return '$';
@@ -83,7 +85,7 @@ function decodeStringEscape (c: string): string {
 %left '*' '+' '?' RANGE_REGEX
 
 %{
-    import {Choice, Concat, Empty, CaptureGroup, SpecialGroup, Cardinality, LookAhead, LookBehind, Wildcard, Begin, End, Literal, Assertion, Operator, Reference, CharacterClass, CharacterAtomClass} from './RegexpAtom';
+    import {Choice, Concat, Empty, CaptureGroup, SpecialGroup, Cardinality, LookAhead, LookBehind, Wildcard, Begin, End, PatternLiteral, CharClassLiteral, Assertion, Operator, Reference, CharacterClass, CharacterAtomClass} from './RegexpAtom';
 %}
 
 %%
@@ -152,14 +154,20 @@ char_class_rangeStar
      
 char_class_range
     : CHAR_CLASS
-        { $$ = new Literal(prepareCharacterClass(yytext)); }
+        { $$ = new CharClassLiteral(prepareCharacterClass(yytext)); }
     | NAME_BRACE
         { $$ = new Reference(yytext.substring(1, yytext.length - 1)); }
+    | ASSERTION
+        { $$ = new Assertion(yytext.substring(1)); }
+    | ESCAPE
+        { $$ = new CharClassLiteral(yytext.substring(1)); }
     ;
      
 escape_char
     : ASSERTION
         { $$ = new Assertion(yytext.substring(1)); }
+    | ESCAPE
+        { $$ = new PatternLiteral(yytext.substring(1)); }
     | OPERATOR
         { $$ = new Operator(yytext.substring(1)); }
     ;
@@ -171,8 +179,8 @@ range_regex
 
 string
     : STRING_LIT
-        { $$ = new Literal(yytext); }
-    | CHARACTER_LIT { $$ = new Literal(yytext); }
+        { $$ = new PatternLiteral(yytext); }
+    | CHARACTER_LIT { $$ = new PatternLiteral(yytext); }
     ;
 
 %%

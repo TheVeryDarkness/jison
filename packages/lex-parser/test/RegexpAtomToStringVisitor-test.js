@@ -14,7 +14,6 @@ function test (input, g, output) {
 }
 
 describe('RegexpAtomToStringVisitor', () => {
-  if (true) {
   // Concat
   test("[a-z][a-z0-9]+", G.preserve, "[a-z][a-z0-9]+");
   test("(([a-z])([a-z0-9]+))", G.preserve, "(?:(?:[a-z])(?:[a-z0-9]+))");
@@ -159,7 +158,7 @@ describe('RegexpAtomToStringVisitor', () => {
   it('Reference !debug', () => {
     expect(() => {RegexpAtomToJs.serialize(new LexRegexpParser().parse("{REF}[a-z0-9]+"), G.preserve, false);}).toThrow(/Reference.visit\(\) should never be called/);
   });
-// TODO: \\b
+
   // Literal
   test("abc[a-z0-9]+", G.preserve, "abc[a-z0-9]+");
   test("[a-z]abc", G.preserve, "[a-z]abc");
@@ -181,7 +180,7 @@ describe('RegexpAtomToStringVisitor', () => {
   test("(([a-z])abc)", G.simplify, "[a-z]abc");
   test("(abc[a-z0-9])+", G.simplify, "(?:abc[a-z0-9])+");
   test("([a-z]abc)+", G.simplify, "(?:[a-z]abc)+");
-  }
+
   // Operator
   test(`\\/*(.|\\n|\\r)*?`, G.simplify, `\\/*(?:.|\\n|\\r)*?`);
   test(`\\n`, G.simplify, `\\n`);

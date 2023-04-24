@@ -4,7 +4,7 @@ import {
   CaptureGroup, Cardinality, CharacterClass, CharacterAtomClass,
   Choice,
   Concat,
-  Empty, End, Literal, LookAhead, LookBehind, LookOut, Operator, Reference,
+  Empty, End, PatternLiteral, CharClassLiteral, LookAhead, LookBehind, LookOut, Operator, Reference,
   RegexpAtom,
   RegexpAtomVisitor,
   RegexpList,
@@ -95,7 +95,7 @@ export abstract class RegexpAtomToStringVisitor implements RegexpAtomVisitor {
     if (this.debug) return `{${visitee.ref}}`
     throw Error('Reference.visit() should never be called (unless you\'re debugging)');
   }
-  visit_Literal (visitee: Literal, parentPrecedence: number, ...args: any[]): any {
+  visit_PatternLiteral (visitee: PatternLiteral, parentPrecedence: number, ...args: any[]): any {
     return this.escapeLiteral(visitee.literal);
   }
   visit_CharacterClass (visitee: CharacterClass, parentPrecedence: number, ...args: any[]): any {
@@ -103,6 +103,9 @@ export abstract class RegexpAtomToStringVisitor implements RegexpAtomVisitor {
   }
   visit_CharacterAtomClass (visitee: CharacterAtomClass, parentPrecedence: number, ...args: any[]): any {
     return '[' + (visitee.negated ? '^' : '') + visitee.ranges.map(range => this.escapeCharacterClass(range.visit(this, parentPrecedence))).join('') + ']';
+  }
+  visit_CharClassLiteral (visitee: CharClassLiteral, parentPrecedence: number, ...args: any[]): any {
+    return this.escapeCharacterClass(visitee.literal);
   }
   // protected visit_EscapedCharacter (visitee: EscapedCharacter, parentPrecedence: number, ...args: any[]): any {}
   visit_Assertion (visitee: Assertion, parentPrecedence: number, ...args: any[]): any {

@@ -6,7 +6,7 @@
 .replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RegexpAtomCopyVisitor = exports.Operator = exports.Assertion = exports.EscapedCharacter = exports.CharacterAtomClass = exports.CharacterClass = exports.Literal = exports.Reference = exports.End = exports.Begin = exports.Anchor = exports.Wildcard = exports.LookBehind = exports.LookAhead = exports.LookOut = exports.Cardinality = exports.Empty = exports.SpecialGroup = exports.CaptureGroup = exports.Concat = exports.Choice = exports.RegexpList = exports.RegexpAtom = void 0;
+exports.RegexpAtomCopyVisitor = exports.Operator = exports.Assertion = exports.EscapedCharacter = exports.CharClassLiteral = exports.CharacterAtomClass = exports.CharacterClass = exports.PatternLiteral = exports.Reference = exports.End = exports.Begin = exports.Anchor = exports.Wildcard = exports.LookBehind = exports.LookAhead = exports.LookOut = exports.Cardinality = exports.Empty = exports.SpecialGroup = exports.CaptureGroup = exports.Concat = exports.Choice = exports.RegexpList = exports.RegexpAtom = void 0;
 /**
 @startuml
 abstract class RegexpList extends RegexpAtom
@@ -24,9 +24,10 @@ abstract class Anchor extends RegexpAtom
   class Begin extends Anchor
   class End extends Anchor
 class Reference extends RegexpAtom
-class Literal extends RegexpAtom
+class PatternLiteral extends RegexpAtom
 class CharacterClass extends RegexpAtom
 class CharacterAtomClass extends RegexpAtom
+class CharClassLiteral extends RegexpAtom
 class EscapedCharacter extends RegexpAtom
   class Assertion extends EscapedCharacter
   class Operator extends EscapedCharacter
@@ -157,17 +158,17 @@ class Reference extends RegexpAtom {
     }
 }
 exports.Reference = Reference;
-class Literal extends RegexpAtom {
+class PatternLiteral extends RegexpAtom {
     constructor(literal) {
         super();
         this.literal = literal;
     }
     getPrecedence() { return 7; }
     visit(visitor, ...args) {
-        return visitor.visit_Literal(this, args);
+        return visitor.visit_PatternLiteral(this, args);
     }
 }
-exports.Literal = Literal;
+exports.PatternLiteral = PatternLiteral;
 class CharacterClass extends RegexpAtom {
     constructor(charClass) {
         super();
@@ -191,6 +192,17 @@ class CharacterAtomClass extends RegexpAtom {
     }
 }
 exports.CharacterAtomClass = CharacterAtomClass;
+class CharClassLiteral extends RegexpAtom {
+    constructor(literal) {
+        super();
+        this.literal = literal;
+    }
+    getPrecedence() { return 7; }
+    visit(visitor, ...args) {
+        return visitor.visit_CharClassLiteral(this, args);
+    }
+}
+exports.CharClassLiteral = CharClassLiteral;
 class EscapedCharacter extends RegexpAtom {
     constructor(escapedChar) {
         super();
@@ -254,14 +266,17 @@ class RegexpAtomCopyVisitor {
     visit_Reference(visitee, ...args) {
         return new Reference(visitee.ref);
     }
-    visit_Literal(visitee, ...args) {
-        return new Literal(visitee.literal);
+    visit_PatternLiteral(visitee, ...args) {
+        return new PatternLiteral(visitee.literal);
     }
     visit_CharacterClass(visitee, ...args) {
         return new CharacterClass(visitee.charClass);
     }
     visit_CharacterAtomClass(visitee, ...args) {
         return new CharacterAtomClass(visitee.negated, visitee.ranges.map(range => range.visit(this)));
+    }
+    visit_CharClassLiteral(visitee, ...args) {
+        return new CharClassLiteral(visitee.literal);
     }
     // protected visit_EscapedCharacter (visitee: EscapedCharacter, ...args: any[]): any {}
     visit_Assertion(visitee, ...args) {
