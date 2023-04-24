@@ -78,6 +78,9 @@ class RegexpAtomToStringVisitor {
     visit_CharacterClass(visitee, parentPrecedence, ...args) {
         return '[' + this.escapeCharacterClass(visitee.charClass) + ']';
     }
+    visit_CharacterAtomClass(visitee, parentPrecedence, ...args) {
+        return '[' + (visitee.negated ? '^' : '') + visitee.ranges.map(range => this.escapeCharacterClass(range.visit(this, parentPrecedence))).join('') + ']';
+    }
     // protected visit_EscapedCharacter (visitee: EscapedCharacter, parentPrecedence: number, ...args: any[]): any {}
     visit_Assertion(visitee, parentPrecedence, ...args) {
         return '\\' + visitee.escapedChar;

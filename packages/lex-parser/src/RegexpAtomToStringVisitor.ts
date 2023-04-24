@@ -1,7 +1,7 @@
 import {
   Assertion,
   Begin,
-  CaptureGroup, Cardinality, CharacterClass,
+  CaptureGroup, Cardinality, CharacterClass, CharacterAtomClass,
   Choice,
   Concat,
   Empty, End, Literal, LookAhead, LookBehind, LookOut, Operator, Reference,
@@ -100,6 +100,9 @@ export abstract class RegexpAtomToStringVisitor implements RegexpAtomVisitor {
   }
   visit_CharacterClass (visitee: CharacterClass, parentPrecedence: number, ...args: any[]): any {
     return '[' + this.escapeCharacterClass(visitee.charClass) + ']';
+  }
+  visit_CharacterAtomClass (visitee: CharacterAtomClass, parentPrecedence: number, ...args: any[]): any {
+    return '[' + (visitee.negated ? '^' : '') + visitee.ranges.map(range => this.escapeCharacterClass(range.visit(this, parentPrecedence))).join('') + ']';
   }
   // protected visit_EscapedCharacter (visitee: EscapedCharacter, parentPrecedence: number, ...args: any[]): any {}
   visit_Assertion (visitee: Assertion, parentPrecedence: number, ...args: any[]): any {

@@ -4,7 +4,25 @@ Shared = require("../../parser-generator/tests/extend-expect");
 JisonLexer.print = Shared.print;
 afterEach(Shared.nothingPrinted);
 
-describe("", () => {  if (true) {
+describe("lexer-generator-test", () => {
+  it("test character classes", () => {
+    const dict = {
+      rules: [
+        {pattern: "x", action: "return 'X';"},
+        {pattern: "\\{[^}]*\\}", action: "yytext = yytext.substr(1, yyleng-2); return 'ACTION';"},
+        {pattern: "$", action: "return 'EOF';"}
+      ]
+    };
+
+    const input = 'x{code}x';
+
+    const lexer = new RegExpLexer(dict, input);
+    expect(lexer.lex()).toEqual("X");
+    expect(lexer.lex()).toEqual("ACTION");
+    expect(lexer.lex()).toEqual("X");
+    expect(lexer.lex()).toEqual("EOF");
+  });
+
   it("test basic matchers", () => {
     const dict = {
       rules: [
@@ -131,12 +149,15 @@ describe("", () => {  if (true) {
     const dict = {
       macros: {
         "digit": "[0-9]",
+        "dot": ".", // not escaped 'cause it only appears in a character class
+        "digit_": "{digit}[_{dot}-]{digit}",
         "digit2": "{digit}{digit}",
         "digit3": "{digit2}{digit}"
       },
       rules: [
         {pattern: "x", action: "return 'X';"},
         {pattern: "y", action: "return 'Y';"},
+        {pattern: "{digit_}", action: "return ['N.N', yytext];"},
         {pattern: "{digit3}", action: "return 'NNN';"},
         {pattern: "{digit2}", action: "return 'NN';"},
         {pattern: "{digit}", action: "return 'N';"},
@@ -144,9 +165,15 @@ describe("", () => {  if (true) {
       ]
     };
 
-    const input = "x1y42y123";
+    const input = "x0.0x1_1x2-2x1y42y123";
 
     const lexer = new RegExpLexer(dict, input);
+    expect(lexer.lex()).toEqual("X");
+    expect(lexer.lex()).toEqual(["N.N", "0.0"]);
+    expect(lexer.lex()).toEqual("X");
+    expect(lexer.lex()).toEqual(["N.N", "1_1"]);
+    expect(lexer.lex()).toEqual("X");
+    expect(lexer.lex()).toEqual(["N.N", "2-2"]);
     expect(lexer.lex()).toEqual("X");
     expect(lexer.lex()).toEqual("N");
     expect(lexer.lex()).toEqual("Y");
@@ -461,7 +488,7 @@ describe("", () => {  if (true) {
     expect(generated.lex()).toEqual("EOF");
   });
 
-  xit("test amd module generator", () => { // TODO
+  xit("test AMD module generator", () => { // TODO
     const dict = {
       rules: [
         {pattern: "x", action: "return 'X';"},
@@ -836,7 +863,7 @@ describe("", () => {  if (true) {
     expect(lexer.lex()).toEqual("X");
     expect(lexer.lex()).toEqual("EOF");
   });
-  }
+
   it("test flex mode default rule", () => {
     const dict = {
       rules: [
@@ -857,7 +884,7 @@ describe("", () => {  if (true) {
 
     logSpy.mockRestore();
   });
-  if (true) {
+
   it("test pipe precedence", () => {
     const dict = {
       rules: [
@@ -1037,4 +1064,4 @@ describe("", () => {  if (true) {
     expect(lexer.lex()).toEqual("NUMBER");
     expect(lexer.lex()).toEqual("EOF");
   });
-}});
+});

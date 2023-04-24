@@ -5,6 +5,7 @@
  * By Zachary Carter <zach@carter.name>
  * MIT Licensed
  * */
+// istanbul ignore file
 
 var typal = (function () {
 

@@ -18,14 +18,14 @@ function prepareCharacterClass(s) {
 class LexRegexpParser extends parser_1.JisonParser {
     constructor(yy = {}, lexer = new LexRegexpLexer(yy)) {
         super(yy, lexer);
-        this.symbols_ = { "error": 2, "regex": 3, "regex_list": 4, "EOF": 5, "|": 6, "regex_concat": 7, "regex_base": 8, "(": 9, ")": 10, "SPECIAL_GROUP": 11, "+": 12, "*": 13, "?": 14, "/": 15, "/!": 16, "name_expansion": 17, "range_regex": 18, "any_group_regex": 19, ".": 20, "^": 21, "$": 22, "string": 23, "escape_char": 24, "NAME_BRACE": 25, "ANY_GROUP_REGEX": 26, "ASSERTION": 27, "OPERATOR": 28, "RANGE_REGEX": 29, "STRING_LIT": 30, "CHARACTER_LIT": 31, "$accept": 0, "$end": 1 };
-        this.terminals_ = { 2: "error", 5: "EOF", 6: "|", 9: "(", 10: ")", 11: "SPECIAL_GROUP", 12: "+", 13: "*", 14: "?", 15: "/", 16: "/!", 20: ".", 21: "^", 22: "$", 25: "NAME_BRACE", 26: "ANY_GROUP_REGEX", 27: "ASSERTION", 28: "OPERATOR", 29: "RANGE_REGEX", 30: "STRING_LIT", 31: "CHARACTER_LIT" };
-        this.productions_ = [0, [3, 2], [4, 3], [4, 2], [4, 1], [4, 0], [7, 2], [7, 1], [8, 3], [8, 3], [8, 2], [8, 2], [8, 2], [8, 2], [8, 2], [8, 1], [8, 2], [8, 1], [8, 1], [8, 1], [8, 1], [8, 1], [8, 1], [17, 1], [19, 1], [24, 1], [24, 1], [18, 1], [23, 1], [23, 1]];
-        this.defaultActions = { 22: [2, 1] };
+        this.symbols_ = { "error": 2, "regex": 3, "regex_list": 4, "EOF": 5, "|": 6, "regex_concat": 7, "regex_base": 8, "(": 9, ")": 10, "SPECIAL_GROUP": 11, "+": 12, "*": 13, "?": 14, "/": 15, "/!": 16, "name_expansion": 17, "range_regex": 18, "ANY_GROUP_REGEX": 19, "char_class_rangeStar": 20, "END_CHAR_CLASS": 21, ".": 22, "^": 23, "$": 24, "string": 25, "escape_char": 26, "NAME_BRACE": 27, "char_class_range": 28, "CHAR_CLASS": 29, "ASSERTION": 30, "OPERATOR": 31, "RANGE_REGEX": 32, "STRING_LIT": 33, "CHARACTER_LIT": 34, "$accept": 0, "$end": 1 };
+        this.terminals_ = { 2: "error", 5: "EOF", 6: "|", 9: "(", 10: ")", 11: "SPECIAL_GROUP", 12: "+", 13: "*", 14: "?", 15: "/", 16: "/!", 19: "ANY_GROUP_REGEX", 21: "END_CHAR_CLASS", 22: ".", 23: "^", 24: "$", 27: "NAME_BRACE", 29: "CHAR_CLASS", 30: "ASSERTION", 31: "OPERATOR", 32: "RANGE_REGEX", 33: "STRING_LIT", 34: "CHARACTER_LIT" };
+        this.productions_ = [0, [3, 2], [4, 3], [4, 2], [4, 1], [4, 0], [7, 2], [7, 1], [8, 3], [8, 3], [8, 2], [8, 2], [8, 2], [8, 2], [8, 2], [8, 1], [8, 2], [8, 3], [8, 1], [8, 1], [8, 1], [8, 1], [8, 1], [17, 1], [20, 0], [20, 2], [28, 1], [28, 1], [26, 1], [26, 1], [18, 1], [25, 1], [25, 1]];
+        this.defaultActions = { 21: [2, 1] };
         // shorten static method to just `o` for terse STATE_TABLE
-        const $V0 = [2, 5], $V1 = [1, 5], $V2 = [1, 6], $V3 = [1, 7], $V4 = [1, 8], $V5 = [1, 11], $V6 = [1, 12], $V7 = [1, 13], $V8 = [1, 16], $V9 = [1, 17], $Va = [1, 20], $Vb = [1, 21], $Vc = [1, 18], $Vd = [1, 19], $Ve = [1, 23], $Vf = [5, 6, 10], $Vg = [5, 6, 9, 10, 11, 15, 16, 20, 21, 22, 25, 26, 27, 28, 30, 31], $Vh = [1, 25], $Vi = [1, 26], $Vj = [1, 27], $Vk = [1, 29], $Vl = [6, 10], $Vm = [5, 6, 9, 10, 11, 12, 13, 14, 15, 16, 20, 21, 22, 25, 26, 27, 28, 29, 30, 31];
+        const $V0 = [2, 5], $V1 = [1, 5], $V2 = [1, 6], $V3 = [1, 7], $V4 = [1, 8], $V5 = [1, 10], $V6 = [1, 11], $V7 = [1, 12], $V8 = [1, 13], $V9 = [1, 16], $Va = [1, 19], $Vb = [1, 20], $Vc = [1, 17], $Vd = [1, 18], $Ve = [1, 22], $Vf = [5, 6, 10], $Vg = [5, 6, 9, 10, 11, 15, 16, 19, 22, 23, 24, 27, 30, 31, 33, 34], $Vh = [1, 24], $Vi = [1, 25], $Vj = [1, 26], $Vk = [1, 28], $Vl = [6, 10], $Vm = [5, 6, 9, 10, 11, 12, 13, 14, 15, 16, 19, 22, 23, 24, 27, 30, 31, 32, 33, 34], $Vn = [21, 27, 29];
         const o = parser_1.JisonParser.expandParseTable;
-        this.table = [o([5, 6], $V0, { 3: 1, 4: 2, 7: 3, 8: 4, 17: 9, 19: 10, 23: 14, 24: 15, 9: $V1, 11: $V2, 15: $V3, 16: $V4, 20: $V5, 21: $V6, 22: $V7, 25: $V8, 26: $V9, 27: $Va, 28: $Vb, 30: $Vc, 31: $Vd }), { 1: [3] }, { 5: [1, 22], 6: $Ve }, o($Vf, [2, 4], { 17: 9, 19: 10, 23: 14, 24: 15, 8: 24, 9: $V1, 11: $V2, 15: $V3, 16: $V4, 20: $V5, 21: $V6, 22: $V7, 25: $V8, 26: $V9, 27: $Va, 28: $Vb, 30: $Vc, 31: $Vd }), o($Vg, [2, 7], { 18: 28, 12: $Vh, 13: $Vi, 14: $Vj, 29: $Vk }), o($Vl, $V0, { 7: 3, 8: 4, 17: 9, 19: 10, 23: 14, 24: 15, 4: 30, 9: $V1, 11: $V2, 15: $V3, 16: $V4, 20: $V5, 21: $V6, 22: $V7, 25: $V8, 26: $V9, 27: $Va, 28: $Vb, 30: $Vc, 31: $Vd }), o($Vl, $V0, { 7: 3, 8: 4, 17: 9, 19: 10, 23: 14, 24: 15, 4: 31, 9: $V1, 11: $V2, 15: $V3, 16: $V4, 20: $V5, 21: $V6, 22: $V7, 25: $V8, 26: $V9, 27: $Va, 28: $Vb, 30: $Vc, 31: $Vd }), { 8: 32, 9: $V1, 11: $V2, 15: $V3, 16: $V4, 17: 9, 19: 10, 20: $V5, 21: $V6, 22: $V7, 23: 14, 24: 15, 25: $V8, 26: $V9, 27: $Va, 28: $Vb, 30: $Vc, 31: $Vd }, { 8: 33, 9: $V1, 11: $V2, 15: $V3, 16: $V4, 17: 9, 19: 10, 20: $V5, 21: $V6, 22: $V7, 23: 14, 24: 15, 25: $V8, 26: $V9, 27: $Va, 28: $Vb, 30: $Vc, 31: $Vd }, o($Vm, [2, 15]), o($Vm, [2, 17]), o($Vm, [2, 18]), o($Vm, [2, 19]), o($Vm, [2, 20]), o($Vm, [2, 21]), o($Vm, [2, 22]), o($Vm, [2, 23]), o($Vm, [2, 24]), o($Vm, [2, 28]), o($Vm, [2, 29]), o($Vm, [2, 25]), o($Vm, [2, 26]), { 1: [2, 1] }, o($Vf, [2, 3], { 8: 4, 17: 9, 19: 10, 23: 14, 24: 15, 7: 34, 9: $V1, 11: $V2, 15: $V3, 16: $V4, 20: $V5, 21: $V6, 22: $V7, 25: $V8, 26: $V9, 27: $Va, 28: $Vb, 30: $Vc, 31: $Vd }), o($Vg, [2, 6], { 18: 28, 12: $Vh, 13: $Vi, 14: $Vj, 29: $Vk }), o($Vm, [2, 10]), o($Vm, [2, 11]), o($Vm, [2, 12]), o($Vm, [2, 16]), o($Vm, [2, 27]), { 6: $Ve, 10: [1, 35] }, { 6: $Ve, 10: [1, 36] }, o($Vg, [2, 13], { 18: 28, 12: $Vh, 13: $Vi, 14: $Vj, 29: $Vk }), o($Vg, [2, 14], { 18: 28, 12: $Vh, 13: $Vi, 14: $Vj, 29: $Vk }), o($Vf, [2, 2], { 17: 9, 19: 10, 23: 14, 24: 15, 8: 24, 9: $V1, 11: $V2, 15: $V3, 16: $V4, 20: $V5, 21: $V6, 22: $V7, 25: $V8, 26: $V9, 27: $Va, 28: $Vb, 30: $Vc, 31: $Vd }), o($Vm, [2, 8]), o($Vm, [2, 9])];
+        this.table = [o([5, 6], $V0, { 3: 1, 4: 2, 7: 3, 8: 4, 17: 9, 25: 14, 26: 15, 9: $V1, 11: $V2, 15: $V3, 16: $V4, 19: $V5, 22: $V6, 23: $V7, 24: $V8, 27: $V9, 30: $Va, 31: $Vb, 33: $Vc, 34: $Vd }), { 1: [3] }, { 5: [1, 21], 6: $Ve }, o($Vf, [2, 4], { 17: 9, 25: 14, 26: 15, 8: 23, 9: $V1, 11: $V2, 15: $V3, 16: $V4, 19: $V5, 22: $V6, 23: $V7, 24: $V8, 27: $V9, 30: $Va, 31: $Vb, 33: $Vc, 34: $Vd }), o($Vg, [2, 7], { 18: 27, 12: $Vh, 13: $Vi, 14: $Vj, 32: $Vk }), o($Vl, $V0, { 7: 3, 8: 4, 17: 9, 25: 14, 26: 15, 4: 29, 9: $V1, 11: $V2, 15: $V3, 16: $V4, 19: $V5, 22: $V6, 23: $V7, 24: $V8, 27: $V9, 30: $Va, 31: $Vb, 33: $Vc, 34: $Vd }), o($Vl, $V0, { 7: 3, 8: 4, 17: 9, 25: 14, 26: 15, 4: 30, 9: $V1, 11: $V2, 15: $V3, 16: $V4, 19: $V5, 22: $V6, 23: $V7, 24: $V8, 27: $V9, 30: $Va, 31: $Vb, 33: $Vc, 34: $Vd }), { 8: 31, 9: $V1, 11: $V2, 15: $V3, 16: $V4, 17: 9, 19: $V5, 22: $V6, 23: $V7, 24: $V8, 25: 14, 26: 15, 27: $V9, 30: $Va, 31: $Vb, 33: $Vc, 34: $Vd }, { 8: 32, 9: $V1, 11: $V2, 15: $V3, 16: $V4, 17: 9, 19: $V5, 22: $V6, 23: $V7, 24: $V8, 25: 14, 26: 15, 27: $V9, 30: $Va, 31: $Vb, 33: $Vc, 34: $Vd }, o($Vm, [2, 15]), o($Vn, [2, 24], { 20: 33 }), o($Vm, [2, 18]), o($Vm, [2, 19]), o($Vm, [2, 20]), o($Vm, [2, 21]), o($Vm, [2, 22]), o($Vm, [2, 23]), o($Vm, [2, 31]), o($Vm, [2, 32]), o($Vm, [2, 28]), o($Vm, [2, 29]), { 1: [2, 1] }, o($Vf, [2, 3], { 8: 4, 17: 9, 25: 14, 26: 15, 7: 34, 9: $V1, 11: $V2, 15: $V3, 16: $V4, 19: $V5, 22: $V6, 23: $V7, 24: $V8, 27: $V9, 30: $Va, 31: $Vb, 33: $Vc, 34: $Vd }), o($Vg, [2, 6], { 18: 27, 12: $Vh, 13: $Vi, 14: $Vj, 32: $Vk }), o($Vm, [2, 10]), o($Vm, [2, 11]), o($Vm, [2, 12]), o($Vm, [2, 16]), o($Vm, [2, 30]), { 6: $Ve, 10: [1, 35] }, { 6: $Ve, 10: [1, 36] }, o($Vg, [2, 13], { 18: 27, 12: $Vh, 13: $Vi, 14: $Vj, 32: $Vk }), o($Vg, [2, 14], { 18: 27, 12: $Vh, 13: $Vi, 14: $Vj, 32: $Vk }), { 21: [1, 37], 27: [1, 40], 28: 38, 29: [1, 39] }, o($Vf, [2, 2], { 17: 9, 25: 14, 26: 15, 8: 23, 9: $V1, 11: $V2, 15: $V3, 16: $V4, 19: $V5, 22: $V6, 23: $V7, 24: $V8, 27: $V9, 30: $Va, 31: $Vb, 33: $Vc, 34: $Vd }), o($Vm, [2, 8]), o($Vm, [2, 9]), o($Vm, [2, 17]), o($Vn, [2, 25]), o($Vn, [2, 26]), o($Vn, [2, 27])];
     }
     performAction(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
         /* this == yyval */
@@ -70,6 +70,9 @@ class LexRegexpParser extends parser_1.JisonParser {
             case 16:
                 this.$ = new RegexpAtom_1.Cardinality($$[$0 - 1], $$[$0]);
                 break;
+            case 17:
+                this.$ = new RegexpAtom_1.CharacterAtomClass($$[$0 - 2].length === 2, $$[$0 - 1]);
+                break;
             case 18:
                 this.$ = new RegexpAtom_1.Wildcard();
                 break;
@@ -80,22 +83,29 @@ class LexRegexpParser extends parser_1.JisonParser {
                 this.$ = new RegexpAtom_1.End();
                 break;
             case 23:
+            case 27:
                 this.$ = new RegexpAtom_1.Reference(yytext.substring(1, yytext.length - 1));
                 break;
             case 24:
-                this.$ = new RegexpAtom_1.CharacterClass(prepareCharacterClass(yytext.substring(1, yytext.length - 1)));
+                this.$ = [];
                 break;
             case 25:
-                this.$ = new RegexpAtom_1.Assertion(yytext.substring(1));
+                this.$ = $$[$0 - 1].concat([$$[$0]]);
                 break;
             case 26:
-                this.$ = new RegexpAtom_1.Operator(yytext.substring(1));
-                break;
-            case 27:
-                this.$ = yytext;
+                this.$ = new RegexpAtom_1.Literal(prepareCharacterClass(yytext));
                 break;
             case 28:
+                this.$ = new RegexpAtom_1.Assertion(yytext.substring(1));
+                break;
             case 29:
+                this.$ = new RegexpAtom_1.Operator(yytext.substring(1));
+                break;
+            case 30:
+                this.$ = yytext;
+                break;
+            case 31:
+            case 32:
                 this.$ = new RegexpAtom_1.Literal(yytext);
                 break;
         }
@@ -108,13 +118,18 @@ class LexRegexpLexer extends lexer_1.JisonLexer {
     constructor(yy = {}) {
         super(yy);
         this.options = { "moduleName": "LexRegexp" };
-        this.rules = [
+        this.rules = [/^(?:\])/,
+            /^(?:\\\\)/,
+            /^(?:\\\])/,
+            /^(?:[^\]{])/,
+            /^(?:(\{[a-zA-Z_][a-zA-Z0-9_-]*\}))/,
+            /^(?:\{)/,
             /^(?:(\\[rfntv]))/,
-            /^(?:\/\*(?:.|\n|\r)*?\*\/)/,
+            /^(?:\/\*(.|\n|\r)*?\*\/)/,
             /^(?:\/\/.*)/,
             /^(?:([^\\*+()${}|[\]\/.^?]+))/,
             /^(?:\|)/,
-            /^(?:\[(?:\\\\|\\\]|[^\]])*\])/,
+            /^(?:\[\^?)/,
             /^(?:\(\?:)/,
             /^(?:\(\?=)/,
             /^(?:\(\?!)/,
@@ -126,7 +141,6 @@ class LexRegexpLexer extends lexer_1.JisonLexer {
             /^(?:\^)/,
             /^(?:,)/,
             /^(?:<<EOF>>)/,
-            /^(?:<)/,
             /^(?:\/!)/,
             /^(?:\/)/,
             /^(?:(\\x[0-9A-F]{2}))/,
@@ -138,75 +152,75 @@ class LexRegexpLexer extends lexer_1.JisonLexer {
             /^(?:\\.)/,
             /^(?:\$)/,
             /^(?:\.)/,
-            /^(?:%options\b)/,
-            /^(?:\{\d+(?:,\s?\d+|,)?\})/,
-            /^(?:(\{[a-zA-Z_][a-zA-Z0-9_-]*\}))/,
+            /^(?:\{\d+(,\s?\d+|,)?\})/,
             /^(?:\{)/,
             /^(?:\})/,
             /^(?:.)/,
             /^(?:$)/
         ];
-        this.conditions = { "code": { "rules": [35], "inclusive": false }, "start_condition": { "rules": [35], "inclusive": false }, "options": { "rules": [35], "inclusive": false }, "conditions": { "rules": [35], "inclusive": false }, "action": { "rules": [35], "inclusive": false }, "indented": { "rules": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35], "inclusive": true }, "trail": { "rules": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35], "inclusive": true }, "rules": { "rules": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35], "inclusive": true }, "INITIAL": { "rules": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35], "inclusive": true } };
+        this.conditions = { "char_class": { "rules": [0, 1, 2, 3, 4, 5, 38], "inclusive": false }, "INITIAL": { "rules": [4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38], "inclusive": true } };
     }
     performAction(yy, yy_, $avoiding_name_collisions, YY_START) {
         var YYSTATE = YY_START;
         switch ($avoiding_name_collisions) {
             case 0:
+                this.begin('INITIAL');
+                return 21;
+            case 1: return 29;
+            case 2: return 29;
+            case 3: return 29;
+            case 4: return 27;
+            case 5: return 29;
+            case 6:
                 yy_.yytext = decodeStringEscape(yy_.yytext.substring(1));
-                return 31;
-            case 1: /* ignore */
+                return 34;
+            case 7: /* ignore */
                 break;
-            case 2: /* ignore */
+            case 8: /* ignore */
                 break;
-            case 3: return 30;
-            case 4: return 6;
-            case 5: return 26;
-            case 6: return 11;
-            case 7: return 11;
-            case 8: return 11;
-            case 9: return 9;
-            case 10: return 10;
-            case 11: return 12;
-            case 12: return 13;
-            case 13: return 14;
-            case 14: return 21;
-            case 15: return ',';
-            case 16: return 22;
-            case 17:
-                this.begin('conditions');
-                return '<';
-            case 18: return 16;
-            case 19: return 15;
-            case 20:
+            case 9: return 33;
+            case 10: return 6;
+            case 11:
+                this.begin('char_class');
+                return 19;
+            case 12: return 11;
+            case 13: return 11;
+            case 14: return 11;
+            case 15: return 9;
+            case 16: return 10;
+            case 17: return 12;
+            case 18: return 13;
+            case 19: return 14;
+            case 20: return 23;
+            case 21: return ',';
+            case 22: return 24;
+            case 23: return 16;
+            case 24: return 15;
+            case 25:
                 yy_.yytext = String.fromCharCode(parseInt(yy_.yytext.substring(2), 16));
-                return 31;
-            case 21:
-                yy_.yytext = String.fromCharCode(parseInt(yy_.yytext.substring(2), 16));
-                return 31;
-            case 22:
-                yy_.yytext = String.fromCodePoint(yy_.yytext.charCodeAt(2) - 64);
-                return 31;
-            case 23:
-                yy_.yytext = String.fromCharCode(parseInt(yy_.yytext.substring(1), 8));
-                return 31;
-            case 24: return 27;
-            case 25: return 28;
+                return 34;
             case 26:
+                yy_.yytext = String.fromCharCode(parseInt(yy_.yytext.substring(2), 16));
+                return 34;
+            case 27:
+                yy_.yytext = String.fromCodePoint(yy_.yytext.charCodeAt(2) - 64);
+                return 34;
+            case 28:
+                yy_.yytext = String.fromCharCode(parseInt(yy_.yytext.substring(1), 8));
+                return 34;
+            case 29: return 30;
+            case 30: return 31;
+            case 31:
                 yy_.yytext = yy_.yytext.replace(/^\\/g, '');
-                return 31; // escaped special chars like '"'s
-            case 27: return 22;
-            case 28: return 20;
-            case 29:
-                yy.options = {};
-                this.begin('options');
+                return 34; // escaped special chars like '"'s
+            case 32: return 24;
+            case 33: return 22;
+            case 34: return 32;
+            case 35: return '{';
+            case 36: return '}';
+            case 37: /* ignore bad characters */
                 break;
-            case 30: return 29;
-            case 31: return 25;
-            case 32: return '{';
-            case 33: return '}';
-            case 34: /* ignore bad characters */
-                break;
-            case 35: return 5;
+            case 38: return 5;
         }
     }
 }

@@ -23,6 +23,7 @@ abstract class Anchor extends RegexpAtom
 class Reference extends RegexpAtom
 class Literal extends RegexpAtom
 class CharacterClass extends RegexpAtom
+class CharacterAtomClass extends RegexpAtom
 class EscapedCharacter extends RegexpAtom
   class Assertion extends EscapedCharacter
   class Operator extends EscapedCharacter
@@ -114,6 +115,13 @@ export declare class CharacterClass extends RegexpAtom {
     getPrecedence(): number;
     visit(visitor: RegexpAtomVisitor, ...args: any[]): any;
 }
+export declare class CharacterAtomClass extends RegexpAtom {
+    negated: boolean;
+    ranges: (Literal | Reference)[];
+    constructor(negated: boolean, ranges: (Literal | Reference)[]);
+    getPrecedence(): number;
+    visit(visitor: RegexpAtomVisitor, ...args: any[]): any;
+}
 export declare abstract class EscapedCharacter extends RegexpAtom {
     escapedChar: string;
     constructor(escapedChar: string);
@@ -142,6 +150,7 @@ export interface RegexpAtomVisitor {
     visit_Reference(visitee: Reference, ...args: any[]): any;
     visit_Literal(visitee: Literal, ...args: any[]): any;
     visit_CharacterClass(visitee: CharacterClass, ...args: any[]): any;
+    visit_CharacterAtomClass(visitee: CharacterAtomClass, ...args: any[]): any;
     visit_Assertion(visitee: Assertion, ...args: any[]): any;
     visit_Operator(visitee: Operator, ...args: any[]): any;
 }
@@ -161,6 +170,7 @@ export declare class RegexpAtomCopyVisitor implements RegexpAtomVisitor {
     visit_Reference(visitee: Reference, ...args: any[]): any;
     visit_Literal(visitee: Literal, ...args: any[]): any;
     visit_CharacterClass(visitee: CharacterClass, ...args: any[]): any;
+    visit_CharacterAtomClass(visitee: CharacterAtomClass, ...args: any[]): any;
     visit_Assertion(visitee: Assertion, ...args: any[]): any;
     visit_Operator(visitee: Operator, ...args: any[]): any;
 }

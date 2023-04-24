@@ -12,10 +12,16 @@ REGEXP_ASSERTIONS \\[sSbBwWdD]
 OPERATORS         \\[\\*+()${}|[\]\/.^?]
 BARE              [^\\*+()${}|[\]\/.^?]+
 
-%s indented trail rules
-%x code start_condition options conditions action
+%x char_class
 
 %%
+
+<char_class>"]"                 this.begin('INITIAL'); return 'END_CHAR_CLASS';
+<char_class>"\\\\"              return 'CHAR_CLASS';
+<char_class>"\]"                return 'CHAR_CLASS';
+<char_class>[^\]{]              return 'CHAR_CLASS';
+<INITIAL,char_class>{BRACED}    return 'NAME_BRACE';
+<char_class>"{"                 return 'CHAR_CLASS';
 
 {STR_ESCAPE}                    yytext = decodeStringEscape(yytext.substring(1));                return 'CHARACTER_LIT';
 "/*"(.|\n|\r)*?"*/"             /* ignore */
@@ -23,7 +29,7 @@ BARE              [^\\*+()${}|[\]\/.^?]+
 
 {BARE}                          return 'STRING_LIT';
 "|"                             return '|';
-"["("\\\\"|"\]"|[^\]])*"]"      return 'ANY_GROUP_REGEX';
+"[""^"?                         this.begin('char_class'); return 'ANY_GROUP_REGEX';
 "(?:"                           return 'SPECIAL_GROUP';
 "(?="                           return 'SPECIAL_GROUP';
 "(?!"                           return 'SPECIAL_GROUP';
@@ -35,7 +41,6 @@ BARE              [^\\*+()${}|[\]\/.^?]+
 "^"                             return '^';
 ","                             return ',';
 "<<EOF>>"                       return '$';
-"<"                             this.begin('conditions'); return '<';
 "/!"                            return '/!';
 "/"                             return '/';
 {HEX}                           yytext = String.fromCharCode(parseInt(yytext.substring(2), 16)); return 'CHARACTER_LIT';
@@ -47,9 +52,7 @@ BARE              [^\\*+()${}|[\]\/.^?]+
 "\\".                           yytext = yytext.replace(/^\\/g,''); return 'CHARACTER_LIT'; // escaped special chars like '"'s
 "$"                             return '$';
 "."                             return '.';
-"%options"                      yy.options = {}; this.begin('options');
 "{"\d+(","\s?\d+|",")?"}"       return 'RANGE_REGEX';
-{BRACED}                        return 'NAME_BRACE';
 "{"                             return '{';
 "}"                             return '}';
 .                               /* ignore bad characters */
@@ -80,7 +83,7 @@ function decodeStringEscape (c: string): string {
 %left '*' '+' '?' RANGE_REGEX
 
 %{
-    import {Choice, Concat, Empty, CaptureGroup, SpecialGroup, Cardinality, LookAhead, LookBehind, Wildcard, Begin, End, Literal, Assertion, Operator, Reference, CharacterClass} from './RegexpAtom';
+    import {Choice, Concat, Empty, CaptureGroup, SpecialGroup, Cardinality, LookAhead, LookBehind, Wildcard, Begin, End, Literal, Assertion, Operator, Reference, CharacterClass, CharacterAtomClass} from './RegexpAtom';
 %}
 
 %%
@@ -123,7 +126,8 @@ regex_base
     | name_expansion
     | regex_base range_regex
         { $$ = new Cardinality($1, $2); }
-    | any_group_regex
+    | ANY_GROUP_REGEX char_class_rangeStar END_CHAR_CLASS
+        { $$ = new CharacterAtomClass($1.length === 2, $2); }
     | '.'
         { $$ = new Wildcard(); }
     | '^'
@@ -139,9 +143,18 @@ name_expansion
         { $$ = new Reference(yytext.substring(1, yytext.length - 1)); }
     ;
 
-any_group_regex
-    : ANY_GROUP_REGEX
-        { $$ = new CharacterClass(prepareCharacterClass(yytext.substring(1, yytext.length - 1))); }
+char_class_rangeStar
+    : 
+        { $$ = []; }
+    | char_class_rangeStar char_class_range
+        { $$ = $1.concat([$2]); }
+    ;
+     
+char_class_range
+    : CHAR_CLASS
+        { $$ = new Literal(prepareCharacterClass(yytext)); }
+    | NAME_BRACE
+        { $$ = new Reference(yytext.substring(1, yytext.length - 1)); }
     ;
      
 escape_char

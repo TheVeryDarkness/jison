@@ -5,21 +5,20 @@
 
 const Fs = require('fs');
 const Path = require('path');
-const lexParser = require('@ts-jison/lex-parser').LexParser;
+const LexParser = new (require('@ts-jison/lex-parser').LexParser)();
 const LexRegexpParser = new (require('@ts-jison/lex-parser/lib/lex-regexp-parser').LexRegexpParser)();
 const {FileTemplate} = require('@ts-jison/common-generator');
 const {RegexpAtom, Wildcard} = require('@ts-jison/lex-parser/lib/RegexpAtom');
+const {RegexpAtomSubstitutionVisitor} = require('@ts-jison/lex-parser/lib/RegexpAtomSubstitutionVisitor');
 const {RegexpAtomToJs} = require('@ts-jison/lex-parser/lib/RegexpAtomToStringVisitor');
 const version = require('../package.json').version;
 
 // expand macros and convert matchers to RegExp's
 function prepareRules(rules, macros, actions, tokens, startConditions, caseless) {
-    var m,i,k,action,conditions,
+    var i,k,action,conditions,
         newRules = [];
 
-    if (macros) {
-        macros = prepareMacros(macros);
-    } else {
+    if (!macros) {
         macros = {}
     }
 
@@ -34,7 +33,7 @@ function prepareRules(rules, macros, actions, tokens, startConditions, caseless)
     }
 
     for (i=0;i < rules.length; i++) {
-        let curRule = rules[i];
+        const curRule = rules[i];
         if (!curRule.start) {
             // implicit add to all inclusive start conditions
             for (k in startConditions) {
@@ -56,16 +55,9 @@ function prepareRules(rules, macros, actions, tokens, startConditions, caseless)
             }
         }
 
-        m = RegexpAtomToJs.serialize(curRule.pattern, 'preserve', true); // can pass in Regexp's directly
-        if (typeof m === 'string') {
-            for (k in macros) {
-                if (macros.hasOwnProperty(k)) {
-                    m = m.split("{" + k + "}").join('(' + (macros[k] instanceof RegexpAtom ? RegexpAtomToJs.serialize(macros[k], 'preserve', true) : macros[k]) + ')');
-                }
-            }
-            m = new RegExp("^(?:" + m + ")", caseless ? 'i':'');
-        }
-        newRules.push(m);
+        const pattern = RegexpAtomSubstitutionVisitor.substitute(curRule.pattern, macros)
+        const patternString = RegexpAtomToJs.serialize(pattern, 'simplify', true);
+        newRules.push(new RegExp("^(?:" + patternString + ")", caseless ? 'i':''));
         if (typeof curRule.action === 'function') {
             curRule.action = String(curRule.action) // function as a string
                 .replace(/^\s*function\s*\(\s*\)\s*{/, '') // strip 'function ( ) { ... }
@@ -90,28 +82,6 @@ function prepareRules(rules, macros, actions, tokens, startConditions, caseless)
     }
 
     return newRules;
-}
-
-// expand macros within macros
-function prepareMacros (macros) {
-    var cont = true,
-        m,i,k,mnew;
-    while (cont) {
-        cont = false;
-        for (i in macros) if (macros.hasOwnProperty(i)) {
-            m = macros[i];
-            for (k in macros) if (macros.hasOwnProperty(k) && i !== k) {
-                if (m instanceof RegexpAtom)
-                    m = RegexpAtomToJs.serialize(m, 'preserve', true);
-                mnew = m.split("{" + k + "}").join('(' + macros[k] + ')');
-                if (mnew !== m) {
-                    cont = true;
-                    macros[i] = mnew;
-                }
-            }
-        }
-    }
-    return macros;
 }
 
 function prepareStartConditions (conditions) {
@@ -177,12 +147,23 @@ function generate (dict, tokens) {
     return generateFromOpts(lexerText, opt) + "return Lexer;\n";
 }
 
-// process the grammar and build final data structures and functions
+/** Process the grammar and build final data structures and functions
+ * jison CLI invokes with already parsed structures (i.e. with RegexpAtoms).
+ * typical API use invokes with strings for macros and rule patterns
+ * @param dict string | { dict?: Record<string | RegexpAtom>, rule: { pattern: RegexpAtom | string, action: string, ... } }
+ * @param tokens Record<string: any> mapping to values returned by lexer
+ * @returns basically a processed copy of the dict
+ */
 function processGrammar(dict, tokens) {
     var opts = {};
     if (typeof dict === 'string') {
-        dict = new lexParser().parse(dict);
+        dict = LexParser.parse(dict);
     } else {
+        if ('macros' in dict) {
+            for (const label in dict.macros)
+                if (typeof dict.macros[label] === 'string')
+                    dict.macros[label] = LexRegexpParser.parse(dict.macros[label]);
+        }
         dict.rules.forEach(rule => {
             if (typeof rule.pattern === 'string')
                 rule.pattern = LexRegexpParser.parse(rule.pattern);

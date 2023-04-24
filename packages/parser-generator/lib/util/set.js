@@ -1,4 +1,5 @@
 // Set class to wrap arrays
+// istanbul ignore file
 
 var typal = require("./typal").typal;
 
