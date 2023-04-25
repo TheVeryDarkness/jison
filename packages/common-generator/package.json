@@ -16,7 +16,7 @@
   "scripts": {
     "build": "tsc -b ./tsconfig.package.json"
   },
-  "gitHead": "f04f018b7655bccbf21e4fe9dab005b8ee179fab",
+  "gitHead": "38924d682eae9d6119ff5ea6372e0fb9da3225ff",
   "homepage": "https://github.com/ericprud/ts-jison/",
   "contributors": [
     {
