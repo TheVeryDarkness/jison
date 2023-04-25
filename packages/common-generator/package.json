@@ -18,6 +18,10 @@
     "prepublish": "npm run build"
   },
   "gitHead": "f04f018b7655bccbf21e4fe9dab005b8ee179fab",
+  "homepage": "https://github.com/ericprud/ts-jison/",
+  "contributors": [
+    { "name": "Eric Prud'hommeauxh", "email": "eric@uu3.org", "url": "http://uu3.org/People/Eric/" }
+  ],
   "dependencies": {
     "@types/js-yaml": "^4.0.5"
   }

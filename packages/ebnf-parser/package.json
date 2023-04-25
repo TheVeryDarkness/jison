@@ -17,7 +17,11 @@
     "parser",
     "jison"
   ],
+  "homepage": "https://github.com/ericprud/ts-jison/",
   "author": "Zach Carter",
+  "contributors": [
+    { "name": "Eric Prud'hommeauxh", "email": "eric@uu3.org", "url": "http://uu3.org/People/Eric/" }
+  ],
   "license": "MIT",
   "devDependencies": {
   }

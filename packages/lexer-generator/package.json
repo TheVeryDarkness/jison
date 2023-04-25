@@ -49,6 +49,10 @@
     "prepublish": "npm run build",
     "test": "node ./tests/all-tests"
   },
-  "homepage": "http://jison.org",
+  "homepage": "https://github.com/ericprud/ts-jison/",
+  "author": "Zach Carter",
+  "contributors": [
+    { "name": "Eric Prud'hommeauxh", "email": "eric@uu3.org", "url": "http://uu3.org/People/Eric/" }
+  ],
   "gitHead": "f04f018b7655bccbf21e4fe9dab005b8ee179fab"
 }
