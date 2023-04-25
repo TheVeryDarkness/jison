@@ -52,7 +52,6 @@
   },
   "scripts": {
     "build": "echo nothing to build in parser-generator",
-    "prepublish": "npm run build",
     "js-calculator-demo": "npm run generate:js-calculator && npm run cli:js-calculator",
     "generate:js-calculator": "(cd examples/ && ../lib/cli.js -n JsCalc -o js-calculator.js js-calculator.jison)",
     "run:js-calculator": "(cd examples/ && node js-calculator.js calculator.input.txt)",

@@ -14,8 +14,7 @@
     "access": "public"
   },
   "scripts": {
-    "build": "tsc -b ./tsconfig.package.json",
-    "prepublish": "npm run build"
+    "build": "tsc -b ./tsconfig.package.json"
   },
   "homepage": "https://github.com/ericprud/ts-jison/",
   "author": "Zach Carter",

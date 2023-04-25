@@ -6,7 +6,6 @@
   "types": "./src/lex-parser.ts",
   "scripts": {
     "build": "make build",
-    "prepublish": "npm run build",
     "test": "make test"
   },
   "repository": {

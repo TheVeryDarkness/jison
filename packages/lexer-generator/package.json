@@ -46,7 +46,6 @@
   },
   "scripts": {
     "build": "echo nothing to build in lexer-generator",
-    "prepublish": "npm run build",
     "test": "node ./tests/all-tests"
   },
   "homepage": "https://github.com/ericprud/ts-jison/",

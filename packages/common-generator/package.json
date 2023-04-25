@@ -14,8 +14,7 @@
     "access": "public"
   },
   "scripts": {
-    "build": "tsc -b ./tsconfig.package.json",
-    "prepublish": "npm run build"
+    "build": "tsc -b ./tsconfig.package.json"
   },
   "gitHead": "f04f018b7655bccbf21e4fe9dab005b8ee179fab",
   "homepage": "https://github.com/ericprud/ts-jison/",
