@@ -1,6 +1,6 @@
 {
   "name": "@ts-jison/ebnf-parser",
-  "version": "0.3.0",
+  "version": "0.4.0-alpha.0",
   "description": "A parser for BNF and EBNF grammars used by jison",
   "main": "ebnf-parser.js",
   "scripts": {
@@ -20,9 +20,11 @@
   "homepage": "https://github.com/ericprud/ts-jison/",
   "author": "Zach Carter",
   "contributors": [
-    { "name": "Eric Prud'hommeauxh", "email": "eric@uu3.org", "url": "http://uu3.org/People/Eric/" }
+    {
+      "name": "Eric Prud'hommeauxh",
+      "email": "eric@uu3.org",
+      "url": "http://uu3.org/People/Eric/"
+    }
   ],
-  "license": "MIT",
-  "devDependencies": {
-  }
+  "license": "MIT"
 }

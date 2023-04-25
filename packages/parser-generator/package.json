@@ -1,7 +1,7 @@
 {
   "name": "@ts-jison/parser-generator",
   "description": "A lightly-typescriptified version of jison",
-  "version": "0.3.0",
+  "version": "0.4.0-alpha.0",
   "license": "MIT",
   "keywords": [
     "jison",
@@ -37,9 +37,9 @@
     "node": ">=0.4"
   },
   "dependencies": {
-    "@ts-jison/common-generator": "^0.3.0",
-    "@ts-jison/lexer-generator": "^0.3.0",
-    "@ts-jison/parser": "^0.3.0",
+    "@ts-jison/common-generator": "^0.4.0-alpha.0",
+    "@ts-jison/lexer-generator": "^0.4.0-alpha.0",
+    "@ts-jison/parser": "^0.4.0-alpha.0",
     "JSONSelect": "^0.4.0",
     "cjson": "^0.5.0",
     "escodegen": "^2.0.0",
@@ -56,22 +56,23 @@
     "generate:js-calculator": "(cd examples/ && ../lib/cli.js -n JsCalc -o js-calculator.js js-calculator.jison)",
     "run:js-calculator": "(cd examples/ && node js-calculator.js calculator.input.txt)",
     "cli:js-calculator": "(cd examples/ && node js-calculator.cli.js calculator.input.txt)",
-
     "ts-calculator-demo": "npm run generate:ts-calculator && npm run compile:ts-calculator && npm run cli:ts-calculator",
     "generate:ts-calculator": "(cd examples/ && ../lib/cli.js -t typescript -n TsCalc -o ts-calculator.ts ts-calculator.jison)",
     "compile:ts-calculator": "(cd examples/ && tsc ts-calculator.ts)",
     "run:ts-calculator": "(cd examples/ && node ts-calculator.js calculator.input.txt)",
     "cli:ts-calculator": "(cd examples/ && node ts-calculator.cli.js calculator.input.txt)",
-
     "ts-node-calculator-demo": "npm run generate:ts-calculator && npm run ts-node:ts-calculator",
     "ts-node:ts-calculator": "(cd examples/ && ts-node ts-calculator.cli.js calculator.input.txt)",
-
     "test": "node ./tests/all-tests"
   },
   "homepage": "https://github.com/ericprud/ts-jison/",
   "author": "Zach Carter",
   "contributors": [
-    { "name": "Eric Prud'hommeauxh", "email": "eric@uu3.org", "url": "http://uu3.org/People/Eric/" }
+    {
+      "name": "Eric Prud'hommeauxh",
+      "email": "eric@uu3.org",
+      "url": "http://uu3.org/People/Eric/"
+    }
   ],
   "gitHead": "f04f018b7655bccbf21e4fe9dab005b8ee179fab"
 }

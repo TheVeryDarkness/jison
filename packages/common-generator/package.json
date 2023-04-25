@@ -1,6 +1,6 @@
 {
   "name": "@ts-jison/common-generator",
-  "version": "0.3.0",
+  "version": "0.4.0-alpha.0",
   "license": "MIT",
   "main": "./lib/common-generator.js",
   "types": "./src/common-generator.ts",
@@ -8,7 +8,7 @@
     "lib"
   ],
   "devDependencies": {
-    "@ts-jison/common": "^0.3.0"
+    "@ts-jison/common": "^0.4.0-alpha.0"
   },
   "publishConfig": {
     "access": "public"
@@ -19,7 +19,11 @@
   "gitHead": "f04f018b7655bccbf21e4fe9dab005b8ee179fab",
   "homepage": "https://github.com/ericprud/ts-jison/",
   "contributors": [
-    { "name": "Eric Prud'hommeauxh", "email": "eric@uu3.org", "url": "http://uu3.org/People/Eric/" }
+    {
+      "name": "Eric Prud'hommeauxh",
+      "email": "eric@uu3.org",
+      "url": "http://uu3.org/People/Eric/"
+    }
   ],
   "dependencies": {
     "@types/js-yaml": "^4.0.5"
