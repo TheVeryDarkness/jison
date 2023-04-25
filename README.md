@@ -1,13 +1,31 @@
 ts-jison
 =====
 
-This is a fork of Zach Carter <zach@carter.name>'s [jison module](https://www.npmjs.com/package/jison) tweaked to use just enough templates to make typescript compilers tollerate the generated parser.
+This is a fork of Zach Carter <zach@carter.name>'s [jison module](https://www.npmjs.com/package/jison) tweaked to use just enough templates to make typescript compilers tollerate the generated parser. This works (I'm using it in a few javascript and typescript projects) and runs all of the original tests except the ones that generated AMD and CommonJS packages. If you want to geek about this, ping ericP on discord or ericprud on gitter.
 
-Status:
+Updates:
 =====
 
-This works (I'm using it in a few javascript and typescritp projects) and runs the original tests. If you want to geek about this, ping ericP on discord or ericprud on gitter.
+Four previously-independent projects have been placed in this mono-repo:
 
+|                                           old npm pakage | new npm package                                          | monorepo directory                                                                                   |
+|---------------------------------------------------------:|:--------------------------------------------------------:|:-----------------------------------------------------------------------------------------------------|
+|             [jison](https://www.npmjs.com/package/jison) | [@ts-jison/parser-generator](@ts-jison/parser-generator) | [packages/parser-generator](http://github.com/ericprud/ts-jison/tree/main/packages/parser-generator) |
+|     [jison-lex](https://www.npmjs.com/package/jison-lex) | [@ts-jison/lexer-generator](@ts-jison/lexer-generator)   | [packages/lexer-generator](http://github.com/ericprud/ts-jison/tree/main/packages/lexer-generator)   |
+| [ebnf-parser](https://www.npmjs.com/package/ebnf-parser) | [@ts-jison/ebnf-parser](@ts-jison/ebnf-parser)           | [packages/ebnf-parser](http://github.com/ericprud/ts-jison/tree/main/packages/ebnf-parser)           |
+|   [lex-parser](https://www.npmjs.com/package/lex-parser) | [@ts-jison/lex-parser](@ts-jison/lex-parser)             | [packages/lex-parser](http://github.com/ericprud/ts-jison/tree/main/packages/lex-parser)             |
+
+In addition, the parser and lexer have been factored following DRY principles but mostly to enable coverage tests on parsers (an excellent way to govern test suite coverage of language features). This results in a smaller footprint for projects that include more than on parser.
+
+|                                          new npm package | monorepo directory                                                                                   |
+|---------------------------------------------------------:|:-----------------------------------------------------------------------------------------------------|
+|                     [@ts-jison/parser](@ts-jison/parser) | [packages/parser](http://github.com/ericprud/ts-jison/tree/main/packages/parser)                     |
+|                       [@ts-jison/lexer](@ts-jison/lexer) | [packages/lexer](http://github.com/ericprud/ts-jison/tree/main/packages/lexer)                       |
+|                     [@ts-jison/common](@ts-jison/common) | [packages/common](http://github.com/ericprud/ts-jison/tree/main/packages/common)                     |
+| [@ts-jison/common-generator](@ts-jison/common-generator) | [packages/common-generator](http://github.com/ericprud/ts-jison/tree/main/packages/common-generator) |
+|                                                          |                                                                                                      |
+
+<!--
 Components:
 =====
 * [@ts-jison/parser-generator](http://github.com/ericprud/ts-jison/tree/main/packages/parser-generator) - A lightly-typescriptified version of jison
@@ -15,6 +33,7 @@ Components:
 * [@ts-jison/parser](http://github.com/ericprud/ts-jison/tree/main/packages/parser) - runtime library for parsers
 * [@ts-jison/lexer](http://github.com/ericprud/ts-jison/tree/main/packages/lexer) - runtime library for lexers
 * [@ts-jison/common](http://github.com/ericprud/ts-jison/tree/main/packages/common) - functions needed by parser and lexer
+-->
 
 ## Example grammar:
 This example parses and executes mathematical expressions:

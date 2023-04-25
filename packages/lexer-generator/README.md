@@ -12,8 +12,15 @@ Installation
 
 Using npm:
 
-    npm install @ts-jison/lexer-generator -g
+    npm install @ts-jison/lexer-generator
 
+add a package.json script for a javascript file for e.g. an LR parser for "ShEx":
+
+    "build-parser": "ts-jison -n ShExJison -t javascript -p lr -o ./lib/ShExJison.js ./lib/ShExJison.jison"
+
+or e.g. an LALR typescript parser:
+
+    "build-parser": "ts-jison -n ShExJison -t typescript -p lalr -o ./lib/ShExJison.ts ./lib/ShExJison.jison"
 
 Status:
 =====
@@ -23,6 +30,30 @@ This works (I'm using it in a few javascript and typescritp projects) and runs t
 * [issues](http://github.com/ericprud/ts-jison/issues)
 
 <!-- [![build status](https://travis-ci.org/zaach/jison.svg)](http://travis-ci.org/zaach/jison) -->
+
+Changes from jison
+---
+Most changes are in the output. Specifically, the constructed regular expressions (mostly) elide unnecessary `()` and eliminate capture groups on semanticly-necessary `(?:)`, e.g.:
+```
+/^(?:\s+|(#[^\u000a\u000d]*|\/\*([^*]|\*([^/]|\\\/))*\*\/))/
+```
+is now:
+```
+/^(?:\s+|#[^\u000a\u000d]*|\/\*(?:[^*]|\*(?:[^/]|\\\/))*\*\/)/
+```
+This resulted in a ~300X speedup for the [ShExC parser](https://github.com/shexjs/shex.js/tree/main/packages/shex-parser) and kept the stack from blowing up on large input like the [FHIR ShEx](https://build.fhir.org/fhir.schema.shex.zip).
+
+When invoking the lexer through the API, the old convetion for rules was an optional array of start conditions, followed by a string for the pattern and a string for the action:
+
+``` JSON
+[ "enter-test", "this.begin('test');" ],
+[ ["INITIIAL", "test"], "x", "return 'T';" },
+```
+Those are now distinguised by properties in an object:
+``` JSON
+{ pattern: "enter-test", action: "this.begin('test');" },
+{ start: ["INITIAL", "test"], pattern: "x", action: "return 'T';" },
+```
 
 Components:
 =====
