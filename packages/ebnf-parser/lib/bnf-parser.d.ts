@@ -1,4 +1,8 @@
 import { JisonParser, JisonParserApi, StateType, SymbolsType, TerminalsType, ProductionsType } from '@ts-jison/parser';
+type YY_ = {
+    yytext: string;
+    yyleng: number;
+};
 export declare class BnfParser extends JisonParser implements JisonParserApi {
     $?: any;
     symbols_: SymbolsType;
@@ -17,6 +21,6 @@ export declare class BnfLexer extends JisonLexer implements JisonLexerApi {
     constructor(yy?: {});
     rules: RegExp[];
     conditions: any;
-    performAction(yy: any, yy_: any, $avoiding_name_collisions: any, YY_START: any): any;
+    performAction(yy: any, yy_: YY_, $avoiding_name_collisions: any, YY_START: any): any;
 }
 //# sourceMappingURL=bnf-parser.d.ts.map

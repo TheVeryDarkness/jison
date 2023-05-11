@@ -34,7 +34,15 @@ const yy = {
       for (var i=0; i < decl.options.length; i++) {
         grammar.options[decl.options[i]] = true;
       }
-    }
+    } else if (decl.type) {
+      if (!grammar.type) grammar.type = {};
+      for (var nterm in decl.type) {
+        grammar.type[nterm] = decl.type[nterm];
+      }
+    } else
+      /* debugger */
+      /* unexpected */
+      ;
   }
 }
 
