@@ -143,7 +143,7 @@ generator.constructor = function Jison_Generator (grammar, opt) {
 generator.processGrammar = function processGrammarDef (grammar, template) {
     var bnf = grammar.bnf,
         tokens = grammar.tokens,
-        types = grammar.type,
+        types = grammar.type || {},
         nonterminals = this.nonterminals = {},
         productions = this.productions,
         self = this;
@@ -328,8 +328,8 @@ generator.buildProductions = function buildProductions(bnf, productions, nonterm
                 }
 
                 const ts_mode = template === "typescript";
+                const currentType = types[symbol];
                 if (ts_mode) {
-                    const currentType = types[symbol];
                     if (currentType) {
                         const typeAnnotation = 'const _this = this as { $?: ' + currentType + ' };';
                         action = '{' + typeAnnotation + action + '}';
@@ -337,7 +337,7 @@ generator.buildProductions = function buildProductions(bnf, productions, nonterm
                 }
                 action = action
                     // replace references to $$ with this.$, and @$ with this._$
-                    .replace(/([^'"])\$\$|^\$\$/g, ts_mode ? '$1_this.$' : '$1this.$').replace(/@[0$]/g, "this._$")
+                    .replace(/([^'"])\$\$|^\$\$/g, ts_mode && currentType ? '$1_this.$' : '$1this.$').replace(/@[0$]/g, "this._$")
                     // insert type annotation after this.$ =
                     // replace semantic value references ($n) with stack value (stack[n])
                     .replace(/\$(-?\d+)/g, function (_, n) {
