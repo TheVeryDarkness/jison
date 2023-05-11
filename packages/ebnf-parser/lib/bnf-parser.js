@@ -232,9 +232,10 @@ class BnfLexer extends lexer_1.JisonLexer {
             /^(?:%nonassoc\b)/,
             /^(?:%parse-param\b)/,
             /^(?:%options\b)/,
-            /^(?:%type[ ]+<[\w]+>)/,
+            /^(?:%type[\W]+<[^<>]*(?:<[^<>]*>)*[^<>]*>)/,
             /^(?:[%]lex[\w\W]*?[/]lex\b)/,
             /^(?:%[a-zA-Z]+[^\r\n]*)/,
+            /^(?:<[a-zA-Z]*>)/,
             /^(?:\{\{[\w\W]*?\}\})/,
             /^(?:%\{(?:.|\r|\n)*?%\})/,
             /^(?:\{)/,
@@ -252,7 +253,7 @@ class BnfLexer extends lexer_1.JisonLexer {
             /^(?:\})/,
             /^(?:(?:.|\n|\r)+)/
         ];
-        this.conditions = { "bnf": { "rules": [0, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33], "inclusive": true }, "ebnf": { "rules": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33], "inclusive": true }, "action": { "rules": [33, 34, 35, 36, 37, 38, 39, 40, 41, 42], "inclusive": false }, "code": { "rules": [33, 43], "inclusive": false }, "INITIAL": { "rules": [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33], "inclusive": true } };
+        this.conditions = { "bnf": { "rules": [0, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34], "inclusive": true }, "ebnf": { "rules": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34], "inclusive": true }, "action": { "rules": [34, 35, 36, 37, 38, 39, 40, 41, 42, 43], "inclusive": false }, "code": { "rules": [34, 44], "inclusive": false }, "INITIAL": { "rules": [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34], "inclusive": true } };
     }
     performAction(yy, yy_, $avoiding_name_collisions, YY_START) {
         var YYSTATE = YY_START;
@@ -344,39 +345,38 @@ class BnfLexer extends lexer_1.JisonLexer {
                 break;
             case 27: /* ignore unrecognized decl */
                 break;
-            case 28:
+            case 28: /* ignore type */
+                break;
+            case 29:
                 yy_.yytext = yy_.yytext.substr(2, yy_.yyleng - 4);
                 return 15;
                 break;
-            case 29:
+            case 30:
                 yy_.yytext = yy_.yytext.substr(2, yy_.yytext.length - 4);
                 return 15;
                 break;
-            case 30:
+            case 31:
                 yy.depth = 0;
                 this.pushState('action');
                 return 51;
                 break;
-            case 31:
+            case 32:
                 yy_.yytext = yy_.yytext.substr(2, yy_.yyleng - 2);
                 return 54;
                 break;
-            case 32: /* ignore bad characters */
-                break;
-            case 33:
-                return 8;
+            case 33: /* ignore bad characters */
                 break;
             case 34:
-                return 56;
+                return 8;
                 break;
             case 35:
                 return 56;
                 break;
             case 36:
-                return 56; // regexp with braces or quotes (and no spaces)
+                return 56;
                 break;
             case 37:
-                return 56;
+                return 56; // regexp with braces or quotes (and no spaces)
                 break;
             case 38:
                 return 56;
@@ -388,17 +388,20 @@ class BnfLexer extends lexer_1.JisonLexer {
                 return 56;
                 break;
             case 41:
+                return 56;
+                break;
+            case 42:
                 yy.depth++;
                 return 51;
                 break;
-            case 42:
+            case 43:
                 if (yy.depth == 0)
                     this.begin(ebnf ? 'ebnf' : 'bnf');
                 else
                     yy.depth--;
                 return 53;
                 break;
-            case 43:
+            case 44:
                 return 9;
                 break;
         }

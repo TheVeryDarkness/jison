@@ -4,7 +4,8 @@ Import: |
 Constructor: |
   type YY_ = {
     yytext: string; 
-    yyleng: number
+    yyleng: number;
+    yylineno: number;
   };
   export class {{NAME}}Lexer extends JisonLexer implements JisonLexerApi {
       options: any = {{OPTIONS}};

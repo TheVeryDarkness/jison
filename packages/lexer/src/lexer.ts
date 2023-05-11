@@ -74,9 +74,9 @@ export abstract class JisonLexer {
   };
   offset?: number;
 
-  parseError(str: string, hash: ParseErrorHashType): never {
+  parseError(str: string, hash: ParseErrorHashType): void | never {
     if (this.yy.parser) {
-      return this.yy.parser.parseError(str, hash);
+      this.yy.parser.parseError(str, hash);
     } else {
       throw new Error(str);
     }
@@ -177,7 +177,7 @@ export abstract class JisonLexer {
     if (this.options.backtrack_lexer) {
       this._backtrack = true;
     } else {
-      return this.parseError('Lexical error on line ' + (this.yylineno! + 1) + '. You can only invoke reject() in the lexer when the lexer is of the backtracking persuasion (options.backtrack_lexer = true).\n' + this.showPosition(), {
+      this.parseError('Lexical error on line ' + (this.yylineno! + 1) + '. You can only invoke reject() in the lexer when the lexer is of the backtracking persuasion (options.backtrack_lexer = true).\n' + this.showPosition(), {
         text: "",
         token: null,
         line: this.yylineno,
@@ -290,7 +290,7 @@ export abstract class JisonLexer {
   }
 
   // return next match in input
-  next(): number | boolean {
+  next(): number | boolean | undefined {
     if (this.done) {
       return this.EOF;
     }
@@ -339,7 +339,7 @@ export abstract class JisonLexer {
     if (this._input === "") {
       return this.EOF;
     } else {
-      return this.parseError('Lexical error on line ' + (this.yylineno! + 1) + '. Unrecognized text.\n' + this.showPosition(), {
+      this.parseError('Lexical error on line ' + (this.yylineno! + 1) + '. Unrecognized text.\n' + this.showPosition(), {
         text: "",
         token: null,
         line: this.yylineno,

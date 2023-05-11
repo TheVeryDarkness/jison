@@ -345,8 +345,9 @@ generator.buildProductions = function buildProductions(bnf, productions, nonterm
                         var s = "$$[$0" + (N - rhs.length || '') + "]"
                         if (ts_mode) {
                             const t = types[rhs[N - 1]];
-                            const T = template === "typescript" && t ? "<" + t + ">" : "";
-                            s = T + '(' + s + ')';
+                            if (t) {
+                                s = '(<' + t + '>(' + s + '))';
+                            }
                         }
                         return s;
                     })

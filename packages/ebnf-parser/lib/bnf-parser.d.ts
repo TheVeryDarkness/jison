@@ -1,8 +1,4 @@
 import { JisonParser, JisonParserApi, StateType, SymbolsType, TerminalsType, ProductionsType } from '@ts-jison/parser';
-type YY_ = {
-    yytext: string;
-    yyleng: number;
-};
 export declare class BnfParser extends JisonParser implements JisonParserApi {
     $?: any;
     symbols_: SymbolsType;
@@ -16,6 +12,11 @@ export declare class BnfParser extends JisonParser implements JisonParserApi {
     performAction(yytext: string, yyleng: number, yylineno: number, yy: any, yystate: number, $$: any, _$: any): any;
 }
 import { JisonLexer, JisonLexerApi } from '@ts-jison/lexer';
+type YY_ = {
+    yytext: string;
+    yyleng: number;
+    yylineno: number;
+};
 export declare class BnfLexer extends JisonLexer implements JisonLexerApi {
     options: any;
     constructor(yy?: any);

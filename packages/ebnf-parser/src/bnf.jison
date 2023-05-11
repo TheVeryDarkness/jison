@@ -35,7 +35,8 @@ id                [a-zA-Z][a-zA-Z0-9_-]*
 "%nonassoc"             return 'NONASSOC';
 "%parse-param"          return 'PARSE_PARAM';
 "%options"              return 'OPTIONS';
-"%type"[ ]+"<"[\w]+">"  return 'TYPES';
+"%type"[\W]+"<"[^<>]*("<"[^<>]*">")*[^<>]*">" 
+                        return 'TYPES';
 
 /* []s around '%' and '/' allow jison to parse its on grammar */
 [%]"lex"[\w\W]*?[/]"lex" return 'LEX_BLOCK';
